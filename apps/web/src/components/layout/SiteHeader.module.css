@@ -1,19 +1,32 @@
+/* L'en-tête occupe toute la largeur de l'écran, d'une marge à l'autre. */
+
 .dateline {
   color: var(--text-secondary);
   background: var(--bg-page);
 }
 
+.datelineInner,
+.inner {
+  margin-inline: var(--page-margin);
+}
+
 .datelineInner {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   column-gap: var(--space-16);
-  padding-block: var(--space-12);
   border-bottom: var(--rule-width) solid var(--border-rule);
+}
+
+.datelineText {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-32);
   font-weight: var(--font-weight-semibold);
 }
 
 /* Sur téléphone, seule l'année reste dans la une. */
-.datelineInner span:first-child {
+.datelineText span:first-child {
   display: none;
 }
 
@@ -50,7 +63,7 @@
 }
 
 @media (min-width: 768px) {
-  .datelineInner span:first-child {
+  .datelineText span:first-child {
     display: inline;
   }
 }

@@ -15,7 +15,7 @@ export function MembersOpening({ years, selectedYear }: MembersOpeningProps) {
   return (
     <section className={styles.opening} aria-labelledby="membres-titre">
       <div className="container">
-        <p className={`label ${styles.label}`}>{membersOpening.label}</p>
+        <p className="label">{membersOpening.label}</p>
         <h1 id="membres-titre" className={styles.title}>
           {membersOpening.title}
         </h1>

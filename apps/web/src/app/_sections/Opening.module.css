@@ -106,8 +106,7 @@
     flex-direction: column;
     justify-content: flex-start;
     row-gap: var(--space-16);
-    padding: var(--space-32) 0 0;
-    border-top: var(--rule-width) solid var(--rule-strong);
+    padding: 0;
     margin-top: var(--space-32);
   }
 
@@ -122,7 +121,7 @@
   /* La photographie garde assez de hauteur pour que les visages restent */
   /* au-dessus de la signature ; sur un écran bas, l'accroche passe dessous. */
   .frame {
-    height: clamp(24rem, 100dvh - 32rem, 44rem);
+    height: clamp(26rem, 100dvh - 28rem, 46rem);
   }
 
   .lead {

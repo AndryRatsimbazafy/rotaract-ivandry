@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import { mainNavigation, routes } from "@/config/routes";
 import styles from "./MobileMenu.module.css";
 
 interface MobileMenuProps {
   /** Lieu et année, repris de la une. */
   dateline: string[];
+  /** Les liens vers les réseaux sociaux, rendus par l'en-tête. */
+  social: ReactNode;
 }
 
 function isCurrent(href: string, pathname: string) {
@@ -21,7 +23,7 @@ function isCurrent(href: string, pathname: string) {
  * Menu du téléphone : le sommaire du journal, en plein écran.
  * L'élément dialog fournit le piège de focus et la fermeture par Échap.
  */
-export function MobileMenu({ dateline }: MobileMenuProps) {
+export function MobileMenu({ dateline, social }: MobileMenuProps) {
   const dialog = useRef<HTMLDialogElement>(null);
   const pathname = usePathname();
   const close = () => dialog.current?.close();
@@ -73,11 +75,14 @@ export function MobileMenu({ dateline }: MobileMenuProps) {
             ))}
           </ol>
         </nav>
-        <p className={`label ${styles.dateline}`}>
-          {dateline.map((item) => (
-            <span key={item}>{item}</span>
-          ))}
-        </p>
+        <div className={styles.foot}>
+          <p className={`label ${styles.dateline}`}>
+            {dateline.map((item) => (
+              <span key={item}>{item}</span>
+            ))}
+          </p>
+          {social}
+        </div>
       </dialog>
     </div>
   );

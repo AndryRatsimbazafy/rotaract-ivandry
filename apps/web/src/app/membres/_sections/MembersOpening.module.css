@@ -10,12 +10,6 @@
   padding-top: var(--space-32);
 }
 
-/* Un filet encre ouvre la page. */
-.label {
-  padding-top: var(--space-16);
-  border-top: var(--rule-width) solid var(--rule-strong);
-}
-
 .title {
   margin-top: var(--space-32);
   font-size: var(--text-mega-size);

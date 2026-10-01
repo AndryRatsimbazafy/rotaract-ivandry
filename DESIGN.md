@@ -63,7 +63,7 @@ Cette direction est la référence obligatoire de toutes les pages de `apps/web`
 
 1. **La typographie comme matière graphique.** Très grands titres, chiffres monumentaux, contrastes d'échelle marqués, petites informations très fines.
 2. **La photographie documentaire.** Grande, recadrée, débordante, parfois porteuse d'un titre.
-3. **Le blanc comme élément de composition.** Il sépare, il met en tension, il laisse une colonne vide en face d'un bloc dense. Il n'est jamais une simple absence de design : le fond de page est une brume marquée par les repères de la grille, et le blanc est une feuille que l'on pose dessus.
+3. **Le blanc comme élément de composition.** Il sépare, il met en tension, il laisse une colonne vide en face d'un bloc dense. Il n'est jamais une simple absence de design : le fond de page est une brume unie, et le blanc est une feuille que l'on pose dessus.
 4. **Le détail éditorial.** Étiquettes, numéros de section, métadonnées en marge, filets fins.
 
 **Principes.**
@@ -90,7 +90,7 @@ Cette direction est la référence obligatoire de toutes les pages de `apps/web`
 | **Club Ivandry** | La signature typographique, la une, la photographie, la composition | Rien d'officiel : c'est l'espace de création | Toute la mise en page |
 | **UI fonctionnelle** | Neutres dérivés, états, focus | Les contrastes | Contrôles, emplacements sans contenu |
 
-**Logo.** La signature officielle du club (`logo-club.png`) figure dans l'en-tête et dans le pied de page. L'emblème seul (`logo-club-sans-texte.png`) sert d'icône d'onglet. Ils ne sont jamais redessinés, recolorés, déformés ni animés. Les deux fichiers ont un fond blanc opaque : la signature se pose sur du blanc, et dans le pied de page elle garde un cartouche blanc. La roue n'est jamais un motif, un filigrane ou une puce.
+**Logo.** La signature officielle du club figure dans l'en-tête et dans le pied de page, sur fond transparent. L'emblème seul sert d'icône d'onglet. Ils ne sont jamais redessinés, recolorés, déformés ni animés. Les fichiers fournis ont un fond blanc opaque ; `logo-club-transparent.png` en est tiré en retirant ce fond, sans toucher aux couleurs. La roue n'est jamais un motif, un filigrane ou une puce.
 
 **Signatures propres au club.** Ce qui rend le site reconnaissable, contenu retiré.
 
@@ -104,7 +104,7 @@ Cette direction est la référence obligatoire de toutes les pages de `apps/web`
 
 ## 3. Couleurs
 
-**Stratégie.** Un fond de page brume, des feuilles blanches posées dessus, trois couleurs de marque à rôle fixe, et une gamme de neutres qui apporte les nuances : brume, blanc, encre, filets. La couleur s'engage par grandes surfaces rares et bien placées. La page n'est jamais un blanc uniforme.
+**Stratégie.** Un fond de page brume uni, des feuilles blanches posées dessus, trois couleurs de marque à rôle fixe, et une gamme de neutres qui apporte les nuances : brume, blanc, encre, filets. La couleur s'engage par grandes surfaces rares et bien placées. La page n'est jamais un blanc uniforme.
 
 ### Couleurs de marque (valeurs officielles Rotary, non modifiables)
 
@@ -138,7 +138,7 @@ Ce sont des outils d'interface, pas des couleurs de marque. Ils ne sortent jamai
 
 | Surface | Fréquence | Usage sur la Home |
 |---|---|---|
-| **Fond de page : brume**, avec les repères de grille | Le fond par défaut de tout le site | Ouverture, axes stratégiques, actualités |
+| **Fond de page : brume**, unie | Le fond par défaut de tout le site | Ouverture, axes stratégiques, actualités |
 | **Feuille blanche** | Une section sur deux environ, jamais deux d'affilée sans raison | En-tête, club, actions, membres |
 | **Champ encre** | Une section par page, plus le pied de page | Valeurs du Rotary |
 | **Bleu royal** | Jamais en plein cadre. Une bande verticale ou un bloc partiel par page au plus | Derrière les portraits des membres |
@@ -149,7 +149,7 @@ Ce sont des outils d'interface, pas des couleurs de marque. Ils ne sortent jamai
 ### Le fond de page
 
 - **La brume est le fond de tout le site.** Le blanc devient une surface choisie : une « feuille » qui porte une section, l'en-tête, ou l'aplat qui mord sur une image.
-- **Les repères de grille.** Trois filets verticaux de 1 px, en Silver, sont tracés sur le fond de page aux quarts du conteneur, à partir de la tablette. Sur téléphone, où le texte occupe toute la largeur, il n'y en a pas. Ils tombent dans les gouttières de la grille. Ils montrent la grille sur laquelle la page est composée et disparaissent sous les feuilles blanches et les champs forts. Ce sont des filets unis : ni motif, ni texture, ni dégradé visible.
+- **Un fond uni.** Le fond de page ne porte aucun tracé : ni repère de grille, ni filet décoratif. Des repères verticaux ont été essayés puis retirés à la demande du club.
 - **L'alternance.** Les sections passent du fond de page à la feuille blanche, puis à un champ fort. C'est cette alternance, et non une couleur ajoutée, qui donne son relief à la page.
 - **Sur le fond de page**, le gabarit photographique et le survol d'une ligne sont blancs. **Sur une feuille blanche**, ils sont brume.
 
@@ -403,7 +403,8 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 
 | Élément | Langage |
 |---|---|
-| **En-tête** | La une (lieu, année Rotary) sur une ligne fine, puis l'en-tête, fixe en haut de l'écran, fermé par un filet encre. Signature officielle du club à gauche, haute de 44 px sur téléphone et de 56 px sur ordinateur. Hauteur de l'en-tête : 68 px et 88 px. |
+| **En-tête** | Il occupe toute la largeur de l'écran, d'une marge à l'autre, même quand le contenu est centré. La une sur une ligne fine : lieu et année Rotary à gauche, pictogrammes des réseaux sociaux à droite. Puis l'en-tête, fixe en haut de l'écran, fermé par un filet encre. Signature du club à gauche, haute de 44 px sur téléphone et de 56 px sur ordinateur. Hauteur de l'en-tête : 68 px et 88 px. |
+| **Réseaux sociaux** | Facebook et Instagram, en pictogrammes au trait de 1,5 px, 20 px dans une zone tactile de 44 px. Dans la une, dans le pied de page et au bas du sommaire du téléphone. Chacun a un nom lisible par les lecteurs d'écran. |
 | **Navigation** | À partir de 1024 px : liens en ligne, un filet bleu de 2 px sous la rubrique courante. « Nous rejoindre » dans un cadre fin de 1 px. |
 | **Menu du téléphone** | Le mot « Menu » en étiquette et deux filets inégaux. Il ouvre le **sommaire** : plein écran sur encre, rubriques numérotées en très grand, lieu et année au bas, bouton « Fermer ». Fermeture par Échap, focus retenu dans le sommaire. |
 | **Lien fléché** | Libellé en graisse 600 et flèche. C'est la forme d'appel par défaut. |
@@ -418,7 +419,7 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 | **Notification** | Bandeau à fond teinté d'état avec bordure de 1 px, icône et texte. |
 | **Chargement** | Squelettes aux dimensions du contenu. |
 | **Erreur** | Une phrase calme, la cause et la correction. |
-| **Pied de page** | Sur encre : signature du club dans un cartouche blanc, navigation en colonne, lieu et année, puis le nom du club en très grand, tracé au trait et coupé par le bas. |
+| **Pied de page** | Sur encre : signature du club, navigation en colonne, lieu, année et réseaux sociaux, puis le nom du club en très grand, tracé au trait et coupé par le bas. |
 
 **Icônes.** Trait de 1,5 px, 20 ou 24 px. Jamais d'émoji. La famille reste à choisir.
 
@@ -555,7 +556,8 @@ Le téléphone est conçu, pas réduit.
 
 - Ombres sur le contenu, grands arrondis, portraits en cercle.
 - Barre colorée épaisse sur le côté d'un bloc.
-- Motifs, textures, grain, formes abstraites décoratives. Les repères de grille sont la seule trace graphique du fond de page.
+- Motifs, textures, grain, formes abstraites décoratives, repères de grille visibles.
+- Filet horizontal au-dessus d'une ouverture de page : le filet de l'en-tête suffit.
 - Troisième famille typographique, police monospace, émoji.
 - Texte courant sur une photographie.
 - Faux contenu : chiffres, témoignages, membres, photographies.
@@ -625,7 +627,8 @@ Seule la Home est conçue. Les quatre autres pages reprendront ce langage en mod
 
 ## Points ouverts
 
-1. **Logos à fond transparent.** Les fichiers fournis ont un fond blanc opaque. Une version transparente, et une version inversée pour le pied de page, supprimeraient le cartouche blanc.
+1. **Logo officiel à fond transparent.** Le fichier utilisé est tiré du logo fourni. Sur le pied de page encre, le cranberry du mot « Rotaract » est peu contrasté : une version inversée officielle serait préférable.
+1. **Adresses des réseaux sociaux.** À renseigner dans `apps/web/src/config/site.ts` ; d'ici là, les pictogrammes s'affichent sans lien.
 2. **Photographies.** Seule l'ouverture en a une. Les autres sont à fournir, avec pour chacune sa légende (quoi, où, quand).
 3. **Textes.** Présentation du club, accroches, libellés des étiquettes.
 4. **Famille d'icônes.**

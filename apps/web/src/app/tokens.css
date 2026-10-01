@@ -43,8 +43,6 @@
   --bg-ground: var(--color-brume);
   --bg-page: var(--color-white);
   --bg-surface: var(--color-brume);
-  /* Repères de grille tracés sur le fond de page. */
-  --guide: var(--color-silver);
   --text-primary: var(--color-encre);
   --text-secondary: var(--color-charcoal);
   --link: var(--color-royal-blue);
@@ -195,23 +193,20 @@
   --container-reading: 680px;
   --header-height: 68px;
   --logo-height: 44px;
+  --icon-size: 20px;
   --control-height: 48px;
   --target-min: 44px;
 
   /* Largeur d'une colonne et distance du bord de l'écran au conteneur : */
   /* pour les éléments qui débordent de la grille ou vont à bord perdu. */
-  --content-width: min(100vw - 2 * var(--page-margin), var(--container-page));
+  /* 100cqi : la largeur du corps de page, sans la barre de défilement. */
+  --content-width: min(100cqi - 2 * var(--page-margin), var(--container-page));
   --col: calc(
     (var(--content-width) - (var(--grid-columns) - 1) * var(--grid-gutter)) /
       var(--grid-columns)
   );
   --col-step: calc(var(--col) + var(--grid-gutter));
-  /* Repères de grille : aucun sur téléphone (hors champ), trois aux quarts du */
-  /* conteneur ensuite. Ils tombent dans les gouttières de la grille. */
-  --guide-1: -1px;
-  --guide-2: -1px;
-  --guide-3: -1px;
-  --edge: max(var(--page-margin), (100vw - var(--container-page)) / 2);
+  --edge: max(var(--page-margin), (100cqi - var(--container-page)) / 2);
 
   /* Ordre de superposition. */
   --layer-header: 10;
@@ -248,9 +243,6 @@
     --rhythm-major: var(--space-128);
     --rhythm-heading: var(--space-32);
     --grid-columns: 8;
-    --guide-1: calc(var(--edge) + var(--content-width) / 4);
-    --guide-2: calc(var(--edge) + var(--content-width) / 2);
-    --guide-3: calc(var(--edge) + 3 * var(--content-width) / 4);
     --grid-gutter: var(--space-24);
     --page-margin: var(--space-32);
   }

@@ -1,0 +1,40 @@
+.list {
+  display: flex;
+  align-items: center;
+  list-style: none;
+}
+
+/* La zone tactile fait 44 px, le pictogramme 20 px. */
+.link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--target-min);
+  height: var(--target-min);
+  color: inherit;
+}
+
+.icon {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+a.link:hover {
+  color: var(--link);
+}
+
+/* Lu par les lecteurs d'écran, absent de l'affichage. */
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .link {
+    transition: color var(--duration-instant) var(--ease-out);
+  }
+}

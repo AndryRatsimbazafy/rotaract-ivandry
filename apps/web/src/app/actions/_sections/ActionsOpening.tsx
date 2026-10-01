@@ -17,7 +17,7 @@ export function ActionsOpening({ rotaryYear, count }: ActionsOpeningProps) {
     <section className={styles.opening} aria-labelledby="actions-titre">
       <div className={`container grid ${styles.layout}`}>
         <div className={styles.text}>
-          <p className={`label ${styles.label}`}>{actionsOpening.label}</p>
+          <p className="label">{actionsOpening.label}</p>
           <h1 id="actions-titre" className={styles.title}>
             <span>{lead}</span> <span>{rest}</span>
           </h1>

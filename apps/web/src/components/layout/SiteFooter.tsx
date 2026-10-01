@@ -2,28 +2,34 @@ import Image from "next/image";
 import { site } from "@/config/site";
 import { currentRotaryYear } from "@/data/members";
 import { SiteNav } from "./SiteNav";
+import { SocialLinks } from "./SocialLinks";
 import styles from "./SiteFooter.module.css";
 
 export function SiteFooter() {
   return (
     <footer className={styles.footer}>
       <div className={`container ${styles.inner}`}>
-        {/* La signature n'existe que sur fond blanc : elle garde son fond. */}
+        {/* La signature du club, sur fond transparent. */}
         <p className={styles.brand}>
           <Image
             src={site.logo.src}
             width={site.logo.width}
             height={site.logo.height}
             alt={site.name}
-            sizes="200px"
+            sizes="220px"
             className={styles.logo}
           />
         </p>
         <SiteNav label="Navigation du pied de page" variant="footer" />
-        <p className={`label ${styles.dateline}`}>
-          <span>{site.location}</span>
-          <span>Année Rotary {currentRotaryYear}</span>
-        </p>
+        <div>
+          <p className={`label ${styles.dateline}`}>
+            <span>{site.location}</span>
+            <span>Année Rotary {currentRotaryYear}</span>
+          </p>
+          <div className={styles.social}>
+            <SocialLinks />
+          </div>
+        </div>
       </div>
       {/* Le nom du club, en très grand, coupé par le bas de la page. */}
       <p className={styles.wordmark} aria-hidden="true">

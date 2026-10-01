@@ -5,6 +5,7 @@ import { site } from "@/config/site";
 import { currentRotaryYear } from "@/data/members";
 import { MobileMenu } from "./MobileMenu";
 import { SiteNav } from "./SiteNav";
+import { SocialLinks } from "./SocialLinks";
 import styles from "./SiteHeader.module.css";
 
 const dateline = [site.location, `Année Rotary ${currentRotaryYear}`];
@@ -14,21 +15,24 @@ export function SiteHeader() {
     <>
       {/* La « une » du journal : lieu et année, au-dessus de l'en-tête. */}
       <div className={styles.dateline}>
-        <p className={`container label ${styles.datelineInner}`}>
-          {dateline.map((item) => (
-            <span key={item}>{item}</span>
-          ))}
-        </p>
+        <div className={styles.datelineInner}>
+          <p className={`label ${styles.datelineText}`}>
+            {dateline.map((item) => (
+              <span key={item}>{item}</span>
+            ))}
+          </p>
+          <SocialLinks />
+        </div>
       </div>
       <header className={styles.header}>
-        <div className={`container ${styles.inner}`}>
+        <div className={styles.inner}>
           <Link href={routes.home} className={styles.brand}>
             <Image
               src={site.logo.src}
               width={site.logo.width}
               height={site.logo.height}
               alt={site.name}
-              sizes="160px"
+              sizes="180px"
               priority
               className={styles.logo}
             />
@@ -36,7 +40,7 @@ export function SiteHeader() {
           <div className={styles.desktopNav}>
             <SiteNav label="Navigation principale" variant="header" />
           </div>
-          <MobileMenu dateline={dateline} />
+          <MobileMenu dateline={dateline} social={<SocialLinks />} />
         </div>
       </header>
     </>

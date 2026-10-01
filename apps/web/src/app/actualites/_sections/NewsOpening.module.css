@@ -14,8 +14,6 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-12) var(--space-32);
-  padding-top: var(--space-16);
-  border-top: var(--rule-width) solid var(--rule-strong);
 }
 
 .facts {

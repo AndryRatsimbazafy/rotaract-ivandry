@@ -11,6 +11,8 @@
 
 html {
   color-scheme: light;
+  /* Rien ne doit faire défiler la page à l'horizontale. */
+  overflow-x: clip;
   /* L'en-tête fixe ne masque ni une ancre ni un élément focalisé. */
   scroll-padding-top: calc(var(--header-height) + var(--space-16));
 }
@@ -20,16 +22,10 @@ body {
   flex-direction: column;
   min-height: 100dvh;
   color: var(--text-primary);
-  /* Fond de page : brume, avec les repères verticaux de la grille, visibles */
-  /* entre les feuilles blanches. Chaque repère est un filet uni de 1 px. */
-  background:
-    linear-gradient(var(--guide), var(--guide)) var(--guide-1) 0 /
-      var(--rule-width) 100% no-repeat,
-    linear-gradient(var(--guide), var(--guide)) var(--guide-2) 0 /
-      var(--rule-width) 100% no-repeat,
-    linear-gradient(var(--guide), var(--guide)) var(--guide-3) 0 /
-      var(--rule-width) 100% no-repeat,
-    var(--bg-ground);
+  /* Fond de page : brume, uni. Le blanc est une feuille posée dessus. */
+  background: var(--bg-ground);
+  /* Sert de référence de largeur (100cqi) aux éléments à bord perdu. */
+  container-type: inline-size;
   font-family: var(--font-structure);
   font-size: var(--text-body-size);
   font-weight: var(--font-weight-regular);

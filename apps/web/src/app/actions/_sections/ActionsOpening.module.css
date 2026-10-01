@@ -20,12 +20,6 @@
   grid-column: 1 / -1;
 }
 
-/* Un filet encre ouvre la page, comme dans la marge de l'accueil. */
-.label {
-  padding-top: var(--space-16);
-  border-top: var(--rule-width) solid var(--rule-strong);
-}
-
 .title {
   margin-top: var(--space-32);
   font-size: var(--text-mega-size);
@@ -106,16 +100,13 @@
 
   .text {
     grid-column: 1 / span 5;
-    padding-bottom: var(--rhythm-section);
   }
 
-  /* En haut de la colonne de droite, sous le même filet que l'étiquette. */
+  /* Les repères restent sous l'accroche, dans la colonne du titre. */
   .facts {
-    grid-column: 8 / -1;
-    grid-row: 1;
-    align-self: start;
-    padding-top: var(--space-16);
-    border-top: var(--rule-width) solid var(--rule-strong);
+    grid-column: 1 / span 5;
+    grid-row: 2;
+    padding-bottom: var(--rhythm-section);
   }
 
   .text {
@@ -124,7 +115,7 @@
 
   .photos {
     grid-column: 8 / -1;
-    grid-row: 1;
+    grid-row: 1 / span 2;
     align-self: end;
     margin-top: 0;
     margin-bottom: calc(-1 * var(--space-160));

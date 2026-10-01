@@ -17,14 +17,22 @@
 .brand {
   align-self: start;
   justify-self: start;
-  padding: var(--space-12) var(--space-16);
-  background: var(--color-white);
 }
 
 .logo {
   display: block;
   width: auto;
-  height: var(--space-48);
+  height: var(--space-64);
+}
+
+/* Aligné sur le bord gauche des autres textes : la zone tactile déborde. */
+.social {
+  margin-top: var(--space-16);
+  margin-left: calc((var(--icon-size) - var(--target-min)) / 2);
+}
+
+.social a:hover {
+  color: var(--on-field-text-secondary);
 }
 
 .dateline {
