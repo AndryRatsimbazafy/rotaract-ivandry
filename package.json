@@ -1,0 +1,23 @@
+{
+  "name": "rotaract-ivandry",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22 <23"
+  },
+  "scripts": {
+    "dev": "npm run dev:web & npm run dev:admin & npm run dev:api & wait",
+    "dev:web": "npm run dev --workspace=web",
+    "dev:admin": "npm run dev --workspace=admin",
+    "dev:api": "npm run start:dev --workspace=api",
+    "build": "npm run build --workspaces --if-present",
+    "build:web": "npm run build --workspace=web",
+    "build:admin": "npm run build --workspace=admin",
+    "build:api": "npm run build --workspace=api",
+    "lint": "npm run lint --workspaces --if-present"
+  }
+}

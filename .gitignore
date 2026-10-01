@@ -1,0 +1,43 @@
+# Dépendances
+node_modules/
+
+# Builds
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Couverture
+coverage/
+.nyc_output/
+
+# Variables d'environnement
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers temporaires
+.tmp/
+.temp/
+*.tmp
+*.swp
+
+# Éditeurs
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Hébergement
+.vercel
