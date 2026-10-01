@@ -17,5 +17,7 @@ export interface NewsItem {
   date: string;
   location?: string;
   summary?: string;
+  /** Texte complet, un paragraphe par élément. Sert au détail de l'actualité. */
+  body?: string[];
   photos: Photo[];
 }

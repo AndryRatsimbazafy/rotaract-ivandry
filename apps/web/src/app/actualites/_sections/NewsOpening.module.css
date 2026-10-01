@@ -1,0 +1,82 @@
+/*
+ * Ouverture de la page Actualités : pas de photographie. Une manchette, puis
+ * le titre en deux lignes, la seconde renvoyée à droite ; l'accroche se loge
+ * dans le blanc laissé à gauche.
+ */
+
+.opening {
+  padding-block: var(--space-32) var(--rhythm-section);
+}
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-12) var(--space-32);
+  padding-top: var(--space-16);
+  border-top: var(--rule-width) solid var(--rule-strong);
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12) var(--space-48);
+}
+
+.facts dt {
+  color: var(--text-secondary);
+}
+
+.facts dd {
+  margin-top: var(--space-4);
+  font-weight: var(--font-weight-bold);
+}
+
+.title {
+  margin-top: var(--space-48);
+  font-size: var(--text-mega-size);
+  line-height: var(--text-mega-leading);
+  letter-spacing: var(--text-mega-tracking);
+}
+
+.lead,
+.rest {
+  display: block;
+}
+
+/* Le trait d'or : un seul par page, attaché au titre principal. */
+.title::before {
+  content: "";
+  display: block;
+  width: var(--accent-rule-width);
+  height: var(--accent-rule-height);
+  margin-bottom: var(--space-24);
+  background: var(--accent-rule);
+}
+
+.lede {
+  max-width: 28ch;
+  margin-top: var(--space-24);
+  font-family: var(--font-recit);
+  font-size: var(--text-lede-size);
+  font-style: italic;
+  line-height: var(--text-lede-leading);
+}
+
+@media (min-width: 1024px) {
+  .opening {
+    padding-top: var(--space-48);
+  }
+
+  /* La seconde ligne part à droite : le titre traverse toute la page. */
+  .rest {
+    text-align: right;
+  }
+
+  /* L'accroche remonte dans le blanc à gauche de la seconde ligne. */
+  .lede {
+    margin-top: calc(-0.62 * var(--text-mega-size));
+    padding-bottom: var(--space-96);
+  }
+}

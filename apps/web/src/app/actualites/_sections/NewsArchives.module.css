@@ -1,0 +1,118 @@
+/*
+ * 03 : le champ encre de la page. Les archives : une ligne par année Rotary,
+ * en très grand, comme le dos des volumes d'une collection.
+ */
+
+.field {
+  /* Sur champ fort, le contour de focus est blanc. */
+  --focus-ring: var(--on-field-focus-ring);
+
+  padding-block: var(--rhythm-major);
+  color: var(--on-field-text);
+  background: var(--field-footer);
+}
+
+.layout {
+  row-gap: var(--space-48);
+}
+
+.head,
+.volumes {
+  grid-column: 1 / -1;
+}
+
+.head {
+  color: var(--on-field-text-secondary);
+}
+
+.title {
+  margin-top: var(--space-16);
+  color: var(--on-field-text);
+  font-size: var(--text-h1-size);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--text-h1-leading);
+  letter-spacing: var(--text-h1-tracking);
+}
+
+.intro {
+  max-width: 28ch;
+  margin-top: var(--space-16);
+  font-family: var(--font-recit);
+  font-style: italic;
+}
+
+.years {
+  border-bottom: var(--rule-width) solid var(--on-field-rule);
+  list-style: none;
+}
+
+.year {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-8) var(--space-24);
+  padding-block: var(--space-24);
+  border-top: var(--rule-width) solid var(--on-field-rule);
+  color: inherit;
+  text-decoration: none;
+}
+
+.yearName {
+  font-size: var(--text-mega-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--text-mega-leading);
+  letter-spacing: var(--text-mega-tracking);
+}
+
+.count {
+  color: var(--on-field-text-secondary);
+}
+
+/* Au survol, l'année passe au bleu clair. L'année affichée est signalée par
+   une mention écrite, pas par un soulignement. */
+.year:hover .yearName {
+  color: var(--on-field-text-secondary);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-16);
+}
+
+.current {
+  color: var(--on-field-text);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .yearName {
+    transition: color var(--duration-instant) var(--ease-out);
+  }
+}
+
+.all {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  margin-top: var(--space-16);
+  color: var(--on-field-link);
+  font-weight: var(--font-weight-semibold);
+}
+
+@media (min-width: 1024px) {
+  .head {
+    grid-column: 1 / span 4;
+  }
+
+  .volumes {
+    grid-column: 6 / -1;
+  }
+
+  /* Plafonnée pour qu'une année tienne sur une ligne dans sa colonne. */
+  .yearName {
+    font-size: min(var(--text-mega-size), 9.5vw);
+  }
+}

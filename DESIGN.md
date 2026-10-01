@@ -388,6 +388,7 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 - **Photographie absente : le gabarit.** Un aplat brume ou encre, deux repères de cadrage dans les angles, l'étiquette « Photographie à venir » suivie d'une description de l'image attendue, et le format en très grand, ton sur ton. C'est un objet d'édition, pas une fausse image.
 - **Texte absent.** Le libellé décrit l'emplacement (« Titre de l'action », « Prénom Nom »), sans crochets. En grand, il est en Tin. En petit, il est en Charcoal. Les filets passent en Silver.
 - **Une mention par section.** « Contenu à venir », une seule fois, près du titre de la section.
+- **Registre vide.** Un registre sans aucune ligne ne répète pas trois lignes fantômes : il montre ses en-têtes de colonnes, une phrase qui dit qu'il n'y a encore rien, et ses filets.
 - **Un emplacement n'est jamais cliquable.**
 - **Rien n'est inventé.** Ni action, ni date, ni membre, ni chiffre, ni citation.
 
@@ -437,7 +438,11 @@ L'impact n'affiche que des données réelles.
 
 **La définition.** Ce qu'est une action s'explique sous la forme d'une entrée de dictionnaire : le mot en très grand, sa nature grammaticale en italique, la définition en voix de récit.
 
-**La fiche dépliable.** Tant que la page de détail n'existe pas, une action publiée offre un « plus » sous la forme d'un bloc qui se déplie sur place : sa fiche complète et ses autres photographies.
+**Le mois en marge.** Dans le registre de la page News, les actualités sont groupées par mois. Le nom du mois, en très grand, occupe la marge et reste visible tant que ses lignes défilent (position collante, sans script). C'est le rythme temporel de la page.
+
+**Les archives.** Les années Rotary se lisent comme le dos des volumes d'une collection : une ligne par année, en très grand, avec le nombre d'actualités. Seules les années qui ont du contenu apparaissent.
+
+**La fiche dépliable.** Tant que la page de détail n'existe pas, une action ou une actualité publiée offre un « plus » sous la forme d'un bloc qui se déplie sur place : la fiche complète ou le texte, et les autres photographies.
 
 ---
 
@@ -588,7 +593,7 @@ Seule la Home est conçue. Les quatre autres pages reprendront ce langage en mod
 |---|---|
 | **Home** | Voir section 6. Signature, sept sections numérotées, champ cranberry. |
 | **Actions** | Le reportage. Ouverture typographique sur le fond de page, avec une photographie verticale à bord perdu qui descend dans la section suivante et une seconde image qui la chevauche. Définition en entrée de dictionnaire sur feuille blanche. Index des filtres, puis les actions une à une, chacune dans l'une de trois compositions qui alternent : grand format avec titre au-dessus et métadonnées en marge, verticale à gauche avec fiche à droite, texte à gauche avec image décalée à droite. Registre d'impact sur champ encre. Rappel cranberry. |
-| **News** | Le registre, étendu. Dense et régulier. |
+| **News** | Le journal. Ouverture purement typographique, en deux lignes décalées, comme une manchette. Une actualité à la une : le jour en chiffre monumental, une grande photographie à bord perdu, le titre sur un aplat blanc qui mord dessus. Sur feuille blanche, les rubriques en index puis le registre, groupé par mois : le mois reste en marge pendant que ses lignes défilent. Les archives par année Rotary sur champ encre, les années en très grand. Deux liens vers les actions et les membres, puis le rappel cranberry. |
 | **Join** | Le parcours d'adhésion en quatre étapes comme colonne vertébrale, les quatre questions du Rotary, les valeurs, le statut de sympathisant, la candidature, les questions fréquentes. Pas de champ cranberry. |
 | **Members** | Le collectif : noms en très grand, portraits 4:5 d'un même cadrage, filtre par année Rotary. Un membre peut avoir plusieurs fonctions la même année. |
 

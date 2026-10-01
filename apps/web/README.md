@@ -4,7 +4,7 @@ Site public du Rotaract Club Ivandry. Next.js (App Router), TypeScript, CSS Modu
 
 Les commandes se lancent depuis la racine du dépôt (`npm run dev:web`, `npm run build:web`, `npm run lint`). Port de développement : 3000.
 
-`DESIGN.md` (racine du dépôt) est la source de vérité pour toute décision visuelle. Ses fondations sont implémentées (tokens dans `src/app/tokens.css`, Open Sans variable chargée par `next/font` avec l'axe de largeur, Georgia en police système). L'accueil et la page Actions sont conçus ; les trois autres pages affichent encore leur plan provisoire.
+`DESIGN.md` (racine du dépôt) est la source de vérité pour toute décision visuelle. Ses fondations sont implémentées (tokens dans `src/app/tokens.css`, Open Sans variable chargée par `next/font` avec l'axe de largeur, Georgia en police système). L'accueil, Actions et Actualités sont conçus ; Membres et Rejoindre affichent encore leur plan provisoire.
 
 ## Routes
 
@@ -23,7 +23,8 @@ Les commandes se lancent depuis la racine du dépôt (`npm run dev:web`, `npm ru
 | `app/` | Routes, layout racine, métadonnées, tokens (`tokens.css`) et styles de base (`globals.css`). Une page compose des sections, elle ne contient ni données ni styles partagés. |
 | `components/layout/` | Coque du site : en-tête, pied de page, navigation, enveloppe de section. |
 | `components/media/`, `components/ui/` | Éléments partagés entre sections : cadre de photographie et son gabarit, lien fléché, étiquette de section, styles de bouton. |
-| `components/sections/` | Sections partagées entre plusieurs pages : le rappel cranberry qui conclut les pages autres que l'accueil. |
+| `components/sections/` | Sections partagées entre plusieurs pages : le rappel cranberry qui conclut les pages autres que l'accueil, les liens de sortie de page. |
+| `lib/` | Fonctions utilitaires sans rendu : formats de date. |
 | `components/scaffold/` | Affichage provisoire du plan des pages. À supprimer une fois les pages conçues. |
 | `config/` | Nom du site, routes, navigation. |
 | `content/` | Textes du site, séparés des composants pour faciliter une future traduction. |
