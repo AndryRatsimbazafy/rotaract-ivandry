@@ -1,0 +1,100 @@
+/*
+ * 03 : sur le fond de page. Un « 7 » monumental, les mots « axes stratégiques » posés
+ * contre lui, et sept entrées sur deux colonnes décalées.
+ */
+
+.section {
+  padding-block: var(--rhythm-major);
+}
+
+.layout {
+  row-gap: var(--space-48);
+}
+
+.head,
+.areas {
+  grid-column: 1 / -1;
+}
+
+.title {
+  display: flex;
+  align-items: flex-end;
+  column-gap: var(--space-16);
+  margin-top: var(--space-24);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.count {
+  color: var(--link);
+  font-size: calc(1.5 * var(--text-numeral-size));
+  line-height: 0.74;
+  letter-spacing: var(--text-mega-tracking);
+}
+
+.words {
+  max-width: 6ch;
+  padding-bottom: 0.08em;
+  font-size: var(--text-h1-size);
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-h1-tracking);
+}
+
+.intro {
+  max-width: 28ch;
+  margin-top: var(--space-32);
+  font-family: var(--font-recit);
+  font-size: var(--text-lede-size);
+  font-style: italic;
+  line-height: var(--text-lede-leading);
+}
+
+.areas {
+  display: grid;
+  list-style: none;
+}
+
+.area {
+  padding-block: var(--space-16) var(--space-24);
+  border-top: var(--rule-width) solid var(--rule-strong);
+}
+
+.index {
+  color: var(--link);
+  font-variant-numeric: tabular-nums;
+}
+
+.name {
+  margin-top: var(--space-8);
+  font-size: var(--text-h3-size);
+  line-height: var(--text-h3-leading);
+}
+
+.description {
+  max-width: 40ch;
+  margin-top: var(--space-8);
+  color: var(--text-secondary);
+}
+
+@media (min-width: 768px) {
+  .areas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
+    padding-bottom: var(--space-64);
+  }
+
+  /* La seconde colonne descend d'un cran. */
+  .area:nth-child(even) {
+    translate: 0 var(--space-64);
+  }
+}
+
+@media (min-width: 1024px) {
+  .head {
+    grid-column: 1 / span 5;
+  }
+
+  .areas {
+    grid-column: 7 / -1;
+    margin-top: var(--space-96);
+  }
+}

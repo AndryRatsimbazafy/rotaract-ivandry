@@ -7,4 +7,6 @@ export interface Photo {
   /** Légende affichée sous l'image, distincte du texte alternatif. */
   caption?: string;
   credit?: string;
+  /** Point d'intérêt gardé au recadrage, en syntaxe CSS (« 50% 30% »). */
+  focus?: string;
 }

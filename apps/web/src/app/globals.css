@@ -11,6 +11,8 @@
 
 html {
   color-scheme: light;
+  /* L'en-tête fixe ne masque ni une ancre ni un élément focalisé. */
+  scroll-padding-top: calc(var(--header-height) + var(--space-16));
 }
 
 body {
@@ -18,7 +20,16 @@ body {
   flex-direction: column;
   min-height: 100dvh;
   color: var(--text-primary);
-  background: var(--bg-page);
+  /* Fond de page : brume, avec les repères verticaux de la grille, visibles */
+  /* entre les feuilles blanches. Chaque repère est un filet uni de 1 px. */
+  background:
+    linear-gradient(var(--guide), var(--guide)) var(--guide-1) 0 /
+      var(--rule-width) 100% no-repeat,
+    linear-gradient(var(--guide), var(--guide)) var(--guide-2) 0 /
+      var(--rule-width) 100% no-repeat,
+    linear-gradient(var(--guide), var(--guide)) var(--guide-3) 0 /
+      var(--rule-width) 100% no-repeat,
+    var(--bg-ground);
   font-family: var(--font-structure);
   font-size: var(--text-body-size);
   font-weight: var(--font-weight-regular);
@@ -91,4 +102,37 @@ a {
 :focus-visible {
   outline: var(--focus-ring-width) solid var(--focus-ring);
   outline-offset: var(--focus-ring-offset);
+}
+
+/* Mise en page partagée par les sections (DESIGN.md, section 5). */
+.container {
+  width: min(100% - 2 * var(--page-margin), var(--container-page));
+  margin-inline: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+}
+
+/* Étiquette éditoriale : petites capitales espacées, quelques mots. */
+.label {
+  font-size: var(--text-label-size);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--text-label-leading);
+  letter-spacing: var(--text-label-tracking);
+  text-transform: uppercase;
+}
+
+/* Métadonnée : dates, lieux, années. */
+.meta {
+  font-size: var(--text-meta-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--text-meta-leading);
+}
+
+/* Le menu plein écran bloque le défilement de la page. */
+html:has(dialog[open]) {
+  overflow: hidden;
 }

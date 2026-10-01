@@ -1,0 +1,125 @@
+.trigger,
+.close {
+  display: inline-flex;
+  align-items: center;
+  column-gap: var(--space-12);
+  min-height: var(--target-min);
+  border: 0;
+  color: inherit;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Deux filets de longueur inégale : un signe, pas un pictogramme générique. */
+.bars {
+  position: relative;
+  width: var(--space-24);
+  height: var(--space-8);
+  border-top: var(--border-width-strong) solid currentColor;
+}
+
+.bars::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 60%;
+  border-top: var(--border-width-strong) solid currentColor;
+}
+
+/* Le sommaire : plein écran, sur encre. */
+.panel {
+  --focus-ring: var(--on-field-focus-ring);
+
+  width: 100dvw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0 var(--page-margin) var(--space-32);
+  border: 0;
+  color: var(--on-field-text);
+  background: var(--field-footer);
+}
+
+.panel[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel::backdrop {
+  background: var(--field-footer);
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--header-height);
+  border-bottom: var(--rule-width) solid var(--on-field-rule);
+  color: var(--on-field-text-secondary);
+}
+
+.close {
+  color: var(--on-field-text);
+}
+
+.entries {
+  margin-top: var(--space-32);
+  list-style: none;
+}
+
+.entry {
+  display: flex;
+  align-items: baseline;
+  column-gap: var(--space-16);
+  padding-block: var(--space-12);
+  border-bottom: var(--rule-width) solid var(--on-field-rule);
+  color: inherit;
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: 1.1;
+  letter-spacing: var(--text-xl-tracking);
+  text-decoration: none;
+}
+
+.index {
+  color: var(--on-field-text-secondary);
+  font-stretch: var(--font-width-normal);
+  letter-spacing: 0;
+}
+
+.entry[aria-current="page"] {
+  color: var(--on-field-text-secondary);
+}
+
+.dateline {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-4);
+  margin-top: auto;
+  padding-top: var(--space-32);
+  color: var(--on-field-text-secondary);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .panel[open] {
+    animation: menu-in var(--duration-overlay) var(--ease-out);
+  }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    translate: 0 calc(-1 * var(--space-8));
+  }
+}
+
+/* À partir de 1024 px, la navigation tient dans l'en-tête. */
+@media (min-width: 1024px) {
+  .menu {
+    display: none;
+  }
+}

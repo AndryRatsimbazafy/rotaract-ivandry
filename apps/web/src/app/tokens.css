@@ -39,8 +39,12 @@
   --color-info-tint: #ecf0f6;
 
   /* ---- Sémantique : couleurs sur fond clair ---- */
+  /* Le fond de page est la brume ; le blanc est une « feuille » posée dessus. */
+  --bg-ground: var(--color-brume);
   --bg-page: var(--color-white);
   --bg-surface: var(--color-brume);
+  /* Repères de grille tracés sur le fond de page. */
+  --guide: var(--color-silver);
   --text-primary: var(--color-encre);
   --text-secondary: var(--color-charcoal);
   --link: var(--color-royal-blue);
@@ -53,6 +57,10 @@
   --accent-rule: var(--color-gold);
   --disabled-bg: var(--color-brume);
   --disabled-text: var(--color-tin);
+  /* Contenu provisoire : réservé au grand texte (rapport 3,5 sur blanc). */
+  --text-placeholder: var(--color-tin);
+  --rule-strong: var(--color-encre);
+  --numeral-outline: var(--color-royal-blue);
 
   /* ---- Sémantique : champs forts et texte posé dessus ---- */
   --field-blue: var(--color-royal-blue);
@@ -64,6 +72,10 @@
   --on-field-link: var(--color-white);
   --on-field-focus-ring: var(--color-white);
   --label-action: var(--color-cranberry);
+  /* Filet décoratif sur encre. */
+  --on-field-rule: var(--color-royal-blue);
+  /* Voile uni posé sur une photographie qui porte un titre. */
+  --photo-veil: rgb(15 28 54 / 0.5);
 
   /* ---- Sémantique : états ---- */
   --state-error: var(--color-error);
@@ -140,6 +152,22 @@
   --text-quote-size: clamp(1.5rem, 1.3333rem + 0.7407vw, 2rem);
   --text-quote-leading: 1.35;
 
+  /* Échelle éditoriale : la typographie comme matière graphique. */
+  /* Signature : le nom du club, une fois par page. */
+  --text-mega-size: clamp(3.5rem, 16.5vw, 13.5rem);
+  --text-mega-leading: 0.9;
+  --text-mega-tracking: -0.03em;
+  /* Chiffres monumentaux : numéros de section, « 7 ». */
+  --text-numeral-size: clamp(6rem, 19vw, 17rem);
+  --text-numeral-leading: 0.8;
+  /* Grands titres de section, valeurs, noms. */
+  --text-xl-size: clamp(2.5rem, 1.2rem + 5.6vw, 6.5rem);
+  --text-xl-leading: 0.95;
+  --text-xl-tracking: -0.025em;
+  /* Phrase d'accroche en voix de récit. */
+  --text-statement-size: clamp(1.5rem, 1.1667rem + 1.4815vw, 2.5rem);
+  --text-statement-leading: 1.25;
+
   /* ---- Espacement (DESIGN.md, section 5) ---- */
   --space-4: 4px;
   --space-8: 8px;
@@ -165,9 +193,25 @@
   --container-page: 1320px;
   --container-wide: 1080px;
   --container-reading: 680px;
-  --header-height: 64px;
+  --header-height: 68px;
+  --logo-height: 44px;
   --control-height: 48px;
   --target-min: 44px;
+
+  /* Largeur d'une colonne et distance du bord de l'écran au conteneur : */
+  /* pour les éléments qui débordent de la grille ou vont à bord perdu. */
+  --content-width: min(100vw - 2 * var(--page-margin), var(--container-page));
+  --col: calc(
+    (var(--content-width) - (var(--grid-columns) - 1) * var(--grid-gutter)) /
+      var(--grid-columns)
+  );
+  --col-step: calc(var(--col) + var(--grid-gutter));
+  /* Repères de grille : aucun sur téléphone (hors champ), trois aux quarts du */
+  /* conteneur ensuite. Ils tombent dans les gouttières de la grille. */
+  --guide-1: -1px;
+  --guide-2: -1px;
+  --guide-3: -1px;
+  --edge: max(var(--page-margin), (100vw - var(--container-page)) / 2);
 
   /* Ordre de superposition. */
   --layer-header: 10;
@@ -179,6 +223,10 @@
   --radius-none: 0;
   --radius-control: 2px;
   --rule-width: 1px;
+  /* Contour du bouton secondaire, soulignements d'état, trait d'or. */
+  --border-width-strong: 2px;
+  --accent-rule-height: 4px;
+  --accent-rule-width: var(--space-48);
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
 
@@ -200,6 +248,9 @@
     --rhythm-major: var(--space-128);
     --rhythm-heading: var(--space-32);
     --grid-columns: 8;
+    --guide-1: calc(var(--edge) + var(--content-width) / 4);
+    --guide-2: calc(var(--edge) + var(--content-width) / 2);
+    --guide-3: calc(var(--edge) + 3 * var(--content-width) / 4);
     --grid-gutter: var(--space-24);
     --page-margin: var(--space-32);
   }
@@ -213,7 +264,8 @@
     --grid-columns: 12;
     --grid-gutter: var(--space-32);
     --page-margin: var(--space-48);
-    --header-height: 72px;
+    --header-height: 88px;
+    --logo-height: 56px;
   }
 }
 

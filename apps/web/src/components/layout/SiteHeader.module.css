@@ -1,15 +1,62 @@
-.header {
+.dateline {
+  color: var(--text-secondary);
+  background: var(--bg-page);
+}
+
+.datelineInner {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  column-gap: var(--space-16);
+  padding-block: var(--space-12);
+  border-bottom: var(--rule-width) solid var(--border-rule);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Sur téléphone, seule l'année reste dans la une. */
+.datelineInner span:first-child {
+  display: none;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--layer-header);
+  background: var(--bg-page);
+}
+
+.inner {
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  column-gap: var(--space-24);
-  padding: var(--space-8) var(--page-margin);
+  column-gap: var(--space-32);
+  min-height: var(--header-height);
+  border-bottom: var(--rule-width) solid var(--rule-strong);
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
   min-height: var(--target-min);
-  font-weight: var(--font-weight-bold);
+}
+
+/* La signature officielle, jamais déformée : la hauteur fixe la largeur. */
+.logo {
+  width: auto;
+  height: var(--logo-height);
+}
+
+.desktopNav {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .datelineInner span:first-child {
+    display: inline;
+  }
+}
+
+@media (min-width: 1024px) {
+  .desktopNav {
+    display: block;
+  }
 }

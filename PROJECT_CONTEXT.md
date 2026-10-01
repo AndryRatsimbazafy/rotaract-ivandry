@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT — Rotaract Club Ivandry
 
-> Document de référence du projet. État au 2026-10-01, après la mise en place des fondations du monorepo et la validation de la direction design (aucun code métier écrit, design non implémenté).
+> Document de référence du projet. État au 2026-10-01, après la mise en place des fondations du monorepo, de l'architecture du Front Office et de sa page d'accueil (données provisoires, aucune connexion à l'API).
 
 ## 1. Objectif du projet
 
@@ -142,7 +142,7 @@ Le script racine `dev` repose sur le shell (`&` + `wait`) : il fonctionne sous L
 - Pas de Docker, pas de tests automatisés, pas de CI/CD.
 - Français seul en V1, avec une architecture prête pour l'anglais.
 - Cibles d'hébergement : Vercel (fronts) et Render (API).
-- Direction design du Front Office validée et verrouillée : `DESIGN.md` en est la référence officielle (concept « Le journal du club », palette Rotary hiérarchisée, pas de mode sombre en V1, WCAG 2.2 AA).
+- Direction design du Front Office : `DESIGN.md` en est la référence officielle. Deuxième version : éditorial premium, documentaire, association contemporaine (concept « Le journal du club », palette Rotary hiérarchisée, pas de mode sombre en V1, WCAG 2.2 AA). La Home en est la première mise en œuvre ; la direction s'applique à toutes les pages du Front Office.
 - Typographie : Open Sans (police web variable, avec l'axe de largeur `wdth`) pour la structure, l'interface et les titres ; Georgia (police système, avec replis) pour le récit. Aucune autre police web en V1. Les polices Geist du gabarit ne sont plus la direction typographique.
 
 ## 8. Décisions volontairement repoussées
@@ -152,13 +152,13 @@ Le script racine `dev` repose sur le shell (`&` + `wait`) : il fonctionne sous L
 - Choix de l'ODM / du driver MongoDB et modélisation des données.
 - Mise en œuvre de l'authentification JWT.
 - Solution d'internationalisation.
-- Implémentation du design (tokens, polices, composants), bibliothèque de composants, famille d'icônes.
+- Conception des pages Actions, Actualités, Membres et Rejoindre du Front Office ; famille d'icônes.
 - Spécification design du Back Office.
 - Déploiement, CI/CD.
 
 ## 9. Périmètre actuel et hors périmètre
 
-**Périmètre actuel** : fondations techniques du monorepo (workspaces, lockfile, ports, nettoyage des gabarits) et direction design du Front Office (`DESIGN.md`, document seul).
+**Périmètre actuel** : fondations techniques du monorepo (workspaces, lockfile, ports, nettoyage des gabarits) direction design du Front Office (`DESIGN.md`), et dans `apps/web` : cinq routes publiques, tokens et polices, page d'accueil conçue avec des emplacements provisoires.
 
 **Hors périmètre pour l'instant** :
 
@@ -167,7 +167,7 @@ Le script racine `dev` repose sur le shell (`&` + `wait`) : il fonctionne sous L
 - modèles MongoDB ;
 - authentification ;
 - APIs ;
-- implémentation du design (tokens, polices) et composants UI métier ;
+- conception des pages autres que l'accueil et connexion du Front Office à l'API ;
 - ajout de dépendances ;
 - refonte de la structure ;
 - tests, CI/CD, Docker, déploiement ;
@@ -179,7 +179,7 @@ Le script racine `dev` repose sur le shell (`&` + `wait`) : il fonctionne sous L
 - **`@types/node`** : `^20` pour `web`/`admin`, `^24` pour `api`, alors que le projet cible Node 22.
 - **Lint** : ESLint côté Next.js, oxlint côté API ; Prettier présent uniquement dans l'API.
 - **Node 22.18.0 local** : `@nestjs/cli` 12 (via `@angular-devkit`) demande Node `^22.22.3` ; `npm install` affiche des avertissements `EBADENGINE` sans conséquence constatée. Une mise à jour vers le dernier Node 22 les supprime.
-- Les `layout.tsx` chargent encore les polices Geist du gabarit via `next/font/google` (téléchargement réseau au build). Elles seront remplacées lors de l'implémentation du design ; pour Open Sans, l'axe `wdth` devra être demandé explicitement (voir `DESIGN.md`, section 4).
+- `apps/web` charge Open Sans via `next/font/google` avec l'axe `wdth` (téléchargement réseau au build). `apps/admin` charge encore les polices Geist du gabarit.
 - `next dev` génère `AGENTS.md` et `CLAUDE.md` dans `apps/web` et `apps/admin`.
 - Les README de `apps/*` sont ceux des gabarits ; le README racine tient en deux lignes.
 - Aucun fichier `.env.example` pour l'instant.

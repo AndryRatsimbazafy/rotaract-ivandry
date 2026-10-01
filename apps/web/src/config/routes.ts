@@ -11,6 +11,8 @@ export type RoutePath = (typeof routes)[keyof typeof routes];
 export interface NavItem {
   href: RoutePath;
   label: string;
+  /** Entrée vers le recrutement : mise en avant dans l'en-tête. */
+  isRecruitment?: boolean;
 }
 
 export const mainNavigation: NavItem[] = [
@@ -18,5 +20,5 @@ export const mainNavigation: NavItem[] = [
   { href: routes.actions, label: "Actions" },
   { href: routes.news, label: "Actualités" },
   { href: routes.members, label: "Membres" },
-  { href: routes.join, label: "Nous rejoindre" },
+  { href: routes.join, label: "Nous rejoindre", isRecruitment: true },
 ];

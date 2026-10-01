@@ -1,0 +1,115 @@
+/*
+ * 01 : un grand chiffre au trait, une question, une phrase de récit, et une
+ * photographie verticale qui descend dans la section suivante.
+ */
+
+.about {
+  position: relative;
+  z-index: 1;
+  padding-top: var(--rhythm-section);
+  background: var(--bg-page);
+}
+
+.layout {
+  row-gap: var(--space-24);
+}
+
+.numeral,
+.head,
+.statement,
+.body,
+.photo {
+  grid-column: 1 / -1;
+}
+
+.numeral {
+  color: transparent;
+  font-size: var(--text-numeral-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: var(--text-numeral-leading);
+  -webkit-text-stroke: var(--rule-width) var(--numeral-outline);
+}
+
+.title {
+  margin-top: var(--space-16);
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-xl-tracking);
+}
+
+.statement {
+  font-family: var(--font-recit);
+  font-size: var(--text-statement-size);
+  line-height: var(--text-statement-leading);
+  text-wrap: pretty;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1em;
+  max-width: var(--container-reading);
+  font-family: var(--font-recit);
+  font-size: var(--text-reading-size);
+  line-height: var(--text-reading-leading);
+}
+
+/* Texte en attente : en retrait, sans peser sur la page. */
+.pending {
+  padding-top: var(--space-16);
+  border-top: var(--rule-width) solid var(--border-rule);
+  color: var(--text-secondary);
+  font-family: var(--font-structure);
+  font-size: var(--text-small-size);
+  line-height: var(--text-small-leading);
+}
+
+/* La photographie déborde à droite et chevauche la section suivante. */
+.photo {
+  width: 72%;
+  margin: var(--space-24) calc(-1 * var(--page-margin)) calc(-1 * var(--space-96))
+    auto;
+}
+
+.frame {
+  aspect-ratio: 4 / 5;
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-rows: auto auto 1fr;
+    row-gap: var(--space-48);
+  }
+
+  .numeral {
+    grid-column: 1 / span 3;
+    grid-row: 1 / span 2;
+  }
+
+  .head {
+    grid-column: 4 / span 5;
+    grid-row: 1;
+    align-self: end;
+  }
+
+  .statement {
+    grid-column: 4 / span 5;
+    grid-row: 2;
+  }
+
+  .body {
+    grid-column: 4 / span 4;
+    grid-row: 3;
+    padding-bottom: var(--rhythm-section);
+  }
+
+  .photo {
+    grid-column: 9 / -1;
+    grid-row: 1 / span 3;
+    align-self: end;
+    width: auto;
+    margin: var(--space-96) calc(-1 * var(--edge)) calc(-1 * var(--space-160)) 0;
+  }
+}

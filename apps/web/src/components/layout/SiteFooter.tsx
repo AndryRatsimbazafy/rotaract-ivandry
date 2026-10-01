@@ -1,13 +1,34 @@
+import Image from "next/image";
 import { site } from "@/config/site";
+import { currentRotaryYear } from "@/data/members";
 import { SiteNav } from "./SiteNav";
 import styles from "./SiteFooter.module.css";
 
 export function SiteFooter() {
   return (
     <footer className={styles.footer}>
-      {/* Emplacement de la signature officielle du club, version inversée. */}
-      <p className={styles.brand}>{site.name}</p>
-      <SiteNav label="Navigation du pied de page" />
+      <div className={`container ${styles.inner}`}>
+        {/* La signature n'existe que sur fond blanc : elle garde son fond. */}
+        <p className={styles.brand}>
+          <Image
+            src={site.logo.src}
+            width={site.logo.width}
+            height={site.logo.height}
+            alt={site.name}
+            sizes="200px"
+            className={styles.logo}
+          />
+        </p>
+        <SiteNav label="Navigation du pied de page" variant="footer" />
+        <p className={`label ${styles.dateline}`}>
+          <span>{site.location}</span>
+          <span>Année Rotary {currentRotaryYear}</span>
+        </p>
+      </div>
+      {/* Le nom du club, en très grand, coupé par le bas de la page. */}
+      <p className={styles.wordmark} aria-hidden="true">
+        {site.name}
+      </p>
     </footer>
   );
 }

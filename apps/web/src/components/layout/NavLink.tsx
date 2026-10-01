@@ -7,10 +7,11 @@ import { routes, type RoutePath } from "@/config/routes";
 
 interface NavLinkProps {
   href: RoutePath;
+  className?: string;
   children: ReactNode;
 }
 
-export function NavLink({ href, children }: NavLinkProps) {
+export function NavLink({ href, className, children }: NavLinkProps) {
   const pathname = usePathname();
   const isCurrent =
     href === routes.home
@@ -18,7 +19,11 @@ export function NavLink({ href, children }: NavLinkProps) {
       : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <Link href={href} aria-current={isCurrent ? "page" : undefined}>
+    <Link
+      href={href}
+      className={className}
+      aria-current={isCurrent ? "page" : undefined}
+    >
       {children}
     </Link>
   );

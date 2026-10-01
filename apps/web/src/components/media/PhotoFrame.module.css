@@ -1,0 +1,94 @@
+.frame {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-surface);
+}
+
+.figure {
+  height: 100%;
+}
+
+.image {
+  object-fit: cover;
+}
+
+/* Voile uni sous un titre posé sur l'image. */
+.veiled::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--photo-veil);
+}
+
+/* ---- Gabarit sans photographie : repères de cadrage et format attendu ---- */
+
+/* La description à gauche, le format à droite : le bas du cadre reste libre. */
+.template {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  column-gap: var(--space-16);
+  padding: var(--space-24);
+}
+
+.light {
+  --mark: var(--border-control);
+  --format: var(--bg-page);
+
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+}
+
+.dark {
+  --mark: var(--on-field-text-secondary);
+  --format: var(--field-blue);
+
+  color: var(--on-field-text-secondary);
+  background: var(--field-footer);
+}
+
+.template::before,
+.template::after {
+  content: "";
+  position: absolute;
+  width: var(--space-16);
+  height: var(--space-16);
+  border: 0 solid var(--mark);
+}
+
+.template::before {
+  top: var(--space-8);
+  left: var(--space-8);
+  border-top-width: var(--rule-width);
+  border-left-width: var(--rule-width);
+}
+
+.template::after {
+  right: var(--space-8);
+  bottom: var(--space-8);
+  border-right-width: var(--rule-width);
+  border-bottom-width: var(--rule-width);
+}
+
+.brief {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-4);
+  max-width: 28ch;
+  font-size: var(--text-small-size);
+  line-height: var(--text-small-leading);
+}
+
+.format {
+  flex: none;
+  color: var(--format);
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: 0.8;
+  letter-spacing: var(--text-xl-tracking);
+}
+
+.caption {
+  margin-top: var(--space-8);
+}

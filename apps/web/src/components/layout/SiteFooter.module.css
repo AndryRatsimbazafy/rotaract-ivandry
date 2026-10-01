@@ -1,7 +1,57 @@
 .footer {
-  padding: var(--space-32) var(--page-margin);
+  /* Sur champ fort, le contour de focus est blanc. */
+  --focus-ring: var(--on-field-focus-ring);
+
+  overflow: hidden;
+  padding-top: var(--space-64);
+  color: var(--on-field-text);
+  background: var(--field-footer);
+}
+
+.inner {
+  display: grid;
+  row-gap: var(--space-32);
+  padding-bottom: var(--space-48);
 }
 
 .brand {
-  font-weight: var(--font-weight-bold);
+  align-self: start;
+  justify-self: start;
+  padding: var(--space-12) var(--space-16);
+  background: var(--color-white);
+}
+
+.logo {
+  display: block;
+  width: auto;
+  height: var(--space-48);
+}
+
+.dateline {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-4);
+  color: var(--on-field-text-secondary);
+}
+
+/* Tracé au trait, coupé à mi-hauteur : la signature referme la page. */
+.wordmark {
+  margin-bottom: -0.32em;
+  padding-inline: var(--page-margin);
+  color: transparent;
+  font-size: 10.4vw;
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: 1;
+  letter-spacing: var(--text-mega-tracking);
+  text-align: center;
+  white-space: nowrap;
+  -webkit-text-stroke: var(--rule-width) var(--on-field-rule);
+}
+
+@media (min-width: 768px) {
+  .inner {
+    grid-template-columns: 2fr 1fr 1fr;
+    column-gap: var(--grid-gutter);
+  }
 }

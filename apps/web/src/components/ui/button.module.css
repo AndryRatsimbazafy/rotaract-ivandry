@@ -1,0 +1,55 @@
+/* Styles de bouton, appliqués à un lien ou à un bouton (DESIGN.md, section 8). */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-height);
+  padding-inline: var(--space-24);
+  border: var(--border-width-strong) solid transparent;
+  border-radius: var(--radius-control);
+  font-size: var(--text-button-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--text-button-leading);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-instant) var(--ease-out),
+    color var(--duration-instant) var(--ease-out);
+}
+
+.primary {
+  color: var(--action-text);
+  background: var(--action-bg);
+}
+
+.primary:hover {
+  background: var(--action-bg-hover);
+}
+
+.secondary {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.secondary:hover {
+  color: var(--bg-page);
+  background: var(--text-primary);
+}
+
+/* Sur bande bleue ou champ cranberry. */
+.onField {
+  color: var(--text-primary);
+  background: var(--on-field-text);
+}
+
+.onField:hover {
+  background: var(--bg-surface);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .button:active {
+    translate: 0 1px;
+  }
+}

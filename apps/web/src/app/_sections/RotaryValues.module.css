@@ -1,0 +1,86 @@
+/*
+ * 02 : le champ encre. Les cinq valeurs descendent en escalier, chacune
+ * décalée d'une colonne, sa définition en regard.
+ */
+
+.field {
+  /* Sur champ fort, le contour de focus est blanc. */
+  --focus-ring: var(--on-field-focus-ring);
+
+  padding-block: calc(var(--rhythm-major) + var(--space-96)) var(--rhythm-major);
+  color: var(--on-field-text);
+  background: var(--field-footer);
+}
+
+.head {
+  max-width: 60%;
+  color: var(--on-field-text-secondary);
+}
+
+.title {
+  margin-top: var(--space-16);
+  color: var(--on-field-text);
+  font-size: var(--text-h3-size);
+  font-stretch: var(--font-width-normal);
+  line-height: var(--text-h3-leading);
+  letter-spacing: 0;
+}
+
+.values {
+  margin-top: var(--rhythm-heading);
+  list-style: none;
+}
+
+.value {
+  display: grid;
+  grid-template-columns: var(--space-32) 1fr;
+  column-gap: var(--space-8);
+  align-items: baseline;
+  padding-block: var(--space-16);
+  /* L'escalier : sur téléphone, un pas court. */
+  padding-left: calc(var(--step) * var(--space-12));
+  border-top: var(--rule-width) solid var(--on-field-rule);
+}
+
+.index {
+  color: var(--on-field-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.name {
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-xl-tracking);
+}
+
+.description {
+  grid-column: 2;
+  max-width: 30ch;
+  margin-top: var(--space-8);
+  color: var(--on-field-text-secondary);
+  font-family: var(--font-recit);
+  font-size: var(--text-body-size);
+  font-style: italic;
+  line-height: var(--text-body-leading);
+}
+
+@media (min-width: 1024px) {
+  .field {
+    padding-top: calc(var(--rhythm-major) + var(--space-64));
+  }
+
+  .value {
+    grid-template-columns: var(--col) 1fr calc(3 * var(--col-step) - var(--grid-gutter));
+    column-gap: var(--grid-gutter);
+    padding-block: var(--space-24);
+    padding-left: calc(var(--step) * var(--col-step));
+  }
+
+  .description {
+    grid-column: 3;
+    margin-top: 0;
+    font-size: var(--text-h4-size);
+  }
+}

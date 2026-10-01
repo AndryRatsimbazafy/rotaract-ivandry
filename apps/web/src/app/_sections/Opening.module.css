@@ -1,0 +1,150 @@
+/*
+ * Ouverture : une photographie panoramique à bord perdu, la signature du club
+ * à cheval sur son bord inférieur, les informations en marge.
+ */
+
+.opening {
+  padding-bottom: var(--space-48);
+}
+
+.margin {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: var(--space-16);
+  padding: var(--space-16) var(--page-margin);
+}
+
+/* Sur téléphone, l'année figure déjà dans la une. */
+.issue {
+  display: none;
+  color: var(--text-secondary);
+}
+
+.frame {
+  width: 100%;
+  height: min(105vw, 58dvh);
+}
+
+.title {
+  position: relative;
+  /* La première ligne remonte sur la photographie. */
+  margin-top: calc(-1 * var(--text-mega-leading) * 1em - 0.16em);
+  font-size: var(--text-mega-size);
+  line-height: var(--text-mega-leading);
+  letter-spacing: var(--text-mega-tracking);
+  text-wrap: nowrap;
+}
+
+.lead,
+.rest {
+  display: block;
+}
+
+.lead {
+  color: var(--on-field-text);
+}
+
+.rest {
+  margin-top: 0.16em;
+}
+
+/* Le trait d'or : un seul par page, au départ de la seconde ligne. */
+.rest::after {
+  content: "";
+  display: block;
+  width: var(--accent-rule-width);
+  height: var(--accent-rule-height);
+  margin-top: var(--space-24);
+  background: var(--accent-rule);
+}
+
+.foot {
+  row-gap: var(--space-8);
+  margin-top: var(--space-24);
+}
+
+.lede,
+.action,
+.continue {
+  grid-column: 1 / -1;
+}
+
+.lede {
+  max-width: 26ch;
+  font-family: var(--font-recit);
+  font-size: var(--text-lede-size);
+  font-style: italic;
+  line-height: var(--text-lede-leading);
+}
+
+.continue {
+  order: 3;
+  color: var(--text-secondary);
+}
+
+@media (min-width: 768px) {
+  .frame {
+    height: min(62vw, 56dvh);
+  }
+}
+
+@media (min-width: 1024px) {
+  .opening {
+    padding-bottom: var(--space-64);
+  }
+
+  /* La marge occupe deux colonnes, la photographie va jusqu'au bord droit. */
+  .stage {
+    display: grid;
+    grid-template-columns: calc(2 * var(--col-step) - var(--grid-gutter)) 1fr;
+    column-gap: var(--grid-gutter);
+    margin-left: var(--edge);
+  }
+
+  .margin {
+    flex-direction: column;
+    justify-content: flex-start;
+    row-gap: var(--space-16);
+    padding: var(--space-32) 0 0;
+    border-top: var(--rule-width) solid var(--rule-strong);
+    margin-top: var(--space-32);
+  }
+
+  .issue {
+    display: block;
+  }
+
+  .media {
+    margin-top: var(--space-32);
+  }
+
+  /* La photographie garde assez de hauteur pour que les visages restent */
+  /* au-dessus de la signature ; sur un écran bas, l'accroche passe dessous. */
+  .frame {
+    height: clamp(24rem, 100dvh - 32rem, 44rem);
+  }
+
+  .lead {
+    padding-left: calc(2 * var(--col-step) + var(--space-32));
+  }
+
+  .foot {
+    align-items: start;
+    margin-top: var(--space-32);
+  }
+
+  .continue {
+    grid-column: 1 / span 4;
+    order: 0;
+  }
+
+  .lede {
+    grid-column: 7 / span 4;
+  }
+
+  .action {
+    grid-column: 11 / -1;
+    justify-self: end;
+  }
+}

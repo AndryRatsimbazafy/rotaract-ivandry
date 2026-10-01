@@ -1,4 +1,4 @@
-// Plan de chaque page publique : textes d'identification et sections prévues.
+// Plan des pages publiques qui ne sont pas encore conçues : textes d'identification et sections prévues.
 // Structure provisoire, remplacée section par section lors de la conception des pages.
 
 export interface SectionOutline {
@@ -18,22 +18,6 @@ export interface PageOutline {
   /** Éléments prévus hors de cette page (pages de détail, par exemple). */
   later?: string[];
 }
-
-export const homePage: PageOutline = {
-  title: "Rotaract Club Ivandry",
-  description: "Site du Rotaract Club Ivandry",
-  objective:
-    "Présenter le club et ce qu'il fait, puis orienter vers ses actions et vers le recrutement.",
-  sections: [
-    { id: "ouverture", title: "Ouverture éditoriale et présentation du club" },
-    { id: "valeurs", title: "Valeurs Rotary" },
-    { id: "axes", title: "Les 7 axes prioritaires du Rotary" },
-    { id: "actions", title: "Les 3 dernières actions" },
-    { id: "actualites", title: "Les 3 dernières actualités" },
-    { id: "membres", title: "Aperçu des membres" },
-    { id: "rejoindre", title: "Nous rejoindre" },
-  ],
-};
 
 export const actionsPage: PageOutline = {
   title: "Actions",

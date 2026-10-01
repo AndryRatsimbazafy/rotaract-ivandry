@@ -1,0 +1,167 @@
+/*
+ * 07 : le champ cranberry, une seule fois sur le site. Une photographie
+ * verticale dépasse du champ par le haut ; la question s'écrit en très grand ;
+ * l'appel est une ligne de texte ; le parcours court au bas du champ.
+ */
+
+.field {
+  /* Sur champ fort, le contour de focus est blanc. */
+  --focus-ring: var(--on-field-focus-ring);
+
+  padding-bottom: var(--space-48);
+  color: var(--on-field-text);
+  background: var(--field-cranberry);
+}
+
+.layout {
+  row-gap: var(--space-24);
+}
+
+.photo,
+.head,
+.text,
+.action,
+.path {
+  grid-column: 1 / -1;
+}
+
+/* La photographie sort du champ et remonte dans la section précédente. */
+.photo {
+  width: 58%;
+  margin: calc(-1 * var(--space-96)) calc(-1 * var(--page-margin)) 0 auto;
+}
+
+.frame {
+  aspect-ratio: 4 / 5;
+}
+
+.title {
+  margin-top: var(--space-16);
+  font-size: var(--text-mega-size);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--text-mega-leading);
+  letter-spacing: var(--text-mega-tracking);
+  text-wrap: balance;
+}
+
+.text {
+  max-width: 24ch;
+  font-family: var(--font-recit);
+  font-size: var(--text-statement-size);
+  line-height: var(--text-statement-leading);
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: var(--space-24);
+  min-height: var(--target-min);
+  padding-block: var(--space-16);
+  border-block: var(--rule-width) solid currentColor;
+  color: inherit;
+  font-size: var(--text-h1-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: var(--text-h1-leading);
+  letter-spacing: var(--text-h1-tracking);
+  text-decoration: none;
+}
+
+.arrow {
+  flex: none;
+  width: 0.8em;
+  height: 0.8em;
+}
+
+.action:hover,
+.action:focus-visible {
+  color: var(--text-primary);
+  background: var(--on-field-text);
+}
+
+.path {
+  margin-top: var(--space-32);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  margin-top: var(--space-12);
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-4);
+  padding-block: var(--space-12);
+  border-top: var(--rule-width) solid currentColor;
+  font-weight: var(--font-weight-semibold);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .action {
+    transition:
+      color var(--duration-instant) var(--ease-out),
+      background-color var(--duration-instant) var(--ease-out),
+      padding var(--duration-state) var(--ease-out);
+  }
+
+  .arrow {
+    transition: translate var(--duration-state) var(--ease-out);
+  }
+
+  .action:hover {
+    padding-inline: var(--space-16);
+  }
+
+  .action:hover .arrow {
+    translate: var(--space-8) 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .field {
+    padding-bottom: var(--space-64);
+  }
+
+  .layout {
+    grid-template-rows: auto auto auto auto;
+    row-gap: var(--space-48);
+  }
+
+  .head {
+    grid-column: 1 / span 8;
+    grid-row: 1;
+    padding-top: var(--rhythm-section);
+  }
+
+  .text {
+    grid-column: 1 / span 5;
+    grid-row: 2;
+  }
+
+  .photo {
+    grid-column: 9 / -1;
+    grid-row: 1 / span 2;
+    width: auto;
+    margin: calc(-1 * var(--space-160)) calc(-1 * var(--edge)) 0 0;
+  }
+
+  .action {
+    grid-row: 3;
+  }
+
+  .path {
+    grid-row: 4;
+    margin-top: 0;
+  }
+}
