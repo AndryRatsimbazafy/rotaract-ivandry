@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Website for the Rotaract Club Ivandry: a public Front Office, an admin Back Office, and a backend API. `PROJECT_CONTEXT.md` is the reference for decisions, constraints and scope — read it before any structural change, and update it when a documented decision becomes obsolete.
 
-State: the Front Office (`apps/web`) v1 is complete — five pages on local data, not yet connected to the API. `apps/admin` and `apps/api` are still CLI templates. `ARCHITECTURE.md` specifies the backend and Back Office and is not implemented yet.
+State: the Front Office (`apps/web`) v1 is complete — five pages on local data, not yet connected to the API. `apps/api` has its foundation in place (validated env configuration, MongoDB connection, `/api/v1` prefix, common error format, global validation, security headers, `GET /api/v1/health`; six dependencies installed; `apps/api/.env.example` exists) with no business module yet. `apps/admin` is still a CLI template. `ARCHITECTURE.md` specifies the backend and Back Office; only the API foundation is implemented.
 
 ## Commands
 

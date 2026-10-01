@@ -261,6 +261,7 @@ apps/api/src/
 │   ├── schemas/             MediaRef, FileRef (sous-documents)
 │   └── utils/               slug, label et dates d'une année Rotary
 ├── auth/                    login, me ; JwtAuthGuard, RolesGuard, @Roles, @CurrentAdmin ; schéma Admin
+├── health/                  route technique de santé
 ├── rotary-years/
 ├── members/                 schémas Member et MemberMandate, un seul module
 ├── actions/

@@ -16,7 +16,7 @@ Phase 0 du plan. Chaque décision répond à une exigence de la [spec](./spec.md
 
 ## 3. Connexion à la base et échec au démarrage
 
-- **Decision** : `MongooseModule.forRootAsync`, alimenté par la configuration, dans `app.module.ts`. Trois tentatives, deux secondes d'intervalle, cinq secondes de délai de sélection du serveur, journal détaillé des tentatives désactivé. Après la dernière tentative, le démarrage échoue : `main.ts` journalise un message générique (« Connexion à la base de données impossible. ») et termine le processus avec un code d'erreur. En cas de succès, un message de connexion établie est journalisé.
+- **Decision** : `MongooseModule.forRootAsync`, alimenté par la configuration, dans `app.module.ts`. Trois tentatives, deux secondes d'intervalle, cinq secondes de délai de sélection du serveur, journal détaillé des tentatives désactivé. Après la dernière tentative, le démarrage échoue : `main.ts` journalise un message générique (« Connexion à la base de données impossible. ») et termine le processus avec un code d'erreur. En cas de succès, un message de connexion établie est journalisé. Le nom d'hôte ne doit pas apparaître non plus : voir la décision 10.
 - **Rationale** : la spec suppose que l'API ne démarre pas « à vide ». Les réglages par défaut de NestJS (neuf tentatives de trois secondes, avec la trace de l'erreur) feraient attendre près de trente secondes et pourraient afficher des noms d'hôtes ; FR-013 demande qu'aucun détail de connexion n'apparaisse.
 - **Alternatives considered** : démarrer sans base et réessayer en tâche de fond, écarté car contraire à l'hypothèse de la spec et plus complexe ; un dossier `database/` avec son module, écarté car il ne contiendrait qu'un appel de configuration.
 
@@ -30,6 +30,7 @@ Phase 0 du plan. Chaque décision répond à une exigence de la [spec](./spec.md
 
 - **Decision** : un filtre d'exception global qui attrape tout. Pour une exception HTTP, il renvoie `statusCode`, `error` (libellé standard du code) et `message` en français, tiré d'une table par code (`400`, `401`, `403`, `404`, `405`, `409`, `413`, `415`, `429`, `500`, `503`) sauf si le code appelant a fourni son propre message. Pour toute autre erreur : `500`, message générique, et l'erreur est journalisée côté serveur seulement. Un corps JSON mal formé donne `400`.
 - **Rationale** : FR-017 à FR-019. Les messages par défaut de NestJS sont en anglais (« Cannot GET /… ») et répètent l'adresse appelée ; la table les remplace.
+- **Limite connue, acceptée pour la V1** : NestJS transmet ses propres messages (adresse inconnue, corps JSON mal formé, adresse mal encodée) sans marqueur ; le filtre les reconnaît à leur texte (libellé standard du code, préfixe « Cannot », mot « JSON », préfixe « Failed to decode param ») pour les remplacer. Un message métier en `400` contenant « JSON » serait donc remplacé par « Requête mal formée. », et un message d'analyse au texte différent ne serait pas reconnu.
 - **Alternatives considered** : laisser le format par défaut de NestJS, proche mais en anglais et sans `details` structuré ; un filtre par type d'exception, écarté car un seul filtre suffit.
 
 ## 6. Validation globale des entrées
@@ -58,8 +59,11 @@ Phase 0 du plan. Chaque décision répond à une exigence de la [spec](./spec.md
 
 ## 10. Journalisation
 
-- **Decision** : le journal intégré de NestJS, sans ajout.
-- **Rationale** : hypothèse de la spec. Trois messages utiles au démarrage : configuration valide, base connectée, port d'écoute.
+- **Decision** : le journal intégré de NestJS, sans bibliothèque ajoutée. Deux messages sont émis au démarrage : base connectée, port d'écoute. Aucun message « configuration valide » n'est exigé : une configuration invalide arrête l'API avec son message, une configuration valide ne produit rien de particulier.
+- **Règle de confidentialité** (FR-013) : le journal ne contient aucun nom d'hôte, adresse, identifiant ni autre détail sensible de MongoDB, y compris lors d'un échec de démarrage. Deux mesures locales au socle l'assurent :
+  - dans `main.ts`, la classe `StartupLogger` (une spécialisation du journal intégré, non exportée) supprime l'erreur d'origine que NestJS journalise lui-même à l'échec du démarrage et retire la trace des messages de tentative du module Mongoose ; constaté à l'implémentation : sans elle, le nom d'hôte de la base apparaît même avec le journal détaillé des tentatives désactivé. Ce n'est pas un service de journalisation réutilisable et elle ne doit pas le devenir ;
+  - dans le filtre d'erreurs, une erreur interne est journalisée par son type et ses lignes d'appel, jamais par son message.
+- **Rationale** : hypothèse de la spec (le journal par défaut suffit) et FR-013.
 - **Alternatives considered** : une bibliothèque de journalisation structurée, écartée faute de besoin.
 
 ## 11. Installation des dépendances

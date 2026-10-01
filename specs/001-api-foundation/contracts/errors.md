@@ -42,10 +42,28 @@ L'exemple reprend celui d'`ARCHITECTURE.md`. Le socle n'a aucune route qui reço
 | `500` | Erreur interne | Une erreur interne est survenue. |
 | `503` | Base injoignable, sur la route de santé | La base de données ne répond pas. |
 
-Les codes `401`, `403`, `405`, `409`, `413`, `415` et `429` reçoivent aussi un message par défaut en français dans le filtre, mais aucune route du socle ne les produit ; leur usage est défini par les fonctionnalités concernées.
+## Messages par défaut par code
+
+Ce tableau est la source de vérité des messages par défaut : le filtre les reprend à l'identique. Un message par défaut sert quand le code appelant n'en fournit pas ; un message fourni par le code appelant est conservé.
+
+| Code | Message par défaut |
+|---|---|
+| `400` | Requête mal formée. |
+| `401` | Authentification requise. |
+| `403` | Accès refusé. |
+| `404` | Ressource introuvable. |
+| `405` | Méthode non autorisée. |
+| `409` | Conflit avec une ressource existante. |
+| `413` | Contenu trop volumineux. |
+| `415` | Type de contenu non pris en charge. |
+| `429` | Trop de requêtes. Réessayez plus tard. |
+| `500` | Une erreur interne est survenue. |
+| `503` | Service indisponible. |
+
+Aucune route du socle ne produit `401`, `403`, `405`, `409`, `415` ni `429` ; leur usage est défini par les fonctionnalités concernées. Sur la route de santé, le `503` porte son propre message (« La base de données ne répond pas. »), pas le message par défaut.
 
 ## Règles
 
 - Une réponse d'erreur ne contient jamais de trace d'exécution, de nom de fichier, de requête à la base ni l'adresse appelée.
-- Une erreur interne est journalisée côté serveur ; le client ne reçoit que le message générique.
+- Une erreur interne est journalisée côté serveur par son type et ses lignes d'appel, sans son message, qui pourrait contenir un détail de connexion à la base ; le client ne reçoit que le message générique.
 - Toute erreur de l'API, y compris sur une adresse hors de `/api/v1`, a cette forme.

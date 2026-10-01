@@ -104,14 +104,14 @@ apps/api/
     ├── common/
     │   ├── filters/
     │   │   └── all-exceptions.filter.ts nouveau : format d'erreur unique
-    │   └── validation/
+    │   └── pipes/
     │       └── validation.pipe.ts       nouveau : options du ValidationPipe et détail par champ
     └── health/
         ├── health.module.ts             nouveau
         └── health.controller.ts         nouveau : GET /health
 ```
 
-**Structure Decision** : on reste dans `apps/api/src`, avec les dossiers `config/` et `common/` prévus par `ARCHITECTURE.md`, section 5, plus `health/` (voir l'écart ci-dessus). La connexion à la base est déclarée dans `app.module.ts` : un dossier `database/` dédié n'apporterait rien pour un seul appel de configuration. Dans `common/`, seuls le filtre d'erreurs et la validation sont créés ; `dto/`, `pipes/`, `enums/`, `schemas/` et `utils/` arrivent avec la première fonctionnalité qui en a besoin (FR-025). Aucun fichier hors de `apps/api`, sauf `package-lock.json` à la racine, mis à jour par l'installation.
+**Structure Decision** : on reste dans `apps/api/src`, avec les dossiers `config/` et `common/` prévus par `ARCHITECTURE.md`, section 5, plus `health/` (voir l'écart ci-dessus). La connexion à la base est déclarée dans `app.module.ts` : un dossier `database/` dédié n'apporterait rien pour un seul appel de configuration. Dans `common/`, seuls le filtre d'erreurs (`filters/`) et la validation (`pipes/`) sont créés ; `dto/`, `enums/`, `schemas/` et `utils/` arrivent avec la première fonctionnalité qui en a besoin (FR-025). Aucun fichier hors de `apps/api`, sauf `package-lock.json` à la racine, mis à jour par l'installation.
 
 ## Décisions de conception
 

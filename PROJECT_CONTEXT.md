@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT — Rotaract Club Ivandry
 
-> Document de référence du projet. État au 2026-10-01 : le Front Office V1 est terminé et audité (données locales, aucune connexion à l'API) ; l'architecture du Backend et du Back Office est spécifiée dans `ARCHITECTURE.md`, ses décisions principales sont verrouillées ; `apps/admin` et `apps/api` sont encore les gabarits d'origine.
+> Document de référence du projet. État au 2026-10-01 : le Front Office V1 est terminé et audité (données locales, aucune connexion à l'API) ; l'architecture du Backend et du Back Office est spécifiée dans `ARCHITECTURE.md`, ses décisions principales sont verrouillées ; le socle de l'API (`apps/api`) est en place, sans aucune fonctionnalité métier ; `apps/admin` est encore le gabarit d'origine.
 
 ## 1. Objectif du projet
 
@@ -31,7 +31,7 @@ rotaract-ivandry/
 ├── apps/
 │   ├── web/      Front Office public — Next.js (App Router) + TypeScript — terminé en V1
 │   ├── admin/    Back Office — Next.js (App Router) + TypeScript, MUI prévu — gabarit
-│   └── api/      Backend — NestJS + TypeScript — gabarit
+│   └── api/      Backend — NestJS + TypeScript — socle en place
 └── packages/     réservé aux packages partagés futurs (vide, `.gitkeep`)
 ```
 
@@ -74,9 +74,20 @@ Technique : CSS Modules et tokens (`tokens.css`), pas de Tailwind ; Open Sans ch
 
 Gabarit `create-next-app` intact : page d'accueil du gabarit, polices Geist, `lang="fr"`, titre « Administration — Rotaract Club Ivandry ». MUI n'est pas installé. La structure prévue est décrite dans `ARCHITECTURE.md`, section 11.
 
-### apps/api — Backend (gabarit)
+### apps/api — Backend (socle en place)
 
-Gabarit `nest new`, débarrassé de l'outillage de test et de déploiement : `main.ts`, `app.module.ts`, `app.controller.ts`, `app.service.ts` (un `GET /` qui répond « Hello World! »). Aucune connexion à MongoDB, aucune authentification, aucun module métier. La structure prévue est décrite dans `ARCHITECTURE.md`, section 5.
+Le gabarit `nest new` a été remplacé par le socle (spec `specs/001-api-foundation/`). La route « Hello World! » n'existe plus.
+
+- `main.ts` : préfixe global `/api/v1`, en-têtes de sécurité (`helmet`), filtre d'erreurs global, `ValidationPipe` global, CORS activé seulement si `CORS_ORIGINS` est renseignée ; un démarrage raté journalise un message générique, sans détail de connexion, et termine le processus.
+- `app.module.ts` : configuration (`@nestjs/config`, fichier `apps/api/.env`, validée au démarrage) et connexion à MongoDB (`@nestjs/mongoose`).
+- `config/` : règles des variables d'environnement et accès typé à la configuration.
+- `common/` : format d'erreur unique en français (`filters/`) et validation des entrées (`pipes/`).
+- `health/` : `GET /api/v1/health`, seule route de l'API, qui lit l'état de la connexion à la base (`200` ou `503`).
+- `apps/api/.env.example` liste les six variables, sans valeur. `apps/api/.env` est local et ignoré par Git.
+
+État : le code du socle est **implémenté** ; la **configuration** réelle (`apps/api/.env`) et le cluster MongoDB Atlas sont des **opérations manuelles** du porteur du projet, et la vérification du socle contre Atlas reste à faire (`specs/001-api-foundation/tasks.md`, T011, T016, T026). `PORT` absente ou vide vaut 4000.
+
+Aucun modèle, aucune collection, aucune route métier, aucune authentification. La suite de la structure est décrite dans `ARCHITECTURE.md`, section 5.
 
 ## 4. Stack technique
 
@@ -92,8 +103,11 @@ Gabarit `nest new`, débarrassé de l'outillage de test et de déploiement : `ma
 | TypeScript (`api`) | `^6` |
 | Lint / format (`api`) | oxlint, Prettier |
 | MUI (`admin`) | prévu — non installé |
-| Base de données | MongoDB Atlas Free — non installée |
-| ODM | Mongoose + `@nestjs/mongoose` — décidé, non installé |
+| Configuration (`api`) | `@nestjs/config` `^12` |
+| Validation (`api`) | `class-validator` `^0.15`, `class-transformer` `^0.5` |
+| En-têtes de sécurité (`api`) | `helmet` `^8` |
+| Base de données | MongoDB Atlas Free — connexion implémentée dans l'API ; création du cluster et de `apps/api/.env` : opération manuelle du porteur du projet ; connexion réelle à Atlas non encore vérifiée |
+| ODM | Mongoose `^9` + `@nestjs/mongoose` `^12` — installés, aucun modèle |
 | Authentification | JWT — non installée |
 
 ### Configurations TypeScript
@@ -122,7 +136,7 @@ Le script racine `dev` repose sur le shell (`&` + `wait`) : il fonctionne sous L
 |---|---|---|
 | `web` | 3000 | `next dev -p 3000` |
 | `admin` | 3001 | `next dev -p 3001` |
-| `api` | 4000 | `process.env.PORT ?? 4000` dans `main.ts` |
+| `api` | 4000 | variable `PORT`, défaut 4000 (`config/env.validation.ts`) |
 
 ## 5. Contraintes techniques
 
@@ -186,18 +200,17 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 
 ## 10. Périmètre et prochaines étapes
 
-**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office.
+**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé).
 
 **Prochaines étapes**, chacune sur demande explicite, selon `ARCHITECTURE.md` :
 
-1. socle de l'API (configuration, MongoDB, validation, erreurs) ;
-2. authentification et compte `ADMIN` ;
-3. années Rotary, membres et mandats ;
-4. actions, actualités ;
-5. stockage de fichiers, candidatures ;
-6. socle du Back Office (MUI, connexion, session, client API) ;
-7. écrans du Back Office ;
-8. connexion du Front Office à l'API.
+1. authentification et compte `ADMIN` ;
+2. années Rotary, membres et mandats ;
+3. actions, actualités ;
+4. stockage de fichiers, candidatures ;
+5. socle du Back Office (MUI, connexion, session, client API) ;
+6. écrans du Back Office ;
+7. connexion du Front Office à l'API.
 
 **Hors périmètre pour l'instant** : tests, CI/CD, Docker, déploiement, version anglaise, rôles autres que `ADMIN`, workflow de candidature.
 
@@ -210,5 +223,6 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 - `apps/web` télécharge Open Sans au build (`next/font/google`). `apps/admin` charge encore les polices Geist du gabarit.
 - `next dev` génère `AGENTS.md` et `CLAUDE.md` dans `apps/web` et `apps/admin`.
 - Les README de `apps/*` sont ceux des gabarits.
-- Aucun fichier `.env.example` pour l'instant : ils seront créés avec le socle de l'API.
+- `apps/api/.env.example` existe ; l'API refuse de démarrer sans `apps/api/.env` valide (`MONGODB_URI`, `JWT_SECRET`) ni sans base joignable. Les autres applications n'ont pas encore de `.env.example`.
+- Le journal de l'API ne doit contenir aucun nom d'hôte, adresse ni identifiant de la base : le journal de démarrage est filtré dans `main.ts` (classe `StartupLogger`, locale, à ne pas généraliser) et le filtre d'erreurs ne journalise jamais le message d'une erreur interne.
 - Le Front Office affiche encore des contenus provisoires à remplacer avant mise en ligne (texte de présentation du club, photographies, adresses des réseaux sociaux).

@@ -118,6 +118,7 @@ Par défaut, aucun navigateur n'est autorisé à appeler l'API depuis un autre s
 ### Edge Cases
 
 - `PORT` renseigné avec une valeur qui n'est pas un numéro de port valide : l'API refuse de démarrer et nomme la variable.
+- Une variable présente mais vide est traitée comme absente : `PORT`, `NODE_ENV`, `JWT_EXPIRES_IN` et `CORS_ORIGINS` prennent leur valeur par défaut (pour `PORT`, 4000) ; `MONGODB_URI` et `JWT_SECRET` sont signalées comme manquantes et l'API refuse de démarrer. Le détail est dans `data-model.md`.
 - Plusieurs variables obligatoires manquent : le message les nomme toutes, pas seulement la première.
 - La base devient injoignable après un démarrage réussi : l'API reste en service ; une requête qui a besoin de la base échoue au format d'erreur commun, sans détail technique.
 - Un corps de requête mal formé (JSON invalide) : `400` au format commun.
@@ -149,7 +150,7 @@ Par défaut, aucun navigateur n'est autorisé à appeler l'API depuis un autre s
 
 - **FR-011** : L'API MUST établir au démarrage une connexion à la base de données désignée par `MONGODB_URI`, par le moyen fixé dans `ARCHITECTURE.md`, section 4.
 - **FR-012** : Le journal de démarrage MUST indiquer si la connexion est établie ou a échoué.
-- **FR-013** : L'adresse complète de la base et ses identifiants MUST NOT apparaître dans un journal ni dans une réponse.
+- **FR-013** : L'adresse de la base, son nom d'hôte, ses identifiants et tout autre détail sensible de connexion MUST NOT apparaître dans un journal ni dans une réponse, y compris lors d'un échec de démarrage et lors d'une erreur interne en cours de fonctionnement.
 - **FR-014** : Le socle MUST permettre à un module futur de déclarer ses modèles sans modifier le socle, et MUST NOT créer lui-même de collection métier, de modèle métier ni de donnée.
 
 **API**
