@@ -1,35 +1,7 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/*
+ * Styles de base des éléments HTML, d'après DESIGN.md.
+ * Thème clair uniquement, pas de mode sombre.
+ */
 
 * {
   box-sizing: border-box;
@@ -37,13 +9,86 @@ body {
   margin: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+html {
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  color: var(--text-primary);
+  background: var(--bg-page);
+  font-family: var(--font-structure);
+  font-size: var(--text-body-size);
+  font-weight: var(--font-weight-regular);
+  font-stretch: var(--font-width-normal);
+  line-height: var(--text-body-leading);
+  caret-color: var(--focus-ring);
+}
+
+::selection {
+  color: var(--action-text);
+  background: var(--action-bg);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-structure);
+  text-wrap: balance;
+  hyphens: none;
+}
+
+h1 {
+  font-size: var(--text-h1-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: var(--text-h1-leading);
+  letter-spacing: var(--text-h1-tracking);
+}
+
+h2 {
+  font-size: var(--text-h2-size);
+  font-weight: var(--font-weight-bold);
+  font-stretch: var(--font-width-condensed);
+  line-height: var(--text-h2-leading);
+  letter-spacing: var(--text-h2-tracking);
+}
+
+h3 {
+  font-size: var(--text-h3-size);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--text-h3-leading);
+}
+
+h4 {
+  font-size: var(--text-h4-size);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--text-h4-leading);
+}
+
+/* Voix de récit : citations et légendes. */
+blockquote {
+  font-family: var(--font-recit);
+  font-size: var(--text-quote-size);
+  line-height: var(--text-quote-leading);
+}
+
+figcaption {
+  color: var(--text-secondary);
+  font-family: var(--font-recit);
+  font-size: var(--text-caption-size);
+  font-style: italic;
+  line-height: var(--text-caption-leading);
+}
+
+a {
+  color: var(--link);
+}
+
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }

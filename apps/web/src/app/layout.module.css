@@ -1,0 +1,23 @@
+/* Masqué jusqu'à ce qu'il reçoive le focus au clavier. */
+.skipLink {
+  position: absolute;
+  top: var(--space-8);
+  left: var(--page-margin);
+  z-index: var(--layer-toast);
+  padding: var(--space-12) var(--space-16);
+  background: var(--bg-page);
+  transform: translateY(-200%);
+}
+
+.skipLink:focus {
+  transform: none;
+}
+
+.main {
+  flex: 1;
+}
+
+/* Le focus y arrive par le lien d'évitement, pas par la tabulation. */
+.main:focus {
+  outline: none;
+}

@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# web : Front Office public
 
-## Getting Started
+Site public du Rotaract Club Ivandry. Next.js (App Router), TypeScript, CSS Modules.
 
-First, run the development server:
+Les commandes se lancent depuis la racine du dépôt (`npm run dev:web`, `npm run build:web`, `npm run lint`). Port de développement : 3000.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+`DESIGN.md` (racine du dépôt) est la source de vérité pour toute décision visuelle. Ses fondations sont implémentées (tokens dans `src/app/tokens.css`, Open Sans variable chargée par `next/font` avec l'axe de largeur, Georgia en police système). Les pages et les composants de design ne le sont pas encore.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Routes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Route | Page |
+|---|---|
+| `/` | Accueil |
+| `/actions` | Actions du club |
+| `/actualites` | Actualités et événements |
+| `/membres` | Membres du club |
+| `/rejoindre` | Nous rejoindre |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Organisation de `src/`
 
-## Learn More
+| Dossier | Rôle |
+|---|---|
+| `app/` | Routes, layout racine, métadonnées, tokens (`tokens.css`) et styles de base (`globals.css`). Une page compose des sections, elle ne contient ni données ni styles partagés. |
+| `components/layout/` | Coque du site : en-tête, pied de page, navigation, enveloppe de section. |
+| `components/scaffold/` | Affichage provisoire du plan des pages. À supprimer une fois les pages conçues. |
+| `config/` | Nom du site, routes, navigation. |
+| `content/` | Textes du site, séparés des composants pour faciliter une future traduction. |
+| `types/` | Types du domaine côté front (action, actualité, membre, photo). Provisoires tant que le contrat de l'API n'existe pas. |
 
-To learn more about Next.js, take a look at the following resources:
+## Conventions pour la suite
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Les sections propres à une page vivent à côté de sa route, dans un dossier privé `_sections/` (par exemple `app/actions/_sections/`). Un composant ne monte dans `components/` que lorsqu'il est réellement partagé.
+- L'accès à l'API sera regroupé dans `src/lib/api/`, une fonction par ressource. Les pages appelleront ces fonctions sans connaître l'URL ni le format de l'API. Ce dossier n'existe pas encore.
+- Pas de bibliothèque de gestion d'état, pas de bibliothèque de composants, pas de Tailwind.

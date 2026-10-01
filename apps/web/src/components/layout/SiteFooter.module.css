@@ -1,0 +1,7 @@
+.footer {
+  padding: var(--space-32) var(--page-margin);
+}
+
+.brand {
+  font-weight: var(--font-weight-bold);
+}
