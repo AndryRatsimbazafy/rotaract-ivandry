@@ -1,7 +1,5 @@
 import { PhotoFrame } from "@/components/media/PhotoFrame";
-import { ArrowLink } from "@/components/ui/ArrowLink";
 import button from "@/components/ui/button.module.css";
-import { routes } from "@/config/routes";
 import { opening } from "@/content/home";
 import { joinOpening } from "@/content/join";
 import type { Photo } from "@/types/media";
@@ -22,17 +20,15 @@ export function JoinOpening() {
             <span>{lead}</span> <span>{rest}</span>
           </h1>
           <p className={styles.lede}>{joinOpening.lede}</p>
-          <div className={styles.actions}>
+          {/* Un seul appel : l'accès au formulaire. */}
+          <p className={styles.actions}>
             <a
               href="#candidature"
               className={`${button.button} ${button.onField}`}
             >
               {joinOpening.primaryAction}
             </a>
-            <ArrowLink href={routes.actions}>
-              {joinOpening.secondaryAction}
-            </ArrowLink>
-          </div>
+          </p>
         </div>
 
         {/* La photographie recouvre le bord du champ et descend sous lui. */}

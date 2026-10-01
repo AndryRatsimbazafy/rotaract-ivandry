@@ -1,18 +1,10 @@
+import { rotaryYearOf } from "@/lib/rotary-year";
 import type { NewsItem } from "@/types/news";
 import type { RotaryYear } from "@/types/rotary-year";
 
 // Aucune actualité n'est encore publiée. Ces fonctions seront remplacées par
 // des appels à l'API sans que les pages aient à changer.
 const news: NewsItem[] = [];
-
-/** Année Rotary d'une date : elle commence le 1er juillet. */
-export function rotaryYearOf(isoDate: string): RotaryYear {
-  const date = new Date(isoDate);
-  const year = date.getUTCFullYear();
-  const start = date.getUTCMonth() >= 6 ? year : year - 1;
-
-  return `${start}-${start + 1}`;
-}
 
 function newestFirst(items: NewsItem[]) {
   return [...items].sort((a, b) => b.date.localeCompare(a.date));

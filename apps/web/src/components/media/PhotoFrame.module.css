@@ -24,6 +24,7 @@
 
 /* La description à gauche, le format à droite : le bas du cadre reste libre. */
 .template {
+  container-type: inline-size;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -95,6 +96,13 @@
   font-stretch: var(--font-width-condensed);
   line-height: 0.8;
   letter-spacing: var(--text-xl-tracking);
+}
+
+/* Cadre étroit : le format se retire plutôt que d'être coupé par le bord. */
+@container (max-width: 240px) {
+  .format {
+    display: none;
+  }
 }
 
 .caption {

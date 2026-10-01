@@ -93,6 +93,8 @@ export function ApplicationForm() {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit} noValidate>
+      <p className={styles.hint}>{joinApplication.required}</p>
+
       <div className={styles.pair}>
         <div className={styles.field}>
           <label htmlFor="firstName">{fields.firstName}</label>
@@ -146,7 +148,12 @@ export function ApplicationForm() {
         {errorOf("phone")}
       </div>
 
-      <fieldset className={styles.group} {...describe("status")}>
+      <fieldset
+        role="radiogroup"
+        aria-required="true"
+        className={styles.group}
+        {...describe("status")}
+      >
         <legend>{fields.status}</legend>
         <div className={styles.choices}>
           {statusValues.map((value) => (

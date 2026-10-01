@@ -6,7 +6,7 @@ description: Direction artistique du Front Office du Rotaract Club Ivandry. Édi
 # DESIGN.md : Rotaract Club Ivandry
 
 > Source de vérité pour la direction visuelle du Front Office (`apps/web`).
-> Deuxième version, du 2026-10-01. Elle remplace la première direction, jugée trop sobre et trop institutionnelle après revue dans le navigateur. La Home en est la première mise en œuvre.
+> Deuxième version, du 2026-10-01. Elle remplace la première direction, jugée trop sobre et trop institutionnelle après revue dans le navigateur. Les cinq pages sont conçues et ont été auditées ensemble ; la Home reste la référence.
 > **Elle vaut pour tout le Front Office, pas seulement pour la Home** (voir « Portée »).
 > Les valeurs exactes vivent dans `apps/web/src/app/tokens.css`. Ce document dit ce qu'elles signifient et comment s'en servir.
 > Le Back Office (`apps/admin`) fera l'objet d'une spécification distincte.
@@ -197,7 +197,7 @@ Rapports calculés selon WCAG 2.2. Seuils : 4,5 pour un texte, 3 pour un grand t
 |---|---|---|
 | Gold sur White | 2,0 | Jamais un texte, jamais le seul porteur d'une information |
 | Tin en petit texte | 3,5 | Les petits textes provisoires sont en Charcoal |
-| Royal Blue sur Encre | 1,8 | Réservé aux filets et tracés décoratifs. Les liens sur encre sont blancs. |
+| Royal Blue sur Encre | 1,8 | Réservé aux filets et tracés décoratifs. Sur encre, un lien est blanc ; la rubrique courante et le survol sont en Powder Blue. |
 | Royal Blue et Cranberry | 1,8 | Jamais au contact |
 | Powder Blue sur Cranberry | 3,5 | Sur cranberry, tout le texte est blanc |
 | Silver sur White | 1,6 | Décoratif seulement |
@@ -257,7 +257,7 @@ L'échelle a deux étages : un étage **graphique**, où le texte est une image,
 
 **La règle des deux voix.** Open Sans structure, Georgia raconte. Georgia en italique sert les textes courts qui commentent : accroche, description d'une valeur, résumé d'une actualité.
 
-**La règle du grand texte.** Au-dessus de 6,5 rem, un texte est un élément graphique : il peut être tracé au trait, coupé par le bord de la page, posé sur une photographie. En dessous, il reste plein et entièrement lisible.
+**La règle du grand texte.** Au-dessus de 6,5 rem, un texte est un élément graphique : il peut être tracé au trait, coupé par le bord de la page, posé sur une photographie. En dessous, il reste plein et entièrement lisible. Seule exception : un chiffre ou une année (numéro d'étape, année Rotary) peut être tracé au trait dès 2,5 rem, parce que l'information est aussi écrite en texte plein à côté.
 
 **La règle de la ligne courte.** Les textes de la Home sont courts : une accroche de 25 mots au plus, une description d'une phrase.
 
@@ -338,11 +338,13 @@ Une section utilise un procédé, deux au plus. Jamais d'ombre, de flou ni de tr
 
 **La règle de non-répétition.** Sur une page qui persuade, deux sections voisines n'ont ni la même composition ni le même fond.
 
+**La règle de la marge.** « Titre en marge à gauche, contenu à droite » est le procédé le plus facile à répéter. Jamais plus de deux sections de suite, sur aucune page ; la troisième remet son titre au-dessus du contenu, ou part en retrait.
+
 **La règle anti-cartes.** Aucune grille de cartes identiques. Un contenu d'une collection est une image et un texte, sans cadre, sans fond, sans ombre, et ses voisins n'ont ni la même taille ni la même hauteur de départ. Même les portraits de la page Members changent de taille et de hauteur d'un niveau de lecture à l'autre.
 
 **La règle du motif unique.** « Titre, paragraphe, bouton » n'apparaît qu'une fois par page au plus.
 
-**La règle des appels.** Un appel est un lien fléché. Le seul appel fort de la Home est la ligne du champ cranberry. Un libellé par intention : l'entrée vers le recrutement s'appelle « Nous rejoindre » partout.
+**La règle des appels.** Un appel est un lien fléché. Le seul appel fort de la Home est la ligne du champ cranberry. Un libellé par intention : l'entrée vers le recrutement s'appelle « Nous rejoindre » partout. Une ouverture de page porte un appel au plus, et un même lien n'apparaît pas plus de deux fois sur une page, navigation exclue.
 
 ---
 
@@ -389,7 +391,8 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 - **Photographie absente : le gabarit.** Un aplat brume ou encre, deux repères de cadrage dans les angles, l'étiquette « Photographie à venir » suivie d'une description de l'image attendue, et le format en très grand, ton sur ton. C'est un objet d'édition, pas une fausse image.
 - **Texte absent.** Le libellé décrit l'emplacement (« Titre de l'action », « Prénom Nom »), sans crochets. En grand, il est en Tin. En petit, il est en Charcoal. Les filets passent en Silver.
 - **Une mention par section.** « Contenu à venir », une seule fois, près du titre de la section.
-- **Registre vide.** Un registre sans aucune ligne ne répète pas trois lignes fantômes : il montre ses en-têtes de colonnes, une phrase qui dit qu'il n'y a encore rien, et ses filets.
+- **Registre vide.** Un registre sans aucune ligne ne répète pas trois lignes fantômes : il montre ses en-têtes de colonnes, une phrase qui dit qu'il n'y a encore rien, et ses filets. La règle vaut sur la Home comme sur la page News.
+- **Gabarits qui se touchent.** Deux gabarits qui se chevauchent ne se recouvrent pas leur texte ; dans un cadre de moins de 240 px, le format en très grand se retire.
 - **Un emplacement n'est jamais cliquable.**
 - **Rien n'est inventé.** Ni action, ni date, ni membre, ni chiffre, ni citation.
 - **Profils de démonstration.** La page Members peut montrer quelques profils fictifs pour faire voir sa composition tant que le club n'a pas fourni les siens. Ils vivent dans les données, pas dans les composants ; ils sont marqués comme tels ; ils s'appellent « Profil 01 », « Profil 02 », jamais d'un nom plausible ; ils n'ont pas de portrait ; ils s'affichent comme des emplacements (gris, mention « Profils de démonstration ») et n'apparaissent sur aucune autre page.
@@ -413,7 +416,7 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 | **Appel du champ cranberry** | Une ligne de texte en H1 sur toute la largeur, entre deux filets blancs, flèche à droite. |
 | **Étiquettes et badges** | Texte seul, sans fond ni contour. |
 | **Filtres** | Un index, pas une barre d'outils : une étiquette, puis les choix en texte sur une ligne. Le choix courant est en encre, souligné d'un filet bleu de 2 px ; les autres sont en Charcoal. Une liste longue se replie derrière son choix courant et se déplie sur place. Ni pilule, ni menu déroulant habillé, ni bouton. Un filtre est un lien : il change l'adresse de la page. |
-| **Formulaires** | Une colonne, libellé au-dessus, aide et erreur dessous, champs de 48 px, bordure Tin, texte de 16 px au moins. Une erreur s'écrit sous son champ, précédée du mot « Erreur », avec une bordure plus épaisse : jamais par la couleur seule. Le choix entre deux options se fait par boutons radio dans un groupe titré. Le dépôt de fichier est un champ natif dans une zone à bordure pointillée. Ce qui se passe après l'envoi est écrit avant le bouton. |
+| **Formulaires** | Une colonne, libellé au-dessus, aide et erreur dessous, champs de 48 px, bordure Tin, texte de 16 px au moins. Une erreur s'écrit sous son champ, précédée du mot « Erreur », avec une bordure plus épaisse : jamais par la couleur seule. Le choix entre deux options se fait par boutons radio dans un groupe titré. Le dépôt de fichier est un champ natif dans une zone à bordure pointillée. Si tous les champs sont obligatoires, une phrase le dit en tête du formulaire, sans astérisque. Ce qui se passe après l'envoi est écrit avant le bouton. |
 | **Accordéon** | Lignes séparées par un filet encre, question en H4, signe plus ou moins à droite, toute la ligne cliquable. Élément natif, sans script. |
 | **Modale, tiroir** | Rayon 0, l'unique ombre du système. |
 | **Notification** | Bandeau à fond teinté d'état avec bordure de 1 px, icône et texte. |
@@ -463,7 +466,7 @@ Rejoindre un club est un engagement, pas un achat. Le site invite, explique et l
 
 - **Le champ cranberry** conclut la Home, et seulement la Home. Il contient une question, une phrase, l'appel et le parcours en quatre étapes numérotées.
 - **Le rappel cranberry** conclut les autres pages. C'est une bande basse : l'étiquette, la question, et l'appel sur une ligne. Ni photographie, ni parcours, ni phrase d'explication. Il rappelle, il n'insiste pas.
-- **Sur Join, le cranberry ouvre la page.** Un champ qui n'occupe que la gauche de l'écran, le titre « Nous rejoindre » en blanc, une photographie verticale qui le recouvre en partie à droite. La page n'a ni rappel ni autre surface cranberry : elle se termine par des liens de sortie.
+- **Sur Join, le cranberry ouvre la page.** Un champ qui n'occupe que la gauche de l'écran, le titre « Nous rejoindre » en blanc, un seul appel (« Candidater »), une photographie verticale qui le recouvre en partie à droite. La page n'a ni rappel ni autre surface cranberry : elle se termine par des liens de sortie.
 - **Aucune promesse.** Pas de slogan, pas de bénéfice vanté, pas de chiffre, pas de témoignage. La page explique, dans l'ordre : ce qu'est le club, pourquoi y participer, comment se passe le parcours, comment candidater.
 - **« Nous rejoindre »** figure dans l'en-tête, dans le champ cranberry et dans le pied de page.
 - **Interdits** : fenêtre surgissante, bandeau fixe, compte à rebours, « places limitées », vocabulaire commercial, points d'exclamation en série, appel répété à chaque section, témoignage inventé.
@@ -597,14 +600,14 @@ Une valeur absente des tokens s'ajoute là avant d'être utilisée. Points de ru
 
 ## 17. Direction par page
 
-Seule la Home est conçue. Les quatre autres pages reprendront ce langage en mode lecture. Ces lignes fixent une intention, pas un périmètre fonctionnel.
+Les cinq pages sont conçues. Ces lignes décrivent la composition retenue pour chacune ; elles fixent une intention, pas un périmètre fonctionnel.
 
 | Page | Intention |
 |---|---|
 | **Home** | Voir section 6. Signature, sept sections numérotées, champ cranberry. |
 | **Actions** | Le reportage. Ouverture typographique sur le fond de page, avec une photographie verticale à bord perdu qui descend dans la section suivante et une seconde image qui la chevauche. Définition en entrée de dictionnaire sur feuille blanche. Index des filtres, puis les actions une à une, chacune dans l'une de trois compositions qui alternent : grand format avec titre au-dessus et métadonnées en marge, verticale à gauche avec fiche à droite, texte à gauche avec image décalée à droite. Registre d'impact sur champ encre. Rappel cranberry. |
 | **News** | Le journal. Ouverture purement typographique, en deux lignes décalées, comme une manchette. Une actualité à la une : le jour en chiffre monumental, une grande photographie à bord perdu, le titre sur un aplat blanc qui mord dessus. Sur feuille blanche, les rubriques en index puis le registre, groupé par mois : le mois reste en marge pendant que ses lignes défilent. Les archives par année Rotary sur champ encre, les années en très grand. Deux liens vers les actions et les membres, puis le rappel cranberry. |
-| **Join** | L'invitation. Ouverture sur champ cranberry partiel, photographie verticale qui le recouvre. « Un club, des actions, des liens » en trois lignes décalées sur feuille blanche. Les valeurs de part et d'autre d'un axe central : le nom à gauche de l'axe, la définition à droite. Les sept domaines sur champ encre, en lignes alternées gauche et droite. Le parcours en six étapes le long d'un filet vertical, chiffres au trait, le statut de sympathisant expliqué à son étape. Les quatre questions du Rotary en voix de récit, en grand. La candidature : colonne éditoriale et formulaire. Les questions fréquentes en accordéon. Liens de sortie. |
+| **Join** | L'invitation. Ouverture sur champ cranberry partiel, photographie verticale qui le recouvre. « Un club, des actions, des liens » en trois lignes décalées sur feuille blanche. Les valeurs de part et d'autre d'un axe central : le nom à gauche de l'axe, la définition à droite. Les sept domaines sur champ encre, en lignes alternées gauche et droite. Le parcours en six étapes le long d'un filet vertical, chiffres au trait, le statut de sympathisant expliqué à son étape. Les quatre questions du Rotary en voix de récit, en grand, le titre au-dessus et les questions en retrait de deux colonnes. La candidature : colonne éditoriale et formulaire. Les questions fréquentes en accordéon. Liens de sortie. |
 | **Members** | L'annuaire. Le titre sur une seule ligne, en signature. Une photographie de groupe panoramique à bord perdu à gauche, les années Rotary en regard à droite. Sur feuille blanche, l'année tracée au trait en très grand, puis trois niveaux de lecture : une personne en grand format, trois portraits de tailles et de hauteurs différentes, puis les autres en lignes. Sur champ encre, l'index des fonctions : qui tient quoi, sans hiérarchie entre les fonctions. Liens de sortie, rappel cranberry. L'ordre des personnes est celui que le club choisit, jamais un classement par fonction. |
 
 ---
@@ -629,7 +632,7 @@ Seule la Home est conçue. Les quatre autres pages reprendront ce langage en mod
 
 1. **Logo officiel à fond transparent.** Le fichier utilisé est tiré du logo fourni. Sur le pied de page encre, le cranberry du mot « Rotaract » est peu contrasté : une version inversée officielle serait préférable.
 1. **Adresses des réseaux sociaux.** À renseigner dans `apps/web/src/config/site.ts` ; d'ici là, les pictogrammes s'affichent sans lien.
-2. **Photographies.** Seule l'ouverture en a une. Les autres sont à fournir, avec pour chacune sa légende (quoi, où, quand).
+2. **Photographies.** Seule l'ouverture en a une, reprise recadrée en tête de Join en attendant une image propre à cette page. Les autres sont à fournir, avec pour chacune sa légende (quoi, où, quand).
 3. **Textes.** Présentation du club, accroches, libellés des étiquettes.
 4. **Famille d'icônes.**
 5. **Chiffres tabulaires d'Open Sans.** À vérifier sur le fichier servi.

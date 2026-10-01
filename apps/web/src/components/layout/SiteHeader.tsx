@@ -2,13 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { routes } from "@/config/routes";
 import { site } from "@/config/site";
-import { currentRotaryYear } from "@/data/members";
+import { rotaryYearLabel } from "@/content/common";
+import { currentRotaryYear } from "@/lib/rotary-year";
 import { MobileMenu } from "./MobileMenu";
 import { SiteNav } from "./SiteNav";
 import { SocialLinks } from "./SocialLinks";
 import styles from "./SiteHeader.module.css";
 
-const dateline = [site.location, `Année Rotary ${currentRotaryYear}`];
+const dateline = [site.location, `${rotaryYearLabel} ${currentRotaryYear}`];
 
 export function SiteHeader() {
   return (

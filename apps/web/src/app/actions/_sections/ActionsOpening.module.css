@@ -84,7 +84,7 @@
 /* Le détail reste au-dessus de la feuille blanche qui suit. */
 .detail {
   position: absolute;
-  bottom: var(--space-128);
+  bottom: var(--space-96);
   left: 0;
   width: 56%;
 }

@@ -1,6 +1,8 @@
 /*
  * 05 : sur le fond de page. Les quatre questions du Rotary : la seule section
- * du site où la voix de récit prend la taille d'un titre.
+ * du site où la voix de récit prend la taille d'un titre. Le titre reste
+ * au-dessus, les questions partent en retrait : ni la marge de la section 04,
+ * ni les deux colonnes de la section 06.
  */
 
 .section {
@@ -52,11 +54,11 @@
 
 @media (min-width: 1024px) {
   .head {
-    grid-column: 1 / span 3;
+    grid-column: 1 / span 6;
   }
 
   .questions {
-    grid-column: 4 / span 8;
+    grid-column: 3 / -1;
   }
 
   .question {

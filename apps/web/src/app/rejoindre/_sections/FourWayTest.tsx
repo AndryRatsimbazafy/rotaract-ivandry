@@ -20,7 +20,7 @@ export function FourWayTest() {
           {fourWayTest.questions.map((question, index) => (
             <li key={question} className={styles.question}>
               <span className={`meta ${styles.index}`} aria-hidden="true">
-                {index + 1}
+                {String(index + 1).padStart(2, "0")}
               </span>
               <p className={styles.text}>{question}</p>
             </li>

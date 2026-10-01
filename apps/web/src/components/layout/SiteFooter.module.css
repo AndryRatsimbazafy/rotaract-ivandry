@@ -1,6 +1,8 @@
 .footer {
   /* Sur champ fort, le contour de focus est blanc. */
   --focus-ring: var(--on-field-focus-ring);
+  /* Le bleu royal ne se lit pas sur l'encre : rubrique courante et survol en bleu clair. */
+  --link: var(--on-field-text-secondary);
 
   overflow: hidden;
   padding-top: var(--space-64);
@@ -29,10 +31,6 @@
 .social {
   margin-top: var(--space-16);
   margin-left: calc((var(--icon-size) - var(--target-min)) / 2);
-}
-
-.social a:hover {
-  color: var(--on-field-text-secondary);
 }
 
 .dateline {

@@ -52,10 +52,6 @@
 }
 
 .actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-12) var(--space-32);
   margin-top: var(--space-32);
 }
 

@@ -1,4 +1,4 @@
-import { pendingLabel } from "@/content/home";
+import { pendingLabel } from "@/content/common";
 import { newsOpening } from "@/content/news";
 import type { RotaryYear } from "@/types/rotary-year";
 import styles from "./NewsOpening.module.css";

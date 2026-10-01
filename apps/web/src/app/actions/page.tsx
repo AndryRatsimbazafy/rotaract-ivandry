@@ -7,7 +7,8 @@ import {
   getActionYears,
   getImpactIndicators,
 } from "@/data/actions";
-import { currentRotaryYear } from "@/data/members";
+import { currentRotaryYear } from "@/lib/rotary-year";
+import { single } from "@/lib/search-params";
 import { ActionDefinition } from "./_sections/ActionDefinition";
 import { ActionsIndex } from "./_sections/ActionsIndex";
 import { ActionsOpening } from "./_sections/ActionsOpening";
@@ -17,11 +18,6 @@ export const metadata: Metadata = {
   title: actionsPage.title,
   description: actionsPage.description,
 };
-
-/** Un filtre n'accepte qu'une valeur : la première si l'adresse en répète une. */
-function single(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 export default async function ActionsPage(props: PageProps<"/actions">) {
   const query = await props.searchParams;

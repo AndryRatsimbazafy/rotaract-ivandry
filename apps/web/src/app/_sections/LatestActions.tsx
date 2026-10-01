@@ -3,7 +3,8 @@ import { PhotoFrame } from "@/components/media/PhotoFrame";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { routes } from "@/config/routes";
-import { latestActions, pendingLabel } from "@/content/home";
+import { pendingLabel } from "@/content/common";
+import { latestActions } from "@/content/home";
 import type { Action } from "@/types/action";
 import type { Photo } from "@/types/media";
 import styles from "./LatestActions.module.css";
@@ -74,7 +75,7 @@ export function LatestActions({ actions }: LatestActionsProps) {
               <p className={`meta ${styles.note}`}>{pendingLabel}</p>
             ) : null}
           </div>
-          <p className={styles.all}>
+          <p>
             <ArrowLink href={routes.actions}>{latestActions.allLink}</ArrowLink>
           </p>
         </div>

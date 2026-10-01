@@ -2,11 +2,23 @@
 // Aucune donnée n'est inventée : quand une information manque, la page affiche
 // un emplacement discret.
 
+import { routes } from "@/config/routes";
+import type { NewsType } from "@/types/news";
+import { pendingLabel, rotaryYearLabel } from "./common";
+
+export const newsTypeLabels: Record<NewsType, string> = {
+  evenement: "Événement",
+  participation: "Participation",
+  reunion: "Réunion",
+  formation: "Formation",
+  annonce: "Annonce",
+};
+
 export const newsOpening = {
   label: "Journal du club",
   titleLines: ["Dans la vie", "du club"],
   lede: "Réunions, formations, rencontres, événements : ce qui se passe au club, au fil de l'année.",
-  yearLabel: "Année Rotary",
+  yearLabel: rotaryYearLabel,
   countLabel: "Actualités publiées",
 };
 
@@ -50,13 +62,13 @@ export const newsArchives = {
   current: "Année affichée",
   countOne: "actualité",
   countMany: "actualités",
-  pending: "Contenu à venir",
+  pending: pendingLabel,
 };
 
 export const newsOnward = {
   label: "Poursuivre",
   links: [
-    { href: "/actions", label: "Voir nos actions" },
-    { href: "/membres", label: "Rencontrer les membres" },
+    { href: routes.actions, label: "Voir nos actions" },
+    { href: routes.members, label: "Rencontrer les membres" },
   ],
 };

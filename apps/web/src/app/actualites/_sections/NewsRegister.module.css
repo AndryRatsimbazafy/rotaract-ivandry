@@ -217,12 +217,12 @@
   aspect-ratio: 1;
 }
 
-/* Au survol : la ligne se teinte, le jour passe au bleu. */
-.row:hover {
+/* Au survol d'une ligne qui se déplie : elle se teinte, le jour passe au bleu. */
+.row:has(details):hover {
   background: var(--bg-surface);
 }
 
-.row:hover .day {
+.row:has(details):hover .day {
   color: var(--link);
 }
 

@@ -2,6 +2,7 @@ import { PhotoFrame } from "@/components/media/PhotoFrame";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { routes } from "@/config/routes";
 import { site } from "@/config/site";
+import { rotaryYearLabel } from "@/content/common";
 import { opening } from "@/content/home";
 import type { RotaryYear } from "@/types/rotary-year";
 import styles from "./Opening.module.css";
@@ -19,7 +20,7 @@ export function Opening({ rotaryYear }: OpeningProps) {
         <div className={styles.margin}>
           <p className="label">{opening.label}</p>
           <p className={`meta ${styles.issue}`}>
-            Année Rotary
+            {rotaryYearLabel}
             <br />
             {rotaryYear}
           </p>

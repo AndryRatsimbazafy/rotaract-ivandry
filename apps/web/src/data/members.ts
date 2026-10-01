@@ -1,8 +1,6 @@
 import type { Member, MemberRole } from "@/types/member";
+import { currentRotaryYear } from "@/lib/rotary-year";
 import type { RotaryYear } from "@/types/rotary-year";
-
-/** Année Rotary en cours : du 1er juillet 2026 au 30 juin 2027. */
-export const currentRotaryYear: RotaryYear = "2026-2027";
 
 // Aucun membre réel n'est encore publié. Ces profils de démonstration montrent
 // la composition de la page et les cas à gérer (plusieurs fonctions, aucune

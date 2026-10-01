@@ -1,7 +1,6 @@
 import { PhotoFrame } from "@/components/media/PhotoFrame";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { newsTypeLabels } from "@/content/home";
-import { newsFeature } from "@/content/news";
+import { newsFeature, newsTypeLabels } from "@/content/news";
 import { formatDay, formatMonthYear } from "@/lib/dates";
 import type { NewsItem } from "@/types/news";
 import styles from "./NewsFeature.module.css";

@@ -3,7 +3,7 @@
 // un emplacement discret (voir les libellés « placeholder »).
 
 import type { Photo } from "@/types/media";
-import type { NewsType } from "@/types/news";
+import { rotaryYearLabel } from "./common";
 
 export const opening = {
   label: "Journal du club",
@@ -113,12 +113,12 @@ export const latestActions = {
   label: "Sur le terrain",
   title: "Actions récentes",
   allLink: "Toutes les actions",
-  yearLabel: "Année Rotary",
+  yearLabel: rotaryYearLabel,
   impactLabel: "Impact",
   photoBrief: "Une action du club.",
   // Affiché tant qu'aucune action n'est publiée.
   placeholder: {
-    meta: "Année Rotary",
+    meta: rotaryYearLabel,
     title: "Titre de l'action",
     summary: "Courte description de l'action.",
     impact: "Ce que l'action a changé, et pour qui.",
@@ -130,29 +130,13 @@ export const latestNews = {
   label: "Vie du club",
   title: "Actualités récentes",
   allLink: "Toutes les actualités",
-  // Affiché tant qu'aucune actualité n'est publiée.
-  placeholder: {
-    day: "00",
-    month: "Mois, année",
-    title: "Titre de l'actualité",
-    summary: "Courte information.",
-    type: "Type",
-  },
-};
-
-export const newsTypeLabels: Record<NewsType, string> = {
-  evenement: "Événement",
-  participation: "Participation",
-  reunion: "Réunion",
-  formation: "Formation",
-  annonce: "Annonce",
 };
 
 export const membersPreview = {
   number: "06",
   label: "Le collectif",
   title: "Les membres",
-  yearLabel: "Année Rotary",
+  yearLabel: rotaryYearLabel,
   allLink: "Tous les membres",
   portraitBrief: "Portrait d'un membre.",
   // Affiché tant qu'aucun membre n'est publié.
@@ -175,7 +159,3 @@ export const joinField = {
   ],
   photoBrief: "Un moment de camaraderie.",
 };
-
-/** Mention des emplacements sans contenu. */
-export const pendingLabel = "Contenu à venir";
-export const photoPendingLabel = "Photographie à venir";

@@ -1,6 +1,7 @@
-import { currentRotaryYear, getFeaturedMembers } from "@/data/members";
+import { getFeaturedMembers } from "@/data/members";
 import { getLatestActions } from "@/data/actions";
 import { getLatestNews } from "@/data/news";
+import { currentRotaryYear } from "@/lib/rotary-year";
 import { About } from "./_sections/About";
 import { FocusAreas } from "./_sections/FocusAreas";
 import { JoinField } from "./_sections/JoinField";

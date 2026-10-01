@@ -52,7 +52,7 @@ export function MembersOpening({ years, selectedYear }: MembersOpeningProps) {
                   >
                     <span className={styles.yearName}>{year}</span>
                     {isCurrent ? (
-                      <span className={`label ${styles.yearState}`}>
+                      <span className="label">
                         {membersOpening.currentYear}
                       </span>
                     ) : null}

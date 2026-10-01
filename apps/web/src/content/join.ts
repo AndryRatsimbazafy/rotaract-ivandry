@@ -2,6 +2,7 @@
 // Rien n'est promis ni inventé : pas de slogan, pas de chiffre, pas de
 // témoignage, pas de condition que le club n'a pas énoncée.
 
+import { routes } from "@/config/routes";
 import type { ApplicantStatus, ApplicationField } from "@/types/application";
 
 export const joinOpening = {
@@ -9,7 +10,6 @@ export const joinOpening = {
   titleLines: ["Nous", "rejoindre"],
   lede: "Le club est ouvert à celles et ceux qui veulent découvrir, puis participer. Voici comment cela se passe.",
   primaryAction: "Candidater",
-  secondaryAction: "Voir nos actions",
 };
 
 export const joinClub = {
@@ -90,6 +90,7 @@ export const joinApplication: {
   fields: Record<ApplicationField, string>;
   statuses: Record<ApplicantStatus, string>;
   cvHint: string;
+  required: string;
   submit: string;
   errorPrefix: string;
   errors: Record<ApplicationField, string> & { emailFormat: string; phoneFormat: string };
@@ -113,6 +114,7 @@ export const joinApplication: {
   },
   statuses: { etudiant: "Étudiant", professionnel: "Professionnel" },
   cvHint: "Un fichier PDF ou Word.",
+  required: "Tous les champs sont obligatoires.",
   submit: "Envoyer ma candidature",
   errorPrefix: "Erreur",
   errors: {
@@ -186,7 +188,7 @@ export const joinFaq: { number: string; label: string; title: string; items: Faq
 export const joinOnward = {
   label: "Poursuivre",
   links: [
-    { href: "/actions", label: "Voir nos actions" },
-    { href: "/membres", label: "Rencontrer les membres" },
+    { href: routes.actions, label: "Voir nos actions" },
+    { href: routes.members, label: "Rencontrer les membres" },
   ],
 };

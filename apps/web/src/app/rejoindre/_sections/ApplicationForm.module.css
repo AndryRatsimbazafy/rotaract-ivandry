@@ -147,13 +147,13 @@
   font-weight: var(--font-weight-bold);
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .pair {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 639px) {
+@media (max-width: 767px) {
   .submit {
     align-self: stretch;
   }

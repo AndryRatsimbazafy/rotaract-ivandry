@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { site } from "@/config/site";
-import { currentRotaryYear } from "@/data/members";
+import { rotaryYearLabel } from "@/content/common";
+import { currentRotaryYear } from "@/lib/rotary-year";
 import { SiteNav } from "./SiteNav";
 import { SocialLinks } from "./SocialLinks";
 import styles from "./SiteFooter.module.css";
@@ -24,7 +25,9 @@ export function SiteFooter() {
         <div>
           <p className={`label ${styles.dateline}`}>
             <span>{site.location}</span>
-            <span>Année Rotary {currentRotaryYear}</span>
+            <span>
+              {rotaryYearLabel} {currentRotaryYear}
+            </span>
           </p>
           <div className={styles.social}>
             <SocialLinks />

@@ -3,8 +3,9 @@ import { JoinReminder } from "@/components/sections/JoinReminder";
 import { Onward } from "@/components/sections/Onward";
 import { newsOnward } from "@/content/news";
 import { newsPage } from "@/content/pages";
-import { currentRotaryYear } from "@/data/members";
 import { getNews, getNewsArchives, getNewsCount } from "@/data/news";
+import { currentRotaryYear } from "@/lib/rotary-year";
+import { single } from "@/lib/search-params";
 import { NewsArchives } from "./_sections/NewsArchives";
 import { NewsFeature } from "./_sections/NewsFeature";
 import { NewsOpening } from "./_sections/NewsOpening";
@@ -14,11 +15,6 @@ export const metadata: Metadata = {
   title: newsPage.title,
   description: newsPage.description,
 };
-
-/** Un filtre n'accepte qu'une valeur : la première si l'adresse en répète une. */
-function single(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 export default async function NewsPage(props: PageProps<"/actualites">) {
   const query = await props.searchParams;

@@ -1,4 +1,4 @@
-/* Styles de bouton, appliqués à un lien ou à un bouton (DESIGN.md, section 8). */
+/* Styles de bouton, appliqués à un lien ou à un bouton (DESIGN.md, section 9). */
 
 .button {
   display: inline-flex;
@@ -13,9 +13,6 @@
   line-height: var(--text-button-leading);
   text-decoration: none;
   white-space: nowrap;
-  transition:
-    background-color var(--duration-instant) var(--ease-out),
-    color var(--duration-instant) var(--ease-out);
 }
 
 .primary {
@@ -49,6 +46,12 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  .button {
+    transition:
+      background-color var(--duration-instant) var(--ease-out),
+      color var(--duration-instant) var(--ease-out);
+  }
+
   .button:active {
     translate: 0 1px;
   }

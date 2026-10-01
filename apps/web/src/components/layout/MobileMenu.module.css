@@ -31,6 +31,8 @@
 /* Le sommaire : plein écran, sur encre. */
 .panel {
   --focus-ring: var(--on-field-focus-ring);
+  /* Le bleu royal ne se lit pas sur l'encre : survol en bleu clair. */
+  --link: var(--on-field-text-secondary);
 
   width: 100dvw;
   max-width: none;

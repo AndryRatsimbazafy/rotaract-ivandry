@@ -1,6 +1,8 @@
 // Textes de la page Membres.
 
+import { routes } from "@/config/routes";
 import type { MemberRole } from "@/types/member";
+import { rotaryYearLabel } from "./common";
 
 /** Les fonctions du club, dans l'ordre où le club les énonce. */
 export const memberRoleLabels: Record<MemberRole, string> = {
@@ -21,14 +23,14 @@ export const membersOpening = {
   title: "Les membres",
   lede: "Le Rotaract Club Ivandry rassemble de jeunes professionnels et des étudiants. Ils font vivre le club, ses actions et sa camaraderie.",
   groupPhotoBrief: "Les membres du club, réunis pour l'année Rotary.",
-  yearsLabel: "Année Rotary",
+  yearsLabel: rotaryYearLabel,
   currentYear: "Année affichée",
 };
 
 export const membersDirectory = {
   number: "01",
   label: "L'annuaire",
-  yearLabel: "Année Rotary",
+  yearLabel: rotaryYearLabel,
   countOne: "membre",
   countMany: "membres",
   demoNote: "Profils de démonstration",
@@ -50,7 +52,7 @@ export const membersFunctions = {
 export const membersOnward = {
   label: "Poursuivre",
   links: [
-    { href: "/actions", label: "Voir nos actions" },
-    { href: "/actualites", label: "Lire les actualités" },
+    { href: routes.actions, label: "Voir nos actions" },
+    { href: routes.news, label: "Lire les actualités" },
   ],
 };

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { photoPendingLabel } from "@/content/home";
+import { photoPendingLabel } from "@/content/common";
 import type { Photo } from "@/types/media";
 import styles from "./PhotoFrame.module.css";
 

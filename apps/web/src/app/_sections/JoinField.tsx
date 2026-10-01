@@ -37,7 +37,7 @@ export function JoinField() {
 
         {/* L'appel : une ligne de texte en grand, pas un bouton. */}
         <Link href={routes.join} className={styles.action}>
-          <span className={styles.actionLabel}>{joinLabel}</span>
+          <span>{joinLabel}</span>
           <svg
             className={styles.arrow}
             viewBox="0 0 20 20"

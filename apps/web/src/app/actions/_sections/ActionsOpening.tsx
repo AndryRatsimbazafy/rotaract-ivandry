@@ -1,6 +1,6 @@
 import { PhotoFrame } from "@/components/media/PhotoFrame";
-import { pendingLabel } from "@/content/home";
 import { actionsOpening } from "@/content/actions";
+import { pendingLabel } from "@/content/common";
 import type { RotaryYear } from "@/types/rotary-year";
 import styles from "./ActionsOpening.module.css";
 
