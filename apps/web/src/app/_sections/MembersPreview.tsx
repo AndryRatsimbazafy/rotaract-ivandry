@@ -3,6 +3,7 @@ import { ArrowLink } from "@/components/ui/ArrowLink";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { routes } from "@/config/routes";
 import { membersPreview, pendingLabel } from "@/content/home";
+import { memberRoleLabels } from "@/content/members";
 import { rolesForYear } from "@/data/members";
 import type { Member } from "@/types/member";
 import type { RotaryYear } from "@/types/rotary-year";
@@ -37,7 +38,9 @@ export function MembersPreview({ members, rotaryYear }: MembersPreviewProps) {
     : members.map((member) => ({
         key: member.id,
         name: `${member.firstName} ${member.lastName}`,
-        roles: rolesForYear(member, rotaryYear),
+        roles: rolesForYear(member, rotaryYear).map(
+          (role) => memberRoleLabels[role],
+        ),
       }));
   const portraits = members
     .map((member) => member.portrait)

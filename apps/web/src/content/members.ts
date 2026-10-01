@@ -1,0 +1,56 @@
+// Textes de la page Membres.
+
+import type { MemberRole } from "@/types/member";
+
+/** Les fonctions du club, dans l'ordre où le club les énonce. */
+export const memberRoleLabels: Record<MemberRole, string> = {
+  president: "Président",
+  "vice-president": "Vice président",
+  tresorier: "Trésorier",
+  "responsable-action": "Responsable action",
+  "responsable-image-publique": "Responsable Image publique",
+  "responsable-camaraderie": "Responsable camaraderie",
+  "responsable-effectif": "Responsable effectif",
+  "responsable-fondation": "Responsable fondation",
+  protocole: "Protocole",
+  secretaire: "Secrétaire",
+};
+
+export const membersOpening = {
+  label: "Le collectif",
+  title: "Les membres",
+  lede: "Le Rotaract Club Ivandry rassemble de jeunes professionnels et des étudiants. Ils font vivre le club, ses actions et sa camaraderie.",
+  groupPhotoBrief: "Les membres du club, réunis pour l'année Rotary.",
+  yearsLabel: "Année Rotary",
+  currentYear: "Année affichée",
+};
+
+export const membersDirectory = {
+  number: "01",
+  label: "L'annuaire",
+  yearLabel: "Année Rotary",
+  countOne: "membre",
+  countMany: "membres",
+  demoNote: "Profils de démonstration",
+  portraitBrief: "Portrait.",
+  /** Suivi de l'année, par exemple « … 2025-2026 ne sont pas encore publiés. » */
+  emptyBefore: "Les membres de l'année",
+  emptyAfter: "ne sont pas encore publiés.",
+  backToCurrent: "Voir l'année en cours",
+};
+
+export const membersFunctions = {
+  number: "02",
+  label: "Les fonctions",
+  title: "Qui fait quoi",
+  intro: "Une même personne peut tenir plusieurs fonctions au cours d'une année.",
+  vacant: "Non attribuée",
+};
+
+export const membersOnward = {
+  label: "Poursuivre",
+  links: [
+    { href: "/actions", label: "Voir nos actions" },
+    { href: "/actualites", label: "Lire les actualités" },
+  ],
+};

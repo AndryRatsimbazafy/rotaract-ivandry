@@ -14,6 +14,8 @@ interface PhotoFrameProps {
   priority?: boolean;
   /** Fond du gabarit sans photographie : brume, blanc (sur le fond de page) ou encre. */
   tone?: "light" | "paper" | "dark";
+  /** Petit cadre : sans photographie, seuls l'aplat et les repères restent. */
+  compact?: boolean;
   /** Voile uni, pour une photographie qui porte un titre. */
   veiled?: boolean;
   /** Fixe le ratio du cadre. */
@@ -31,6 +33,7 @@ export function PhotoFrame({
   sizes,
   priority,
   tone = "light",
+  compact,
   veiled,
   className,
 }: PhotoFrameProps) {
@@ -38,14 +41,21 @@ export function PhotoFrame({
 
   if (!photo) {
     return (
-      <div className={`${frameClass} ${styles.template} ${styles[tone]}`}>
-        <p className={styles.brief}>
-          <span className="label">{photoPendingLabel}</span>
-          <span>{brief}</span>
-        </p>
-        <span className={styles.format} aria-hidden="true">
-          {format}
-        </span>
+      <div
+        className={`${frameClass} ${styles.template} ${styles[tone]}`}
+        aria-hidden={compact ? "true" : undefined}
+      >
+        {compact ? null : (
+          <>
+            <p className={styles.brief}>
+              <span className="label">{photoPendingLabel}</span>
+              <span>{brief}</span>
+            </p>
+            <span className={styles.format} aria-hidden="true">
+              {format}
+            </span>
+          </>
+        )}
       </div>
     );
   }

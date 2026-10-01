@@ -1,0 +1,304 @@
+/*
+ * 01 : l'annuaire, sur feuille blanche. L'année tracée au trait, puis trois
+ * niveaux de lecture : une personne en grand format, trois portraits de
+ * tailles et de hauteurs différentes, puis les autres en lignes.
+ */
+
+.sheet {
+  padding-block: calc(var(--rhythm-major) + var(--space-64)) var(--rhythm-major);
+  background: var(--bg-page);
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-8);
+  margin-top: var(--space-24);
+}
+
+.titleLabel {
+  color: var(--text-secondary);
+  font-stretch: var(--font-width-normal);
+}
+
+.year {
+  color: transparent;
+  font-size: var(--text-mega-size);
+  font-weight: var(--font-weight-extrabold);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--text-mega-leading);
+  letter-spacing: var(--text-mega-tracking);
+  white-space: nowrap;
+  -webkit-text-stroke: var(--rule-width) var(--numeral-outline);
+}
+
+.count {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-24);
+  margin-top: var(--space-16);
+  color: var(--text-secondary);
+}
+
+/* ---- Année sans membre ---- */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: var(--space-16);
+  padding-top: var(--space-64);
+}
+
+.emptyText {
+  max-width: 24ch;
+  font-family: var(--font-recit);
+  font-size: var(--text-statement-size);
+  font-style: italic;
+  line-height: var(--text-statement-leading);
+}
+
+/* ---- Profil : portrait, nom, fonctions, profession ---- */
+
+.profile {
+  grid-column: 1 / -1;
+}
+
+.frame {
+  aspect-ratio: 4 / 5;
+}
+
+.name {
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  overflow-wrap: anywhere;
+}
+
+.roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-16);
+  margin-top: var(--space-12);
+  list-style: none;
+}
+
+.occupation {
+  margin-top: var(--space-8);
+  color: var(--text-secondary);
+  font-family: var(--font-recit);
+  font-style: italic;
+}
+
+/* Premier niveau : une personne, en grand. */
+.lead {
+  margin-top: var(--space-64);
+}
+
+.lead .portrait {
+  width: 78%;
+  margin-left: calc(-1 * var(--page-margin));
+}
+
+.lead .identity {
+  margin-top: var(--space-24);
+}
+
+.lead .name {
+  font-size: var(--text-xl-size);
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-xl-tracking);
+}
+
+.lead .occupation {
+  font-size: var(--text-lede-size);
+}
+
+/* Deuxième niveau : trois portraits, chacun à sa place. */
+.plateList {
+  row-gap: var(--space-48);
+  margin-top: var(--rhythm-section);
+  list-style: none;
+}
+
+.plateItem {
+  grid-column: 1 / -1;
+}
+
+.plateItem:nth-child(odd) .portrait {
+  width: 66%;
+  margin-left: auto;
+}
+
+.plateItem:nth-child(even) .portrait {
+  width: 56%;
+}
+
+.plateItem:nth-child(odd) .identity {
+  width: 66%;
+  margin-left: auto;
+}
+
+.plate .identity {
+  margin-top: var(--space-16);
+}
+
+.plate .name {
+  font-size: var(--text-h1-size);
+  line-height: var(--text-h1-leading);
+  letter-spacing: var(--text-h1-tracking);
+}
+
+/* Troisième niveau : les lignes. */
+.lineList {
+  margin-top: var(--rhythm-section);
+  border-bottom: var(--rule-width) solid var(--rule-strong);
+  list-style: none;
+}
+
+.lineItem {
+  padding-block: var(--space-16);
+  border-top: var(--rule-width) solid var(--rule-strong);
+}
+
+.line {
+  display: grid;
+  grid-template-columns: var(--space-64) 1fr;
+  column-gap: var(--space-16);
+  align-items: start;
+}
+
+.line .name {
+  font-size: var(--text-h2-size);
+  line-height: var(--text-h2-leading);
+  letter-spacing: var(--text-h2-tracking);
+}
+
+.line .roles {
+  margin-top: var(--space-8);
+}
+
+/* ---- Profils de démonstration : montrés comme des emplacements ---- */
+
+.demo .name {
+  color: var(--text-placeholder);
+}
+
+.demo .roles {
+  color: var(--text-secondary);
+}
+
+.demo .lineList,
+.demo .lineItem {
+  border-color: var(--border-rule);
+}
+
+@media (min-width: 768px) {
+  .plateItem,
+  .plateItem:nth-child(odd),
+  .plateItem:nth-child(even) {
+    grid-column: span 4;
+  }
+
+  .plateItem:nth-child(odd) .portrait,
+  .plateItem:nth-child(even) .portrait,
+  .plateItem:nth-child(odd) .identity {
+    width: auto;
+    margin-left: 0;
+  }
+
+  .plateItem:nth-child(3) {
+    grid-column: 3 / span 4;
+  }
+
+  .line {
+    grid-template-columns: var(--space-64) 1fr 1fr;
+    align-items: center;
+  }
+
+  .line .identity {
+    display: contents;
+  }
+
+  .line .name {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .line .roles {
+    grid-column: 3;
+    margin-top: 0;
+  }
+
+  .line .occupation {
+    grid-column: 3;
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sheet {
+    padding-top: calc(var(--rhythm-major) + var(--space-96));
+  }
+
+  /* Portrait à bord perdu à gauche, identité en bas à droite. */
+  .lead {
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: end;
+    margin-top: var(--space-96);
+  }
+
+  .lead .portrait {
+    grid-column: 1 / span 5;
+    width: auto;
+    margin-left: calc(-1 * var(--edge));
+  }
+
+  .lead .identity {
+    grid-column: 7 / -1;
+    margin-top: 0;
+    padding-bottom: var(--space-32);
+  }
+
+  /* Dans une colonne étroite, le nom descend d'un cran pour rester lisible. */
+  .plate .name {
+    font-size: var(--text-h2-size);
+    line-height: var(--text-h2-leading);
+    letter-spacing: var(--text-h2-tracking);
+  }
+
+  /* Trois largeurs, trois hauteurs de départ. */
+  .plateItem:nth-child(1) {
+    grid-column: 1 / span 4;
+    margin-top: var(--space-96);
+  }
+
+  .plateItem:nth-child(2) {
+    grid-column: 6 / span 3;
+    margin-top: 0;
+  }
+
+  .plateItem:nth-child(3) {
+    grid-column: 10 / -1;
+    margin-top: var(--space-160);
+  }
+
+  /* Une ligne sur deux part en retrait d'une colonne. */
+  .lineItem:nth-child(even) {
+    padding-left: var(--col-step);
+  }
+
+  .line {
+    grid-template-columns: var(--space-64) 5fr 3fr 3fr;
+    column-gap: var(--grid-gutter);
+  }
+
+  .line .name {
+    grid-row: 1;
+  }
+
+  .line .occupation {
+    grid-column: 4;
+    text-align: right;
+  }
+}

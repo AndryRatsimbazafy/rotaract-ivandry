@@ -1,0 +1,147 @@
+/*
+ * Ouverture de la page Membres : le titre sur une seule ligne, en signature.
+ * Dessous, une photographie de groupe panoramique à bord perdu à gauche, et
+ * les années Rotary en regard à droite.
+ */
+
+.opening {
+  position: relative;
+  z-index: 1;
+  padding-top: var(--space-32);
+}
+
+/* Un filet encre ouvre la page. */
+.label {
+  padding-top: var(--space-16);
+  border-top: var(--rule-width) solid var(--rule-strong);
+}
+
+.title {
+  margin-top: var(--space-32);
+  font-size: var(--text-mega-size);
+  line-height: var(--text-mega-leading);
+  letter-spacing: var(--text-mega-tracking);
+  text-wrap: nowrap;
+}
+
+/* Le trait d'or : un seul par page, attaché au titre principal. */
+.title::after {
+  content: "";
+  display: block;
+  width: var(--accent-rule-width);
+  height: var(--accent-rule-height);
+  margin-top: var(--space-24);
+  background: var(--accent-rule);
+}
+
+.lede {
+  max-width: 34ch;
+  margin-top: var(--space-32);
+  font-family: var(--font-recit);
+  font-size: var(--text-statement-size);
+  line-height: var(--text-statement-leading);
+  text-wrap: pretty;
+}
+
+.stage {
+  row-gap: var(--space-24);
+  margin-top: var(--space-48);
+}
+
+.photo,
+.years {
+  grid-column: 1 / -1;
+}
+
+/* La photographie descend dans la feuille blanche qui suit. */
+.photo {
+  order: 2;
+  margin: 0 var(--space-24) calc(-1 * var(--space-64))
+    calc(-1 * var(--page-margin));
+}
+
+.frame {
+  aspect-ratio: 3 / 2;
+}
+
+.yearsLabel {
+  color: var(--text-secondary);
+}
+
+.yearList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-32);
+  margin-top: var(--space-8);
+  list-style: none;
+}
+
+.year {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  row-gap: var(--space-4);
+  min-height: var(--target-min);
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.yearName {
+  font-size: var(--text-h1-size);
+  font-weight: var(--font-weight-regular);
+  font-stretch: var(--font-width-condensed);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--text-h1-leading);
+  letter-spacing: var(--text-h1-tracking);
+}
+
+/* L'année affichée : en gras, avec sa mention écrite. Pas de soulignement. */
+.year[aria-current="true"] {
+  color: var(--text-primary);
+}
+
+.year[aria-current="true"] .yearName {
+  font-weight: var(--font-weight-extrabold);
+}
+
+.year:hover {
+  color: var(--link);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .year {
+    transition: color var(--duration-instant) var(--ease-out);
+  }
+}
+
+@media (min-width: 768px) {
+  .frame {
+    aspect-ratio: 2 / 1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .opening {
+    padding-top: var(--space-48);
+  }
+
+  .stage {
+    align-items: end;
+    margin-top: var(--space-64);
+  }
+
+  .photo {
+    grid-column: 1 / span 9;
+    order: 0;
+    margin: 0 0 calc(-1 * var(--space-128)) calc(-1 * var(--edge));
+  }
+
+  .years {
+    grid-column: 10 / -1;
+    padding-bottom: var(--space-32);
+  }
+
+  .yearList {
+    flex-direction: column;
+  }
+}

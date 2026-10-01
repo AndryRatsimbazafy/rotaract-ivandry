@@ -337,7 +337,7 @@ Une section utilise un procédé, deux au plus. Jamais d'ombre, de flou ni de tr
 
 **La règle de non-répétition.** Sur une page qui persuade, deux sections voisines n'ont ni la même composition ni le même fond.
 
-**La règle anti-cartes.** Aucune grille de cartes identiques. Un contenu d'une collection est une image et un texte, sans cadre, sans fond, sans ombre, et ses voisins n'ont ni la même taille ni la même hauteur de départ. Seule exception : une série de portraits sur la page Members.
+**La règle anti-cartes.** Aucune grille de cartes identiques. Un contenu d'une collection est une image et un texte, sans cadre, sans fond, sans ombre, et ses voisins n'ont ni la même taille ni la même hauteur de départ. Même les portraits de la page Members changent de taille et de hauteur d'un niveau de lecture à l'autre.
 
 **La règle du motif unique.** « Titre, paragraphe, bouton » n'apparaît qu'une fois par page au plus.
 
@@ -391,6 +391,8 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 - **Registre vide.** Un registre sans aucune ligne ne répète pas trois lignes fantômes : il montre ses en-têtes de colonnes, une phrase qui dit qu'il n'y a encore rien, et ses filets.
 - **Un emplacement n'est jamais cliquable.**
 - **Rien n'est inventé.** Ni action, ni date, ni membre, ni chiffre, ni citation.
+- **Profils de démonstration.** La page Members peut montrer quelques profils fictifs pour faire voir sa composition tant que le club n'a pas fourni les siens. Ils vivent dans les données, pas dans les composants ; ils sont marqués comme tels ; ils s'appellent « Profil 01 », « Profil 02 », jamais d'un nom plausible ; ils n'ont pas de portrait ; ils s'affichent comme des emplacements (gris, mention « Profils de démonstration ») et n'apparaissent sur aucune autre page.
+- **Petit cadre.** Sous 120 px de large, le gabarit photographique ne garde que son aplat et ses repères.
 
 ---
 
@@ -595,7 +597,7 @@ Seule la Home est conçue. Les quatre autres pages reprendront ce langage en mod
 | **Actions** | Le reportage. Ouverture typographique sur le fond de page, avec une photographie verticale à bord perdu qui descend dans la section suivante et une seconde image qui la chevauche. Définition en entrée de dictionnaire sur feuille blanche. Index des filtres, puis les actions une à une, chacune dans l'une de trois compositions qui alternent : grand format avec titre au-dessus et métadonnées en marge, verticale à gauche avec fiche à droite, texte à gauche avec image décalée à droite. Registre d'impact sur champ encre. Rappel cranberry. |
 | **News** | Le journal. Ouverture purement typographique, en deux lignes décalées, comme une manchette. Une actualité à la une : le jour en chiffre monumental, une grande photographie à bord perdu, le titre sur un aplat blanc qui mord dessus. Sur feuille blanche, les rubriques en index puis le registre, groupé par mois : le mois reste en marge pendant que ses lignes défilent. Les archives par année Rotary sur champ encre, les années en très grand. Deux liens vers les actions et les membres, puis le rappel cranberry. |
 | **Join** | Le parcours d'adhésion en quatre étapes comme colonne vertébrale, les quatre questions du Rotary, les valeurs, le statut de sympathisant, la candidature, les questions fréquentes. Pas de champ cranberry. |
-| **Members** | Le collectif : noms en très grand, portraits 4:5 d'un même cadrage, filtre par année Rotary. Un membre peut avoir plusieurs fonctions la même année. |
+| **Members** | L'annuaire. Le titre sur une seule ligne, en signature. Une photographie de groupe panoramique à bord perdu à gauche, les années Rotary en regard à droite. Sur feuille blanche, l'année tracée au trait en très grand, puis trois niveaux de lecture : une personne en grand format, trois portraits de tailles et de hauteurs différentes, puis les autres en lignes. Sur champ encre, l'index des fonctions : qui tient quoi, sans hiérarchie entre les fonctions. Liens de sortie, rappel cranberry. L'ordre des personnes est celui que le club choisit, jamais un classement par fonction. |
 
 ---
 

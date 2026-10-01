@@ -4,7 +4,7 @@ Site public du Rotaract Club Ivandry. Next.js (App Router), TypeScript, CSS Modu
 
 Les commandes se lancent depuis la racine du dépôt (`npm run dev:web`, `npm run build:web`, `npm run lint`). Port de développement : 3000.
 
-`DESIGN.md` (racine du dépôt) est la source de vérité pour toute décision visuelle. Ses fondations sont implémentées (tokens dans `src/app/tokens.css`, Open Sans variable chargée par `next/font` avec l'axe de largeur, Georgia en police système). L'accueil, Actions et Actualités sont conçus ; Membres et Rejoindre affichent encore leur plan provisoire.
+`DESIGN.md` (racine du dépôt) est la source de vérité pour toute décision visuelle. Ses fondations sont implémentées (tokens dans `src/app/tokens.css`, Open Sans variable chargée par `next/font` avec l'axe de largeur, Georgia en police système). L'accueil, Actions, Actualités et Membres sont conçus ; Rejoindre affiche encore son plan provisoire. La page Membres montre des profils de démonstration, marqués `isDemo` dans `data/members.ts`.
 
 ## Routes
 
