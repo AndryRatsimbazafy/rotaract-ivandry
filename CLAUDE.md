@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Website for the Rotaract Club Ivandry: a public Front Office, an admin Back Office, and a backend API. `PROJECT_CONTEXT.md` is the reference for decisions, constraints and scope — read it before any structural change, and update it when a documented decision becomes obsolete.
 
-The project is at the foundation stage: the three apps are near-untouched CLI templates with no business code yet.
+State: the Front Office (`apps/web`) v1 is complete — five pages on local data, not yet connected to the API. `apps/admin` and `apps/api` are still CLI templates. `ARCHITECTURE.md` specifies the backend and Back Office and is not implemented yet.
 
 ## Commands
 
@@ -43,7 +43,8 @@ Things that are not obvious from a single file:
 ## Decided constraints
 
 - npm only; TypeScript everywhere; no Docker; no CI/CD; deployment out of scope for now (later: Vercel for the two Next apps, Render for the API).
-- Planned but **not yet installed**: MongoDB Atlas (Free), JWT auth, a single `ADMIN` role.
+- Planned but **not yet installed**: MongoDB Atlas (Free), JWT auth, a single `ADMIN` role, MUI for the Back Office.
+- `ARCHITECTURE.md` is the reference for the backend and Back Office (data models, MongoDB, API structure, endpoints, auth, API contracts, environment variables). Read it before any work in `apps/api` or `apps/admin`, or before connecting `apps/web` to the API; change a decision there first, never only in code. Its section 14 lists locked decisions and open ones; items marked « [ouvert] » need the user's decision before being implemented. Rules that must hold: Action and News stay separate entities, each with an explicit Rotary year chosen by the admin (never silently derived from the date); missing impact data is not displayed, with no placeholder text; a member's functions live in a per-Rotary-year mandate that can hold several functions, never in a single member property; applications are stored with no status workflow; admin endpoints live under `/admin` behind JWT + `ADMIN`, and the Front Office never calls them; `apps/web` reads data only through `src/data/*`; no secrets in code.
 - Public UI is French only for v1. Keep the architecture ready for French + English, but do not implement English.
 - Do not add dependencies or restructure the repo beyond what a task explicitly asks; work proceeds in explicitly requested steps (pages, models, auth, APIs, design implementation and UI components are each started only on request).
 - `DESIGN.md` is the source of truth for the visual direction of the Front Office (colors, typography, layout, components, motion, accessibility). Read it before any UI work and follow it; change a design decision there first, never only in code. Its values are implemented as tokens in `apps/web/src/app/tokens.css` (Open Sans + Georgia, no dark mode in v1); the Home page is the reference implementation. This direction (premium editorial, documentary, asymmetric but controlled) is mandatory for **every** Front Office page, not only the Home: reuse the tokens, type scale, grid and composition devices, give each page its own composition rather than copying the Home, and never fall back to generic layouts or card grids. If an idea contradicts `DESIGN.md`, name the contradiction and propose an update to `DESIGN.md` before implementing.
