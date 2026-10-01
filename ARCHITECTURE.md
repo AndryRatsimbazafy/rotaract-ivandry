@@ -250,7 +250,7 @@ Le projet a sept collections, deux références simples, et un développement me
 
 ```
 apps/api/src/
-├── main.ts                  préfixe global /api/v1, ValidationPipe, filtre d'erreurs
+├── main.ts                  préfixe global /api/v1, ValidationPipe, filtre d'erreurs, en-têtes de sécurité
 ├── app.module.ts
 ├── config/                  lecture et validation des variables d'environnement
 ├── common/
@@ -288,9 +288,19 @@ actions/
 
 Dépendances à installer **plus tard**, chacune à l'étape qui en a besoin : `@nestjs/mongoose`, `mongoose`, `@nestjs/config`, `@nestjs/jwt`, `class-validator`, `class-transformer`, `@nestjs/throttler`, `helmet`, `argon2`. Aucune n'est installée par cette tâche.
 
+**Sécurité transverse.** Les en-têtes de sécurité HTTP (`helmet`) s'appliquent à toutes les réponses et sont mis en place par le socle. La limitation de fréquence (`@nestjs/throttler`) intervient avec l'authentification, pas dans le socle.
+
 ## 6. Endpoints
 
 Préfixe : `/api/v1`. Trois niveaux d'accès : **Public**, **JWT** (jeton valide), **ADMIN** (jeton valide et rôle `ADMIN`). Avec un seul rôle, JWT et ADMIN désignent en pratique le même compte ; les deux gardes restent distinctes pour que l'ajout d'un rôle ne demande aucune réécriture.
+
+### Route technique
+
+| Méthode | Chemin | Accès | Rôle |
+|---|---|---|---|
+| GET | `/api/v1/health` | Public | État de l'API et de la connexion à la base. `200` si l'API et la connexion à la base répondent, `503` si la base n'est pas joignable. Aucune information sensible. |
+
+Route technique, non métier : elle ne porte aucun contenu du club.
 
 ### Auth
 
@@ -430,7 +440,7 @@ Format unique, pour les deux surfaces :
 }
 ```
 
-`details` n'existe que pour les erreurs de validation. Codes utilisés : `400` (validation, identifiant malformé), `401`, `403`, `404`, `409` (slug, mandat ou année en double ; année utilisée), `413` (fichier trop lourd), `415` (type de fichier refusé), `429` (trop de tentatives). Messages en français, affichables tels quels.
+`details` n'existe que pour les erreurs de validation. Codes utilisés : `400` (validation, identifiant malformé), `401`, `403`, `404`, `409` (slug, mandat ou année en double ; année utilisée), `413` (fichier trop lourd), `415` (type de fichier refusé), `429` (trop de tentatives), `500` (erreur interne, sans détail technique), `503` (base injoignable, sur la route de santé). Messages en français, affichables tels quels.
 
 ### Correspondance API → modèles du Front Office
 
@@ -504,7 +514,7 @@ Aucune valeur réelle ici ni dans le code. Chaque application aura un `.env.exam
 | `PORT` | non | Défaut 4000. |
 | `NODE_ENV` | non | `development` ou `production`. |
 | `MONGODB_URI` | **oui** | Secret. Chaîne de connexion Atlas, avec le nom de la base. |
-| `JWT_SECRET` | **oui** | Secret. 32 octets aléatoires au moins. L'API refuse de démarrer s'il manque. |
+| `JWT_SECRET` | **oui** | Secret. 32 caractères au moins, générés aléatoirement. Exigé dès le socle, utilisé à partir de l'authentification. L'API refuse de démarrer s'il manque. |
 | `JWT_EXPIRES_IN` | non | Défaut et valeur décidée : `8h`. |
 | `CORS_ORIGINS` | non | Vide par défaut : aucun navigateur n'appelle l'API. À renseigner seulement si l'envoi direct de fichiers est retenu. |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | script seulement | Lus par le script d'initialisation, jamais par l'API en fonctionnement. |
@@ -723,6 +733,8 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 | 13 | **Année Rotary d'un contenu** | Référence explicite vers RotaryYear sur Action et News, choisie par l'administrateur. Jamais déduite en silence de la date. |
 | 14 | **RotaryYear** | Identifiée par son année de début. Label et dates calculés. Aucun booléen « courant » stocké. |
 | 15 | **Front Office** | Reste sur ses données locales. La migration vers l'API est une étape ultérieure. |
+| 16 | **Route de santé** | `GET /api/v1/health`, route technique publique : `200` si l'API et la base répondent, `503` si la base n'est pas joignable, aucune information sensible. Mise en place par le socle. |
+| 17 | **En-têtes de sécurité** | `helmet` sur toutes les réponses, mis en place par le socle. La limitation de fréquence (`@nestjs/throttler`) arrive avec l'authentification. |
 
 ### Encore ouvertes
 
@@ -742,7 +754,7 @@ Rien de ce qui est ouvert ne bloque les trois premières étapes (socle de l'API
 
 Chaque étape démarre sur demande explicite.
 
-1. Socle de l'API : configuration, connexion MongoDB, préfixe, validation, format d'erreur.
+1. Socle de l'API : configuration, connexion MongoDB, préfixe, validation, format d'erreur, route de santé, en-têtes de sécurité.
 2. Authentification et script d'initialisation du compte.
 3. Années Rotary, puis membres et mandats.
 4. Actions, actualités.
