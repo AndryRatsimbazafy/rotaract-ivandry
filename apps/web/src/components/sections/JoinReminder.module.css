@@ -1,0 +1,91 @@
+.band {
+  /* Sur champ fort, le contour de focus est blanc. */
+  --focus-ring: var(--on-field-focus-ring);
+
+  padding-block: var(--space-64);
+  color: var(--on-field-text);
+  background: var(--field-cranberry);
+}
+
+.layout {
+  row-gap: var(--space-32);
+  align-items: end;
+}
+
+.head,
+.action {
+  grid-column: 1 / -1;
+}
+
+.title {
+  margin-top: var(--space-16);
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-xl-tracking);
+}
+
+/* L'appel : une ligne de texte entre deux filets, pas un bouton. */
+.action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: var(--space-24);
+  min-height: var(--target-min);
+  padding-block: var(--space-16);
+  border-block: var(--rule-width) solid currentColor;
+  color: inherit;
+  font-size: var(--text-h2-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: var(--text-h2-leading);
+  letter-spacing: var(--text-h2-tracking);
+  text-decoration: none;
+}
+
+.arrow {
+  flex: none;
+  width: 0.8em;
+  height: 0.8em;
+}
+
+.action:hover,
+.action:focus-visible {
+  color: var(--text-primary);
+  background: var(--on-field-text);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .action {
+    transition:
+      color var(--duration-instant) var(--ease-out),
+      background-color var(--duration-instant) var(--ease-out),
+      padding var(--duration-state) var(--ease-out);
+  }
+
+  .arrow {
+    transition: translate var(--duration-state) var(--ease-out);
+  }
+
+  .action:hover {
+    padding-inline: var(--space-16);
+  }
+
+  .action:hover .arrow {
+    translate: var(--space-8) 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .band {
+    padding-block: var(--space-96);
+  }
+
+  .head {
+    grid-column: 1 / span 7;
+  }
+
+  .action {
+    grid-column: 9 / -1;
+  }
+}

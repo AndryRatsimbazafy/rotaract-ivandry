@@ -12,8 +12,8 @@ interface PhotoFrameProps {
   /** Largeurs d'affichage, pour servir un fichier à la bonne taille. */
   sizes: string;
   priority?: boolean;
-  /** Fond du gabarit sans photographie. */
-  tone?: "light" | "dark";
+  /** Fond du gabarit sans photographie : brume, blanc (sur le fond de page) ou encre. */
+  tone?: "light" | "paper" | "dark";
   /** Voile uni, pour une photographie qui porte un titre. */
   veiled?: boolean;
   /** Fixe le ratio du cadre. */

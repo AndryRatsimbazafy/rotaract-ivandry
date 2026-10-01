@@ -142,7 +142,8 @@ Ce sont des outils d'interface, pas des couleurs de marque. Ils ne sortent jamai
 | **Feuille blanche** | Une section sur deux environ, jamais deux d'affilée sans raison | En-tête, club, actions, membres |
 | **Champ encre** | Une section par page, plus le pied de page | Valeurs du Rotary |
 | **Bleu royal** | Jamais en plein cadre. Une bande verticale ou un bloc partiel par page au plus | Derrière les portraits des membres |
-| **Champ cranberry** | Une fois sur le site | Conclusion de la Home |
+| **Champ cranberry** | Une fois sur le site, en entier | Conclusion de la Home |
+| **Rappel cranberry** | Une fois par page, hors Home | Conclusion des autres pages |
 
 ### Le fond de page
 
@@ -157,7 +158,7 @@ Ce sont des outils d'interface, pas des couleurs de marque. Ils ne sortent jamai
 
 **La règle du bleu structurel.** Le bleu royal porte des chiffres, des filets, des états et une bande. Il ne remplit jamais une section entière : l'accumulation d'aplats bleus est ce qui fait un « site Rotary générique ».
 
-**La règle du cranberry expressif.** Le cranberry est rare, mais quand il apparaît il s'engage : un champ entier, une question en très grand, une photographie qui en dépasse. Jamais un bouton, un lien, une bordure ou un survol.
+**La règle du cranberry expressif.** Le cranberry est rare, mais quand il apparaît il s'engage : un champ entier, une question en très grand, une photographie qui en dépasse. Jamais un bouton, un lien, une bordure ou un survol. Une page ne porte qu'une seule surface cranberry, toujours à la fin : le champ entier sur la Home, le rappel ailleurs.
 
 **La règle du trait d'or.** Un filet de 4 px sur 48 px, un seul par page, attaché au titre principal. Il ne porte jamais seul une information.
 
@@ -406,6 +407,7 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 | **Boutons** | Réservés aux formulaires. Rectangle, rayon 2 px. Principal : fond bleu royal, texte blanc. Secondaire : contour encre. Sur champ fort : fond blanc, texte encre. |
 | **Appel du champ cranberry** | Une ligne de texte en H1 sur toute la largeur, entre deux filets blancs, flèche à droite. |
 | **Étiquettes et badges** | Texte seul, sans fond ni contour. |
+| **Filtres** | Un index, pas une barre d'outils : une étiquette, puis les choix en texte sur une ligne. Le choix courant est en encre, souligné d'un filet bleu de 2 px ; les autres sont en Charcoal. Une liste longue se replie derrière son choix courant et se déplie sur place. Ni pilule, ni menu déroulant habillé, ni bouton. Un filtre est un lien : il change l'adresse de la page. |
 | **Formulaires** | Une colonne, libellé au-dessus, aide et erreur dessous, champs de 48 px, bordure Tin, texte de 16 px au moins. |
 | **Modale, tiroir** | Rayon 0, l'unique ombre du système. |
 | **Notification** | Bandeau à fond teinté d'état avec bordure de 1 px, icône et texte. |
@@ -429,7 +431,13 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 | **Survol** | L'image grossit, le titre passe au bleu | La ligne devient blanche, le jour passe au bleu |
 | **Classement** | Par année Rotary | Chronologique |
 
-L'impact n'affiche que des données réelles. Les chiffres d'impact ne sont jamais sortis de leur action pour former un bandeau de statistiques.
+L'impact n'affiche que des données réelles.
+
+**Le registre d'impact.** La page Actions peut réunir l'impact de l'ensemble des actions, à une condition de forme : c'est un **registre**, pas un bandeau de statistiques. Une ligne par indicateur, le libellé à gauche, la valeur à droite, un filet entre les lignes, sur le champ encre. Jamais de tuiles « grand chiffre, petit libellé » alignées, jamais de compteur animé. Une valeur absente s'écrit « Donnée à venir » : aucun chiffre n'est inventé ni arrondi pour l'effet.
+
+**La définition.** Ce qu'est une action s'explique sous la forme d'une entrée de dictionnaire : le mot en très grand, sa nature grammaticale en italique, la définition en voix de récit.
+
+**La fiche dépliable.** Tant que la page de détail n'existe pas, une action publiée offre un « plus » sous la forme d'un bloc qui se déplie sur place : sa fiche complète et ses autres photographies.
 
 ---
 
@@ -442,6 +450,7 @@ Entre la candidature et l'adhésion, la personne est **sympathisante** : pas enc
 Rejoindre un club est un engagement, pas un achat. Le site invite, explique et laisse décider.
 
 - **Le champ cranberry** conclut la Home, et seulement la Home. Il contient une question, une phrase, l'appel et le parcours en quatre étapes numérotées.
+- **Le rappel cranberry** conclut les autres pages. C'est une bande basse : l'étiquette, la question, et l'appel sur une ligne. Ni photographie, ni parcours, ni phrase d'explication. Il rappelle, il n'insiste pas.
 - **« Nous rejoindre »** figure dans l'en-tête, dans le champ cranberry et dans le pied de page.
 - **Interdits** : fenêtre surgissante, bandeau fixe, compte à rebours, « places limitées », vocabulaire commercial, points d'exclamation en série, appel répété à chaque section, témoignage inventé.
 
@@ -578,7 +587,7 @@ Seule la Home est conçue. Les quatre autres pages reprendront ce langage en mod
 | Page | Intention |
 |---|---|
 | **Home** | Voir section 6. Signature, sept sections numérotées, champ cranberry. |
-| **Actions** | Les photographies d'abord. Très grand titre de page, actions par année Rotary, formats et hauteurs alternés. En détail : ouverture photographique, fiche d'impact, récit, planche d'images. |
+| **Actions** | Le reportage. Ouverture typographique sur le fond de page, avec une photographie verticale à bord perdu qui descend dans la section suivante et une seconde image qui la chevauche. Définition en entrée de dictionnaire sur feuille blanche. Index des filtres, puis les actions une à une, chacune dans l'une de trois compositions qui alternent : grand format avec titre au-dessus et métadonnées en marge, verticale à gauche avec fiche à droite, texte à gauche avec image décalée à droite. Registre d'impact sur champ encre. Rappel cranberry. |
 | **News** | Le registre, étendu. Dense et régulier. |
 | **Join** | Le parcours d'adhésion en quatre étapes comme colonne vertébrale, les quatre questions du Rotary, les valeurs, le statut de sympathisant, la candidature, les questions fréquentes. Pas de champ cranberry. |
 | **Members** | Le collectif : noms en très grand, portraits 4:5 d'un même cadrage, filtre par année Rotary. Un membre peut avoir plusieurs fonctions la même année. |

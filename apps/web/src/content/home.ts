@@ -77,6 +77,8 @@ export const rotaryValues: {
 };
 
 export interface FocusArea {
+  /** Identifiant stable, utilisé pour classer et filtrer les actions. */
+  id: string;
   title: string;
   description?: string;
   href?: string;
@@ -96,13 +98,13 @@ export const focusAreas: {
   title: "axes stratégiques",
   intro: "Les causes sur lesquelles le Rotary concentre son action dans le monde.",
   areas: [
-    { title: "Construction de paix et prévention des conflits" },
-    { title: "Prévention et traitement des maladies" },
-    { title: "Eau, assainissement et hygiène" },
-    { title: "Santé des mères et des enfants" },
-    { title: "Alphabétisation et éducation de base" },
-    { title: "Développement économique local" },
-    { title: "Environnement" },
+    { id: "paix", title: "Construction de paix et prévention des conflits" },
+    { id: "maladies", title: "Prévention et traitement des maladies" },
+    { id: "eau", title: "Eau, assainissement et hygiène" },
+    { id: "sante", title: "Santé des mères et des enfants" },
+    { id: "education", title: "Alphabétisation et éducation de base" },
+    { id: "economie", title: "Développement économique local" },
+    { id: "environnement", title: "Environnement" },
   ],
 };
 

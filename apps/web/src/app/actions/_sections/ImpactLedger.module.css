@@ -1,0 +1,93 @@
+/*
+ * 03 : le champ encre de la page. Le registre d'impact : le titre en marge,
+ * une ligne par indicateur, la valeur en très grand à droite.
+ */
+
+.field {
+  /* Sur champ fort, le contour de focus est blanc. */
+  --focus-ring: var(--on-field-focus-ring);
+
+  padding-block: var(--rhythm-major);
+  color: var(--on-field-text);
+  background: var(--field-footer);
+}
+
+.layout {
+  row-gap: var(--space-48);
+}
+
+.head,
+.ledger {
+  grid-column: 1 / -1;
+}
+
+.head {
+  color: var(--on-field-text-secondary);
+}
+
+.title {
+  margin-top: var(--space-16);
+  color: var(--on-field-text);
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-xl-tracking);
+}
+
+.intro {
+  max-width: 30ch;
+  margin-top: var(--space-24);
+  font-family: var(--font-recit);
+  font-size: var(--text-lede-size);
+  font-style: italic;
+  line-height: var(--text-lede-leading);
+}
+
+.ledger {
+  border-bottom: var(--rule-width) solid var(--on-field-rule);
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8) var(--space-24);
+  padding-block: var(--space-24);
+  border-top: var(--rule-width) solid var(--on-field-rule);
+}
+
+.name {
+  font-size: var(--text-h3-size);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--text-h3-leading);
+}
+
+.value {
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-xl-tracking);
+}
+
+.pending {
+  color: var(--on-field-text-secondary);
+}
+
+@media (min-width: 768px) {
+  .row {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 1024px) {
+  .head {
+    grid-column: 1 / span 5;
+  }
+
+  .ledger {
+    grid-column: 7 / -1;
+  }
+}

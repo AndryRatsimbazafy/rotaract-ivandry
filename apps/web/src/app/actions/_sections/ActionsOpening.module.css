@@ -1,0 +1,144 @@
+/*
+ * Ouverture de la page Actions : le titre occupe la gauche sur le fond de
+ * page ; à droite, une photographie verticale à bord perdu descend dans la
+ * section suivante, et un détail la chevauche.
+ */
+
+.opening {
+  position: relative;
+  z-index: 1;
+  padding-top: var(--space-32);
+}
+
+.layout {
+  row-gap: var(--space-32);
+}
+
+.text,
+.facts,
+.photos {
+  grid-column: 1 / -1;
+}
+
+/* Un filet encre ouvre la page, comme dans la marge de l'accueil. */
+.label {
+  padding-top: var(--space-16);
+  border-top: var(--rule-width) solid var(--rule-strong);
+}
+
+.title {
+  margin-top: var(--space-32);
+  font-size: var(--text-mega-size);
+  line-height: var(--text-mega-leading);
+  letter-spacing: var(--text-mega-tracking);
+}
+
+.title span {
+  display: block;
+}
+
+/* Le trait d'or : un seul par page, attaché au titre principal. */
+.title::after {
+  content: "";
+  display: block;
+  width: var(--accent-rule-width);
+  height: var(--accent-rule-height);
+  margin-top: var(--space-24);
+  background: var(--accent-rule);
+}
+
+.lede {
+  max-width: 30ch;
+  margin-top: var(--space-32);
+  font-family: var(--font-recit);
+  font-size: var(--text-statement-size);
+  line-height: var(--text-statement-leading);
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-16) var(--space-48);
+}
+
+.facts dt {
+  color: var(--text-secondary);
+}
+
+.facts dd {
+  margin-top: var(--space-4);
+  font-size: var(--text-h4-size);
+  font-weight: var(--font-weight-bold);
+}
+
+.photos {
+  position: relative;
+  margin-top: var(--space-16);
+  margin-bottom: calc(-1 * var(--space-96));
+}
+
+.main {
+  width: 78%;
+  margin-left: auto;
+  margin-right: calc(-1 * var(--page-margin));
+}
+
+.mainFrame {
+  aspect-ratio: 4 / 5;
+}
+
+/* Le détail reste au-dessus de la feuille blanche qui suit. */
+.detail {
+  position: absolute;
+  bottom: var(--space-128);
+  left: 0;
+  width: 56%;
+}
+
+.detailFrame {
+  aspect-ratio: 3 / 2;
+}
+
+@media (min-width: 1024px) {
+  .opening {
+    padding-top: var(--space-48);
+  }
+
+  .text {
+    grid-column: 1 / span 5;
+    padding-bottom: var(--rhythm-section);
+  }
+
+  /* En haut de la colonne de droite, sous le même filet que l'étiquette. */
+  .facts {
+    grid-column: 8 / -1;
+    grid-row: 1;
+    align-self: start;
+    padding-top: var(--space-16);
+    border-top: var(--rule-width) solid var(--rule-strong);
+  }
+
+  .text {
+    grid-row: 1;
+  }
+
+  .photos {
+    grid-column: 8 / -1;
+    grid-row: 1;
+    align-self: end;
+    margin-top: 0;
+    margin-bottom: calc(-1 * var(--space-160));
+  }
+
+  .main {
+    width: auto;
+    margin-right: calc(-1 * var(--edge));
+  }
+
+  /* Le détail sort de la colonne vers la gauche et mord sur l'image. */
+  .detail {
+    bottom: calc(var(--space-160) + var(--space-48));
+    left: calc(-1 * var(--col-step));
+    width: calc(3 * var(--col-step) - var(--grid-gutter));
+  }
+}

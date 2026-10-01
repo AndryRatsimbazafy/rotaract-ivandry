@@ -18,6 +18,16 @@ export interface Action {
   title: string;
   summary?: string;
   rotaryYear: RotaryYear;
+  /** Identifiant de l'axe stratégique du Rotary auquel l'action se rattache. */
+  focusArea?: string;
   photos: Photo[];
   impact?: ActionImpact;
+}
+
+/** Ligne du registre d'impact : cumul sur l'ensemble des actions. */
+export interface ImpactIndicator {
+  id: string;
+  label: string;
+  /** Absente tant que la donnée n'est pas fournie. Jamais estimée. */
+  value?: string;
 }

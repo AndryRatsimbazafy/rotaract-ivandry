@@ -1,0 +1,372 @@
+/*
+ * 02 : sur le fond de page. L'index des filtres, puis les actions une à une.
+ * Trois compositions alternent : grand format, verticale, décalée.
+ */
+
+.section {
+  padding-block: var(--rhythm-major);
+}
+
+.head {
+  row-gap: var(--space-32);
+}
+
+.heading,
+.filters {
+  grid-column: 1 / -1;
+}
+
+.title {
+  margin-top: var(--space-16);
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-xl-tracking);
+}
+
+.note {
+  margin-top: var(--space-12);
+  color: var(--text-secondary);
+}
+
+/* ---- Index des filtres ---- */
+
+.filters {
+  border-bottom: var(--rule-width) solid var(--rule-strong);
+}
+
+.filter {
+  padding-block: var(--space-12);
+  border-top: var(--rule-width) solid var(--rule-strong);
+}
+
+.filterLabel {
+  color: var(--text-secondary);
+}
+
+.options,
+.areas {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-24);
+  list-style: none;
+}
+
+.option {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  text-decoration-thickness: var(--border-width-strong);
+  text-decoration-color: var(--link);
+  text-underline-offset: 0.4em;
+}
+
+.option:hover {
+  color: var(--text-primary);
+}
+
+.option[aria-current="true"] {
+  color: var(--text-primary);
+  text-decoration-line: underline;
+}
+
+/* La liste des domaines se replie derrière le choix courant. */
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-24);
+  min-height: var(--target-min);
+  cursor: pointer;
+  list-style: none;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.current {
+  display: inline-flex;
+  align-items: center;
+  column-gap: var(--space-12);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Un signe plus, qui devient un signe moins quand la liste est ouverte. */
+.current::after {
+  content: "";
+  width: var(--space-12);
+  height: var(--space-12);
+  background:
+    linear-gradient(currentColor, currentColor) center / 100%
+      var(--border-width-strong) no-repeat,
+    linear-gradient(currentColor, currentColor) center /
+      var(--border-width-strong) 100% no-repeat;
+}
+
+.filter[open] .current::after {
+  background:
+    linear-gradient(currentColor, currentColor) center / 100%
+      var(--border-width-strong) no-repeat;
+}
+
+.areas {
+  flex-direction: column;
+  padding-bottom: var(--space-8);
+}
+
+/* ---- Actions ---- */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: var(--space-8);
+  padding-block: var(--space-64);
+  font-family: var(--font-recit);
+  font-size: var(--text-lede-size);
+}
+
+.entry {
+  row-gap: var(--space-16);
+  margin-top: var(--rhythm-section);
+}
+
+.meta,
+.name,
+.media,
+.body {
+  grid-column: 1 / -1;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-16);
+  padding-top: var(--space-12);
+  border-top: var(--rule-width) solid var(--rule-strong);
+  color: var(--text-secondary);
+  list-style: none;
+}
+
+.name {
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-xl-tracking);
+}
+
+/* Sur téléphone, chaque image part d'un bord différent. */
+.wide .media {
+  margin-inline: calc(-1 * var(--page-margin));
+}
+
+.tall .media {
+  width: 80%;
+  margin-left: calc(-1 * var(--page-margin));
+}
+
+.offset .media {
+  width: 86%;
+  margin-left: auto;
+  margin-right: calc(-1 * var(--page-margin));
+}
+
+.wide .frame {
+  aspect-ratio: 16 / 9;
+}
+
+.tall .frame {
+  aspect-ratio: 4 / 5;
+}
+
+.offset .frame {
+  aspect-ratio: 3 / 2;
+}
+
+.body {
+  max-width: var(--container-reading);
+}
+
+.body > p + p,
+.body > .more {
+  margin-top: var(--space-16);
+}
+
+.text {
+  font-family: var(--font-recit);
+  font-size: var(--text-reading-size);
+  line-height: var(--text-reading-leading);
+}
+
+.impact {
+  padding-top: var(--space-12);
+  border-top: var(--rule-width) solid var(--rule-strong);
+}
+
+/* La fiche dépliable. */
+.moreSummary {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+  cursor: pointer;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--space-16) var(--grid-gutter);
+  margin-top: var(--space-16);
+}
+
+.facts dt {
+  color: var(--text-secondary);
+}
+
+.facts dd {
+  margin-top: var(--space-4);
+}
+
+.plate {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--grid-gutter);
+  margin-top: var(--space-24);
+}
+
+.plateFrame {
+  aspect-ratio: 3 / 2;
+}
+
+/* Emplacements sans contenu : la structure reste, le texte se retire. */
+.pending .name {
+  color: var(--text-placeholder);
+}
+
+.pending .body {
+  color: var(--text-secondary);
+}
+
+.pending .meta,
+.pending .impact {
+  border-top-color: var(--border-rule);
+}
+
+@media (min-width: 768px) {
+  .areas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
+  }
+}
+
+@media (min-width: 1024px) {
+  .head {
+    align-items: end;
+  }
+
+  .heading {
+    grid-column: 1 / span 6;
+  }
+
+  .filters {
+    grid-column: 8 / -1;
+  }
+
+  .entry {
+    row-gap: var(--space-32);
+    margin-top: var(--rhythm-major);
+  }
+
+  /* Grand format : le titre au-dessus, les métadonnées en marge, l'image à
+     bord perdu à droite, le texte sous l'image, décalé. */
+  .wide .name {
+    grid-column: 1 / span 10;
+    grid-row: 1;
+  }
+
+  .wide .meta {
+    grid-column: 1 / span 2;
+    grid-row: 2;
+    flex-direction: column;
+    align-self: start;
+  }
+
+  .wide .media {
+    grid-column: 3 / -1;
+    grid-row: 2;
+    margin-inline: 0 calc(-1 * var(--edge));
+  }
+
+  .wide .body {
+    grid-column: 7 / span 5;
+    grid-row: 3;
+  }
+
+  /* Verticale : l'image à gauche, à bord perdu ; le texte à droite, centré. */
+  .tall {
+    grid-template-rows: 1fr auto auto auto 1fr;
+  }
+
+  .tall .media {
+    grid-column: 1 / span 5;
+    grid-row: 1 / span 5;
+    width: auto;
+    margin-left: calc(-1 * var(--edge));
+  }
+
+  .tall .meta {
+    grid-column: 7 / span 5;
+    grid-row: 2;
+  }
+
+  .tall .name {
+    grid-column: 7 / span 6;
+    grid-row: 3;
+  }
+
+  .tall .body {
+    grid-column: 7 / span 5;
+    grid-row: 4;
+  }
+
+  /* Décalée : le texte à gauche, en retrait d'une colonne ; l'image à droite,
+     plus haute que le texte. */
+  .offset {
+    grid-template-rows: auto auto 1fr;
+  }
+
+  .offset .meta {
+    grid-column: 2 / span 4;
+    grid-row: 1;
+    margin-top: var(--space-96);
+  }
+
+  .offset .name {
+    grid-column: 2 / span 4;
+    grid-row: 2;
+    font-size: var(--text-h1-size);
+    line-height: var(--text-h1-leading);
+    letter-spacing: var(--text-h1-tracking);
+  }
+
+  .offset .body {
+    grid-column: 2 / span 4;
+    grid-row: 3;
+  }
+
+  .offset .media {
+    grid-column: 7 / -1;
+    grid-row: 1 / span 3;
+    width: auto;
+    margin-right: 0;
+  }
+}

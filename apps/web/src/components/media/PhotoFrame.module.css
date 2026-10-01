@@ -39,6 +39,14 @@
   background: var(--bg-surface);
 }
 
+.paper {
+  --mark: var(--border-control);
+  --format: var(--bg-ground);
+
+  color: var(--text-secondary);
+  background: var(--bg-page);
+}
+
 .dark {
   --mark: var(--on-field-text-secondary);
   --format: var(--field-blue);
