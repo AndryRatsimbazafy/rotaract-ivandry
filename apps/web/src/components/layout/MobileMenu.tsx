@@ -64,7 +64,10 @@ export function MobileMenu({ dateline }: MobileMenuProps) {
                   <span className={`meta ${styles.index}`} aria-hidden="true">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  {item.label}
+                  <span>{item.label}</span>
+                  {isCurrent(item.href, pathname) ? (
+                    <span className={`label ${styles.here}`}>Page affichée</span>
+                  ) : null}
                 </Link>
               </li>
             ))}

@@ -1,0 +1,45 @@
+/*
+ * 06 : feuille blanche. La candidature : le titre en très grand à gauche, le
+ * formulaire à droite, sur une colonne.
+ */
+
+.sheet {
+  padding-block: var(--rhythm-major);
+  background: var(--bg-page);
+}
+
+.layout {
+  row-gap: var(--space-48);
+}
+
+.head,
+.form {
+  grid-column: 1 / -1;
+}
+
+.title {
+  margin-top: var(--space-16);
+  font-size: var(--text-mega-size);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--text-mega-leading);
+  letter-spacing: var(--text-mega-tracking);
+}
+
+.form {
+  max-width: var(--container-reading);
+}
+
+@media (min-width: 1024px) {
+  .head {
+    grid-column: 1 / span 5;
+  }
+
+  /* Plafonné pour tenir dans cinq colonnes. */
+  .title {
+    font-size: min(var(--text-mega-size), 8.5vw);
+  }
+
+  .form {
+    grid-column: 7 / -1;
+  }
+}

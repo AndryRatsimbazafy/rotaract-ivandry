@@ -143,7 +143,8 @@ Ce sont des outils d'interface, pas des couleurs de marque. Ils ne sortent jamai
 | **Champ encre** | Une section par page, plus le pied de page | Valeurs du Rotary |
 | **Bleu royal** | Jamais en plein cadre. Une bande verticale ou un bloc partiel par page au plus | Derrière les portraits des membres |
 | **Champ cranberry** | Une fois sur le site, en entier | Conclusion de la Home |
-| **Rappel cranberry** | Une fois par page, hors Home | Conclusion des autres pages |
+| **Champ cranberry d'ouverture** | Sur Join seulement, en partie de l'écran | Ouverture de la page Join |
+| **Rappel cranberry** | Une fois par page, hors Home et Join | Conclusion des autres pages |
 
 ### Le fond de page
 
@@ -158,9 +159,9 @@ Ce sont des outils d'interface, pas des couleurs de marque. Ils ne sortent jamai
 
 **La règle du bleu structurel.** Le bleu royal porte des chiffres, des filets, des états et une bande. Il ne remplit jamais une section entière : l'accumulation d'aplats bleus est ce qui fait un « site Rotary générique ».
 
-**La règle du cranberry expressif.** Le cranberry est rare, mais quand il apparaît il s'engage : un champ entier, une question en très grand, une photographie qui en dépasse. Jamais un bouton, un lien, une bordure ou un survol. Une page ne porte qu'une seule surface cranberry, toujours à la fin : le champ entier sur la Home, le rappel ailleurs.
+**La règle du cranberry expressif.** Le cranberry est rare, mais quand il apparaît il s'engage : un champ entier, une question en très grand, une photographie qui en dépasse. Jamais un bouton, un lien, une bordure ou un survol. Une page ne porte qu'une seule surface cranberry : le champ entier à la fin de la Home, le champ d'ouverture en tête de Join, le rappel à la fin des autres pages.
 
-**La règle du trait d'or.** Un filet de 4 px sur 48 px, un seul par page, attaché au titre principal. Il ne porte jamais seul une information.
+**La règle du trait d'or.** Un filet de 4 px sur 48 px, un seul par page, attaché au titre principal. Il ne porte jamais seul une information. La page Join n'en a pas : son titre est sur cranberry, où l'or est interdit.
 
 **La règle des couleurs séparées.** Cranberry et bleu royal ne se touchent pas. L'or ne se pose pas sur le cranberry.
 
@@ -407,11 +408,12 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 | **Menu du téléphone** | Le mot « Menu » en étiquette et deux filets inégaux. Il ouvre le **sommaire** : plein écran sur encre, rubriques numérotées en très grand, lieu et année au bas, bouton « Fermer ». Fermeture par Échap, focus retenu dans le sommaire. |
 | **Lien fléché** | Libellé en graisse 600 et flèche. C'est la forme d'appel par défaut. |
 | **Liens dans un texte** | Bleu royal, soulignés. Sur champ fort : blancs, soulignés. |
-| **Boutons** | Réservés aux formulaires. Rectangle, rayon 2 px. Principal : fond bleu royal, texte blanc. Secondaire : contour encre. Sur champ fort : fond blanc, texte encre. |
+| **Boutons** | Réservés aux formulaires et à l'accès à un formulaire (« Candidater »). Rectangle, rayon 2 px. Principal : fond bleu royal, texte blanc. Secondaire : contour encre. Sur champ fort : fond blanc, texte encre. |
 | **Appel du champ cranberry** | Une ligne de texte en H1 sur toute la largeur, entre deux filets blancs, flèche à droite. |
 | **Étiquettes et badges** | Texte seul, sans fond ni contour. |
 | **Filtres** | Un index, pas une barre d'outils : une étiquette, puis les choix en texte sur une ligne. Le choix courant est en encre, souligné d'un filet bleu de 2 px ; les autres sont en Charcoal. Une liste longue se replie derrière son choix courant et se déplie sur place. Ni pilule, ni menu déroulant habillé, ni bouton. Un filtre est un lien : il change l'adresse de la page. |
-| **Formulaires** | Une colonne, libellé au-dessus, aide et erreur dessous, champs de 48 px, bordure Tin, texte de 16 px au moins. |
+| **Formulaires** | Une colonne, libellé au-dessus, aide et erreur dessous, champs de 48 px, bordure Tin, texte de 16 px au moins. Une erreur s'écrit sous son champ, précédée du mot « Erreur », avec une bordure plus épaisse : jamais par la couleur seule. Le choix entre deux options se fait par boutons radio dans un groupe titré. Le dépôt de fichier est un champ natif dans une zone à bordure pointillée. Ce qui se passe après l'envoi est écrit avant le bouton. |
+| **Accordéon** | Lignes séparées par un filet encre, question en H4, signe plus ou moins à droite, toute la ligne cliquable. Élément natif, sans script. |
 | **Modale, tiroir** | Rayon 0, l'unique ombre du système. |
 | **Notification** | Bandeau à fond teinté d'état avec bordure de 1 px, icône et texte. |
 | **Chargement** | Squelettes aux dimensions du contenu. |
@@ -450,7 +452,9 @@ L'impact n'affiche que des données réelles.
 
 ## 11. Recrutement
 
-**Parcours d'adhésion.** `Candidature → Invitation à une réunion ou une action → Participation → Devenir membre`
+**Parcours d'adhésion.** `Candidater → Être invité à une réunion ou une action → Participer → Devenir sympathisant → Être validé par l'Assemblée Générale → Devenir membre`
+
+La page Join montre les six étapes. Le champ cranberry de la Home en donne la version courte, en quatre temps.
 
 Entre la candidature et l'adhésion, la personne est **sympathisante** : pas encore membre, elle peut participer aux réunions, aux actions et aux moments de camaraderie, et devient membre après validation par l'Assemblée Générale.
 
@@ -458,6 +462,8 @@ Rejoindre un club est un engagement, pas un achat. Le site invite, explique et l
 
 - **Le champ cranberry** conclut la Home, et seulement la Home. Il contient une question, une phrase, l'appel et le parcours en quatre étapes numérotées.
 - **Le rappel cranberry** conclut les autres pages. C'est une bande basse : l'étiquette, la question, et l'appel sur une ligne. Ni photographie, ni parcours, ni phrase d'explication. Il rappelle, il n'insiste pas.
+- **Sur Join, le cranberry ouvre la page.** Un champ qui n'occupe que la gauche de l'écran, le titre « Nous rejoindre » en blanc, une photographie verticale qui le recouvre en partie à droite. La page n'a ni rappel ni autre surface cranberry : elle se termine par des liens de sortie.
+- **Aucune promesse.** Pas de slogan, pas de bénéfice vanté, pas de chiffre, pas de témoignage. La page explique, dans l'ordre : ce qu'est le club, pourquoi y participer, comment se passe le parcours, comment candidater.
 - **« Nous rejoindre »** figure dans l'en-tête, dans le champ cranberry et dans le pied de page.
 - **Interdits** : fenêtre surgissante, bandeau fixe, compte à rebours, « places limitées », vocabulaire commercial, points d'exclamation en série, appel répété à chaque section, témoignage inventé.
 
@@ -596,7 +602,7 @@ Seule la Home est conçue. Les quatre autres pages reprendront ce langage en mod
 | **Home** | Voir section 6. Signature, sept sections numérotées, champ cranberry. |
 | **Actions** | Le reportage. Ouverture typographique sur le fond de page, avec une photographie verticale à bord perdu qui descend dans la section suivante et une seconde image qui la chevauche. Définition en entrée de dictionnaire sur feuille blanche. Index des filtres, puis les actions une à une, chacune dans l'une de trois compositions qui alternent : grand format avec titre au-dessus et métadonnées en marge, verticale à gauche avec fiche à droite, texte à gauche avec image décalée à droite. Registre d'impact sur champ encre. Rappel cranberry. |
 | **News** | Le journal. Ouverture purement typographique, en deux lignes décalées, comme une manchette. Une actualité à la une : le jour en chiffre monumental, une grande photographie à bord perdu, le titre sur un aplat blanc qui mord dessus. Sur feuille blanche, les rubriques en index puis le registre, groupé par mois : le mois reste en marge pendant que ses lignes défilent. Les archives par année Rotary sur champ encre, les années en très grand. Deux liens vers les actions et les membres, puis le rappel cranberry. |
-| **Join** | Le parcours d'adhésion en quatre étapes comme colonne vertébrale, les quatre questions du Rotary, les valeurs, le statut de sympathisant, la candidature, les questions fréquentes. Pas de champ cranberry. |
+| **Join** | L'invitation. Ouverture sur champ cranberry partiel, photographie verticale qui le recouvre. « Un club, des actions, des liens » en trois lignes décalées sur feuille blanche. Les valeurs de part et d'autre d'un axe central : le nom à gauche de l'axe, la définition à droite. Les sept domaines sur champ encre, en lignes alternées gauche et droite. Le parcours en six étapes le long d'un filet vertical, chiffres au trait, le statut de sympathisant expliqué à son étape. Les quatre questions du Rotary en voix de récit, en grand. La candidature : colonne éditoriale et formulaire. Les questions fréquentes en accordéon. Liens de sortie. |
 | **Members** | L'annuaire. Le titre sur une seule ligne, en signature. Une photographie de groupe panoramique à bord perdu à gauche, les années Rotary en regard à droite. Sur feuille blanche, l'année tracée au trait en très grand, puis trois niveaux de lecture : une personne en grand format, trois portraits de tailles et de hauteurs différentes, puis les autres en lignes. Sur champ encre, l'index des fonctions : qui tient quoi, sans hiérarchie entre les fonctions. Liens de sortie, rappel cranberry. L'ordre des personnes est celui que le club choisit, jamais un classement par fonction. |
 
 ---

@@ -1,0 +1,160 @@
+/* Formulaire de candidature : une colonne, libellé au-dessus, erreur dessous. */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-24);
+}
+
+.pair {
+  display: grid;
+  gap: var(--space-24) var(--grid-gutter);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-8);
+}
+
+.field label,
+.group legend {
+  font-weight: var(--font-weight-semibold);
+}
+
+.field input:not([type="file"]) {
+  width: 100%;
+  min-height: var(--control-height);
+  padding-inline: var(--space-16);
+  border: var(--rule-width) solid var(--border-control);
+  border-radius: var(--radius-control);
+  color: var(--text-primary);
+  background: var(--bg-page);
+  font: inherit;
+  font-size: var(--text-body-size);
+}
+
+/* Une erreur épaissit la bordure : la couleur n'est pas le seul signal. */
+.field input:not([type="file"])[aria-invalid="true"] {
+  border: var(--border-width-strong) solid var(--state-error);
+}
+
+.group {
+  border: 0;
+}
+
+.group[aria-invalid="true"] .choices {
+  padding-left: var(--space-12);
+  border-left: var(--rule-width) solid var(--state-error);
+}
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8) var(--space-32);
+  margin-top: var(--space-8);
+}
+
+.choice {
+  display: inline-flex;
+  align-items: center;
+  column-gap: var(--space-12);
+  min-height: var(--target-min);
+  cursor: pointer;
+}
+
+.choice input {
+  width: var(--space-24);
+  height: var(--space-24);
+  accent-color: var(--action-bg);
+}
+
+/* Le dépôt de fichier : le champ natif, dans une zone à bordure pointillée. */
+.drop {
+  padding: var(--space-16);
+  border: var(--rule-width) dashed var(--border-control);
+  background: var(--bg-surface);
+}
+
+.drop input {
+  width: 100%;
+  min-height: var(--target-min);
+  font: inherit;
+}
+
+.drop input::file-selector-button {
+  min-height: var(--target-min);
+  margin-right: var(--space-16);
+  padding-inline: var(--space-16);
+  border: var(--border-width-strong) solid var(--text-primary);
+  border-radius: var(--radius-control);
+  color: var(--text-primary);
+  background: var(--bg-page);
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.drop:has(input[aria-invalid="true"]) {
+  border: var(--border-width-strong) dashed var(--state-error);
+}
+
+.hint {
+  color: var(--text-secondary);
+  font-size: var(--text-small-size);
+  line-height: var(--text-small-leading);
+}
+
+.error {
+  color: var(--state-error);
+  font-size: var(--text-small-size);
+  line-height: var(--text-small-leading);
+}
+
+.after {
+  padding-top: var(--space-24);
+  border-top: var(--rule-width) solid var(--rule-strong);
+  font-family: var(--font-recit);
+  font-size: var(--text-reading-size);
+  line-height: var(--text-reading-leading);
+}
+
+.after strong {
+  font-family: var(--font-structure);
+}
+
+.submit {
+  align-self: flex-start;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.submit:disabled {
+  color: var(--disabled-text);
+  background: var(--disabled-bg);
+  cursor: default;
+}
+
+/* Le résultat : un bandeau d'information, bordé sur tout son pourtour. */
+.outcome:not(:empty) {
+  padding: var(--space-16);
+  border: var(--rule-width) solid var(--state-info);
+  color: var(--state-info);
+  background: var(--state-info-bg);
+}
+
+.outcomeTitle {
+  font-weight: var(--font-weight-bold);
+}
+
+@media (min-width: 640px) {
+  .pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  .submit {
+    align-self: stretch;
+  }
+}

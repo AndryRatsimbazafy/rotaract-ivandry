@@ -1,0 +1,66 @@
+/*
+ * 02 : sur le fond de page. Les cinq valeurs de part et d'autre d'un axe
+ * central : le nom finit sur l'axe, la définition en part.
+ */
+
+.section {
+  padding-block: var(--rhythm-major);
+}
+
+.title {
+  margin-top: var(--space-16);
+  font-size: var(--text-h3-size);
+  font-stretch: var(--font-width-normal);
+  line-height: var(--text-h3-leading);
+  letter-spacing: 0;
+}
+
+.values {
+  margin-top: var(--rhythm-heading);
+  border-bottom: var(--rule-width) solid var(--rule-strong);
+}
+
+.value {
+  row-gap: var(--space-8);
+  padding-block: var(--space-24);
+  border-top: var(--rule-width) solid var(--rule-strong);
+}
+
+.name,
+.description {
+  grid-column: 1 / -1;
+}
+
+.name {
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-xl-tracking);
+}
+
+.description {
+  max-width: 34ch;
+  font-family: var(--font-recit);
+  font-size: var(--text-lede-size);
+  line-height: var(--text-lede-leading);
+}
+
+@media (min-width: 1024px) {
+  .value {
+    align-items: baseline;
+    padding-block: var(--space-32);
+  }
+
+  .name {
+    grid-column: 1 / span 6;
+    text-align: right;
+  }
+
+  /* L'axe : un filet vertical entre le nom et sa définition. */
+  .description {
+    grid-column: 7 / span 5;
+    padding-left: var(--grid-gutter);
+    border-left: var(--rule-width) solid var(--rule-strong);
+  }
+}

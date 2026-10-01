@@ -1,0 +1,98 @@
+/* 07 : sur le fond de page. Les questions fréquentes, en accordéon. */
+
+.section {
+  padding-block: var(--rhythm-major) var(--rhythm-section);
+}
+
+.layout {
+  row-gap: var(--space-32);
+}
+
+.head,
+.list {
+  grid-column: 1 / -1;
+}
+
+.title {
+  margin-top: var(--space-16);
+  font-size: var(--text-h1-size);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--text-h1-leading);
+  letter-spacing: var(--text-h1-tracking);
+}
+
+.list {
+  border-bottom: var(--rule-width) solid var(--rule-strong);
+}
+
+.item {
+  border-top: var(--rule-width) solid var(--rule-strong);
+}
+
+.question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: var(--space-24);
+  min-height: var(--target-min);
+  padding-block: var(--space-16);
+  cursor: pointer;
+  list-style: none;
+}
+
+.question::-webkit-details-marker {
+  display: none;
+}
+
+.name {
+  font-size: var(--text-h4-size);
+  font-stretch: var(--font-width-normal);
+  line-height: var(--text-h4-leading);
+}
+
+/* Un signe plus, qui devient un signe moins quand la réponse est ouverte. */
+.sign {
+  flex: none;
+  width: var(--space-16);
+  height: var(--space-16);
+  background:
+    linear-gradient(currentColor, currentColor) center / 100%
+      var(--border-width-strong) no-repeat,
+    linear-gradient(currentColor, currentColor) center /
+      var(--border-width-strong) 100% no-repeat;
+}
+
+.item[open] .sign {
+  background: linear-gradient(currentColor, currentColor) center / 100%
+    var(--border-width-strong) no-repeat;
+}
+
+.question:hover .name {
+  color: var(--link);
+}
+
+.answer {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.75em;
+  max-width: 56ch;
+  padding-bottom: var(--space-24);
+  font-family: var(--font-recit);
+  font-size: var(--text-reading-size);
+  line-height: var(--text-reading-leading);
+}
+
+@media (min-width: 1024px) {
+  .head {
+    grid-column: 1 / span 4;
+  }
+
+  .list {
+    grid-column: 6 / -1;
+  }
+
+  .name {
+    font-size: var(--text-h3-size);
+    line-height: var(--text-h3-leading);
+  }
+}

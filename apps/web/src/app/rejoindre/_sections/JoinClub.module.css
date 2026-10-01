@@ -1,0 +1,59 @@
+/*
+ * 01 : feuille blanche. « Un club, des actions, des liens » : trois lignes en
+ * très grand, chacune décalée d'une colonne, puis une phrase de récit.
+ */
+
+.sheet {
+  padding-block: calc(var(--rhythm-major) + var(--space-64)) var(--rhythm-major);
+  background: var(--bg-page);
+}
+
+.layout {
+  row-gap: var(--space-32);
+}
+
+.head,
+.text {
+  grid-column: 1 / -1;
+}
+
+.title {
+  margin-top: var(--space-24);
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-xl-tracking);
+}
+
+.line {
+  display: block;
+  padding-left: calc(var(--step) * var(--space-24));
+}
+
+.text {
+  max-width: 30ch;
+  font-family: var(--font-recit);
+  font-size: var(--text-statement-size);
+  line-height: var(--text-statement-leading);
+  text-wrap: pretty;
+}
+
+@media (min-width: 1024px) {
+  .sheet {
+    padding-top: var(--rhythm-major);
+  }
+
+  /* La colonne de droite reste libre : la photographie d'ouverture y descend. */
+  .head {
+    grid-column: 1 / span 7;
+  }
+
+  .line {
+    padding-left: calc(var(--step) * var(--col-step));
+  }
+
+  .text {
+    grid-column: 3 / span 6;
+    margin-top: var(--space-32);
+  }
+}

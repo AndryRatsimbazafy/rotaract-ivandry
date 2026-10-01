@@ -1,0 +1,94 @@
+/*
+ * 03 : le champ encre de la page. Les sept domaines d'action en grandes
+ * lignes, tour à tour alignées à gauche et à droite.
+ */
+
+.field {
+  /* Sur champ fort, le contour de focus est blanc. */
+  --focus-ring: var(--on-field-focus-ring);
+
+  padding-block: var(--rhythm-major);
+  color: var(--on-field-text);
+  background: var(--field-footer);
+}
+
+.head {
+  row-gap: var(--space-24);
+}
+
+.heading,
+.aside {
+  grid-column: 1 / -1;
+}
+
+.heading {
+  color: var(--on-field-text-secondary);
+}
+
+.title {
+  margin-top: var(--space-16);
+  color: var(--on-field-text);
+  font-size: var(--text-h3-size);
+  font-stretch: var(--font-width-normal);
+  line-height: var(--text-h3-leading);
+  letter-spacing: 0;
+}
+
+.intro {
+  max-width: 32ch;
+  margin-bottom: var(--space-8);
+  color: var(--on-field-text-secondary);
+  font-family: var(--font-recit);
+  font-size: var(--text-lede-size);
+  font-style: italic;
+  line-height: var(--text-lede-leading);
+}
+
+.areas {
+  margin-top: var(--rhythm-heading);
+  border-bottom: var(--rule-width) solid var(--on-field-rule);
+  list-style: none;
+}
+
+.area {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-8);
+  padding-block: var(--space-16) var(--space-24);
+  border-top: var(--rule-width) solid var(--on-field-rule);
+}
+
+.index {
+  color: var(--on-field-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.name {
+  font-size: var(--text-h1-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: var(--text-h1-leading);
+  letter-spacing: var(--text-h1-tracking);
+  text-wrap: balance;
+}
+
+@media (min-width: 768px) {
+  .area:nth-child(even) {
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
+@media (min-width: 1024px) {
+  .head {
+    align-items: end;
+  }
+
+  .heading {
+    grid-column: 1 / span 5;
+  }
+
+  .aside {
+    grid-column: 8 / -1;
+  }
+}
