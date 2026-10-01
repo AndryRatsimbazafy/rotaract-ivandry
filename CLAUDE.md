@@ -45,6 +45,6 @@ Things that are not obvious from a single file:
 - npm only; TypeScript everywhere; no Docker; no CI/CD; deployment out of scope for now (later: Vercel for the two Next apps, Render for the API).
 - Planned but **not yet installed**: MongoDB Atlas (Free), JWT auth, a single `ADMIN` role.
 - Public UI is French only for v1. Keep the architecture ready for French + English, but do not implement English.
-- Do not add dependencies or restructure the repo beyond what a task explicitly asks; work proceeds in explicitly requested steps (pages, models, auth, APIs, design and UI components are each started only on request).
-- Typography and design are deferred to a later design phase; the template's Geist fonts stay until then.
+- Do not add dependencies or restructure the repo beyond what a task explicitly asks; work proceeds in explicitly requested steps (pages, models, auth, APIs, design implementation and UI components are each started only on request).
+- `DESIGN.md` is the source of truth for the visual direction of the Front Office (colors, typography, layout, components, motion, accessibility). Read it before any UI work and follow it; change a design decision there first, never only in code. It is not implemented yet: the templates still load Geist, which is no longer the typographic direction (Open Sans + Georgia, no dark mode in v1).
 - Commits follow Conventional Commits with a scope, e.g. `feat(web): …`.
