@@ -1,7 +1,7 @@
 # ARCHITECTURE : Backend et Back Office
 
 > Référence technique avant implémentation de `apps/api` et `apps/admin`, et de la connexion de `apps/web` à l'API.
-> État au 2026-10-01. **Rien de ce document n'est encore implémenté** : aucune dépendance installée, aucune base créée, aucun endpoint écrit.
+> État au 2026-10-02. **Implémenté** : l'API (étapes 1 à 5 de la section 15) et le Back Office (étapes 6 et 7). **Restent à faire** : le stockage des images, et la connexion du Front Office à l'API (étape 8), qui utilise toujours ses données locales.
 > Les décisions verrouillées et les décisions encore ouvertes sont listées en section 14 ; les points marqués **[ouvert]** y renvoient. Une décision qui change se corrige ici avant de se corriger dans le code.
 > La direction visuelle du Front Office reste dans `DESIGN.md` ; le contexte général dans `PROJECT_CONTEXT.md`.
 
@@ -142,7 +142,7 @@ Une actualité du club. **Entité distincte d'Action** : la date y domine, il n'
 | `title` | string | oui | |
 | `slug` | string | oui | **Unique.** |
 | `type` | NewsType | oui | |
-| `date` | Date | oui | Un seul champ de date et heure ; ni heure séparée, ni date de fin. |
+| `date` | Date | oui | Un seul champ de date et heure ; ni heure séparée, ni date de fin. Enregistrée en temps universel ; saisie dans le Back Office en heure de Madagascar (voir 11). |
 | `rotaryYear` | ObjectId → RotaryYear | oui | Référence explicite, choisie par l'administrateur, comme pour Action. |
 | `location` | string | non | Déjà affiché par le Front Office. 1 à 120 caractères. |
 | `summary` | string | non | |
@@ -465,10 +465,11 @@ Format unique, pour les deux surfaces :
 
 ### Écarts à traiter lors de la migration
 
-Deux décisions de ce document ne sont pas encore reflétées par le Front Office V1 ni par `DESIGN.md`, volontairement laissés intacts à ce stade :
+Trois décisions de ce document ne sont pas encore reflétées par le Front Office V1 ni par `DESIGN.md`, volontairement laissés intacts à ce stade :
 
 1. **Impact sans faux contenu.** Le registre d'impact de la page Actions affiche aujourd'hui cinq indicateurs avec la mention « Donnée à venir », et `DESIGN.md` (section 10) prescrit cette mention. La décision est désormais : pas de donnée, pas de section. À la migration, le registre ne s'affiche que s'il a des données réelles, et `DESIGN.md` est corrigé d'abord. Aucune entité ne porte ce registre agrégé pour l'instant **[ouvert]**.
 2. **Année Rotary explicite.** Le Front Office déduit l'année d'une actualité de sa date ; il lira l'année fournie par l'API.
+3. **Fuseau des actualités.** Le Front Office affiche aujourd'hui les dates en temps universel. La date d'une actualité est saisie en heure de Madagascar (voir 11) : à la migration, il l'affichera dans le fuseau approprié.
 
 ## 11. Back Office → API
 
@@ -482,24 +483,31 @@ Le Back Office est une application Next.js dont **le serveur fait l'intermédiai
 - **Protection des routes, à deux niveaux.** `src/proxy.ts` (la convention de Next.js 16, qui remplace `middleware.ts`) redirige vers `/connexion` toute requête sans cookie. Puis le layout du groupe protégé appelle `GET /auth/me` : la vérification réelle reste celle de l'API.
 - **Erreurs.** `401` : cookie effacé, redirection vers `/connexion`. `403` : page d'accès refusé. `400` avec `details` : chaque message est rendu sous son champ. `409` : message en tête de formulaire. Erreur réseau ou `5xx` : message générique, la saisie est conservée.
 - **Déconnexion.** Une Server Action efface le cookie et redirige.
+- **Dates et fuseau.** La date d'une actualité se saisit en date et heure, **en heure de Madagascar** ; le Back Office la convertit en temps universel avant de l'envoyer à l'API, qui n'enregistre que du temps universel. Le Back Office l'affiche en heure de Madagascar, quel que soit le fuseau de l'ordinateur de l'administrateur ; il affiche de même les dates de création, de première publication et de candidature. La date d'une action est une date sans heure, affichée telle qu'elle est enregistrée. L'API et ses contrats ne changent pas.
 - **Envoi de fichiers.** Dépend de la stratégie de stockage : un passage par le serveur Next.js est limité en taille sur Vercel (environ 4,5 Mo), ce qui est trop peu pour des photographies de 2400 px. Un envoi direct du navigateur vers l'API ou vers le fournisseur sera probablement nécessaire ; c'est le seul cas où CORS devrait être ouvert. **[ouvert]**
 
-### Structure prévue (non créée)
+### Structure
 
 ```
 apps/admin/src/
-├── proxy.ts
+├── proxy.ts                redirection vers /connexion sans cookie
 ├── app/
 │   ├── connexion/
+│   ├── session/fin/        adresse technique : efface le cookie (impossible pendant un rendu)
+│   ├── acces-refuse/       adresse technique : page du 403
 │   └── (admin)/            layout protégé : barre latérale, vérification de session
 │       ├── page.tsx        accueil du Back Office
 │       ├── annees/  membres/  actions/  actualites/  candidatures/
-├── lib/        api.ts, session.ts
+│       └── candidatures/[id]/cv/   relais du fichier renvoyé par l'API
+├── components/ cadre, dialogue de confirmation, avis, états, barre de liste, champs partagés
+├── lib/        api.ts, session.ts, dates.ts (seul fichier à connaître le fuseau), labels.ts, …
 ├── theme/      thème MUI
 └── types/      formes d'administration des ressources
 ```
 
-Interface en français. MUI à installer plus tard : `@mui/material`, `@emotion/react`, `@emotion/styled`, `@mui/material-nextjs`, `@mui/icons-material`. Les tableaux commencent avec le `Table` de MUI ; `@mui/x-data-grid` ne s'ajoute que si un besoin le justifie. La spécification visuelle du Back Office reste à écrire, séparément de `DESIGN.md`.
+Les adresses des écrans sont `/connexion`, `/`, `/annees`, `/membres`, `/actions`, `/actualites`, `/candidatures` et leurs sous-adresses ; aucune n'est sous `/admin`, qui désigne les routes de l'API.
+
+Interface en français. MUI installé : `@mui/material`, `@emotion/react`, `@emotion/styled`, `@mui/material-nextjs`, `@mui/icons-material`, et `@emotion/cache`, dépendance paire obligatoire de `@mui/material-nextjs` que l'installation sans hoisting ne rend pas accessible autrement. Les tableaux utilisent le `Table` de MUI ; `@mui/x-data-grid` ne s'ajoute que si un besoin le justifie. **Aspect.** `DESIGN.md` ne régit pas le Back Office. Sa direction est fonctionnelle : lisibilité, densité adaptée à l'administration, formulaires clairs, tableaux et listes efficaces, états d'attente, d'erreur et de liste vide, confirmation des suppressions, retour après chaque opération, adaptation raisonnable aux écrans. Un seul thème MUI pour tous les écrans ; ses détails (couleurs, typographie, densité) sont fixés par `specs/008-back-office/plan.md`.
 
 ### Types partagés
 
@@ -737,6 +745,8 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 | 15 | **Front Office** | Reste sur ses données locales. La migration vers l'API est une étape ultérieure. |
 | 16 | **Route de santé** | `GET /api/v1/health`, route technique publique : `200` si l'API et la base répondent, `503` si la base n'est pas joignable, aucune information sensible. Mise en place par le socle. |
 | 17 | **En-têtes de sécurité** | `helmet` sur toutes les réponses, mis en place par le socle. La limitation de fréquence (`@nestjs/throttler`) arrive avec l'authentification. |
+| 18 | **Aspect du Back Office** | Direction fonctionnelle, distincte de `DESIGN.md` : lisibilité, densité adaptée à l'administration, formulaires clairs, tableaux et listes efficaces, états d'attente, d'erreur et de liste vide, confirmation des suppressions, retour après chaque opération. Aucun document visuel distinct : un seul thème MUI, détaillé par le plan de la fonctionnalité 008. |
+| 19 | **Dates du Back Office** | La date d'une actualité est saisie en date et heure, en heure de Madagascar, et convertie en temps universel avant l'enregistrement. Le Back Office affiche en heure de Madagascar la date des actualités et les dates de création, de première publication et de candidature, quel que soit le fuseau de l'ordinateur. L'API n'enregistre et ne renvoie que du temps universel. |
 
 ### Encore ouvertes
 
@@ -747,7 +757,6 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 | **Limites des fichiers** | 10 Mo par image est une proposition. (5 Mo par CV : confirmé.) | L'étape « stockage de fichiers » |
 | **Cache du Front Office** | 60 s de revalidation proposées. | La migration du Front Office |
 | **Anti-spam du formulaire** | Au-delà de la limite de fréquence, rien n'est prévu. | Rien dans l'immédiat |
-| **Spécification visuelle du Back Office** | À écrire, séparément de `DESIGN.md`. | Les écrans du Back Office |
 
 Rien de ce qui est ouvert ne bloque les trois premières étapes (socle de l'API, authentification, années, membres et mandats), ni les actions et actualités hors envoi de photos.
 

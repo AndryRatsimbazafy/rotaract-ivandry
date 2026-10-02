@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT — Rotaract Club Ivandry
 
-> Document de référence du projet. État au 2026-10-01 : le Front Office V1 est terminé et audité (données locales, aucune connexion à l'API) ; l'architecture du Backend et du Back Office est spécifiée dans `ARCHITECTURE.md`, ses décisions principales sont verrouillées ; le socle de l'API (`apps/api`) est en place, avec l'authentification de l'administrateur et quatre domaines métier administrables : les années Rotary, les membres avec leurs mandats, les actions et les actualités ; `apps/admin` est encore le gabarit d'origine.
+> Document de référence du projet. État au 2026-10-02 : le Front Office V1 est terminé et audité (données locales, aucune connexion à l'API) ; l'architecture du Backend et du Back Office est spécifiée dans `ARCHITECTURE.md`, ses décisions principales sont verrouillées ; le socle de l'API (`apps/api`) est en place, avec l'authentification de l'administrateur et quatre domaines métier administrables : les années Rotary, les membres avec leurs mandats, les actions et les actualités, ainsi que les candidatures ; le Back Office (`apps/admin`) est construit : connexion, navigation et gestion de ces cinq domaines, sur l'API.
 
 ## 1. Objectif du projet
 
@@ -30,7 +30,7 @@ rotaract-ivandry/
 ├── PROJECT_CONTEXT.md  DESIGN.md  ARCHITECTURE.md  CLAUDE.md  README.md
 ├── apps/
 │   ├── web/      Front Office public — Next.js (App Router) + TypeScript — terminé en V1
-│   ├── admin/    Back Office — Next.js (App Router) + TypeScript, MUI prévu — gabarit
+│   ├── admin/    Back Office — Next.js (App Router) + TypeScript + MUI — construit
 │   └── api/      Backend — NestJS + TypeScript — socle en place
 └── packages/     réservé aux packages partagés futurs (vide, `.gitkeep`)
 ```
@@ -70,9 +70,18 @@ Organisation de `apps/web/src` :
 
 Technique : CSS Modules et tokens (`tokens.css`), pas de Tailwind ; Open Sans chargée par `next/font/google` avec l'axe `wdth`, Georgia en police système ; alias `@/*` → `./src/*` ; aucune dépendance au-delà de Next.js et React.
 
-### apps/admin — Back Office (gabarit)
+### apps/admin — Back Office (construit)
 
-Gabarit `create-next-app` intact : page d'accueil du gabarit, polices Geist, `lang="fr"`, titre « Administration — Rotaract Club Ivandry ». MUI n'est pas installé. La structure prévue est décrite dans `ARCHITECTURE.md`, section 11.
+Interface d'administration, en français, sur les opérations `/admin/*` de l'API (fonctionnalité 008). Le serveur Next.js est le seul intermédiaire : lectures dans des Server Components, écritures par Server Actions, jeton dans un cookie `httpOnly` et `Secure` ; le navigateur n'appelle jamais l'API et ne connaît ni son adresse ni le jeton.
+
+- **Écrans** : `/connexion` ; `/` (accès aux cinq domaines, sans chiffres) ; `/annees` ; `/membres` (liste, fiche avec ses mandats, `/membres/ordre` pour l'ordre d'une année) ; `/actions` ; `/actualites` ; `/candidatures` (liste, fiche, téléchargement du CV relayé par le Back Office, contact par `mailto:`, suppression). Deux adresses techniques : `/session/fin`, `/acces-refuse`.
+- **Protection** : `src/proxy.ts` (présence du cookie), layout protégé (`GET /auth/me`), puis chaque appel à l'API ; un `401` efface la session et ramène à la connexion.
+- **Listes** : recherche, filtres, tri et page vivent dans l'adresse ; ce sont exactement ceux des contrats de l'API.
+- **Dates** : `src/lib/dates.ts` est le seul fichier à connaître le fuseau. Une actualité se saisit en date et heure de Madagascar, convertie en temps universel sur le serveur ; les dates sont formatées sur le serveur, jamais dans le navigateur.
+- **Aspect** : un seul thème MUI, fonctionnel et dense (`src/theme/theme.ts`) ; `DESIGN.md` ne s'y applique pas.
+- **Hors de ce qui est construit** : photographies et portraits (stockage des images non décidé), gestion de compte, aperçu du Front Office.
+
+Technique : MUI 9 et Emotion 11 (six dépendances), Open Sans par `next/font/google` ; aucune bibliothèque de formulaires, de dates, de tableaux ni de glisser-déposer. Variable : `API_URL`, côté serveur seulement (`apps/admin/.env.local`, à créer à la main ; `apps/admin/.env.example` en porte le nom). Structure : `ARCHITECTURE.md`, section 11. Documents : `specs/008-back-office/`.
 
 ### apps/api — Backend (socle en place)
 
@@ -112,7 +121,7 @@ Sept collections : `rotaryyears`, `admins`, `members`, `membermandates`, `action
 | NestJS (`api`) | `^12`, plateforme Express |
 | TypeScript (`api`) | `^6` |
 | Lint / format (`api`) | oxlint, Prettier |
-| MUI (`admin`) | prévu — non installé |
+| MUI (`admin`) | `@mui/material`, `@mui/icons-material`, `@mui/material-nextjs` `^9` ; `@emotion/react`, `@emotion/styled`, `@emotion/cache` `^11` |
 | Configuration (`api`) | `@nestjs/config` `^12` |
 | Validation (`api`) | `class-validator` `^0.15`, `class-transformer` `^0.5` |
 | En-têtes de sécurité (`api`) | `helmet` `^8` |
@@ -123,7 +132,7 @@ Sept collections : `rotaryyears`, `admins`, `members`, `membermandates`, `action
 | Réception de fichiers (`api`) | intercepteur de fichier de `@nestjs/platform-express` (`multer`), déjà présent ; en mémoire |
 | Base de données | MongoDB Atlas Free — connexion implémentée dans l'API ; cluster et `apps/api/.env` créés à la main par le porteur du projet ; connexion à Atlas vérifiée |
 | ODM | Mongoose `^9` + `@nestjs/mongoose` `^12` — installés, aucun modèle |
-| Authentification | JWT HS256, un seul rôle `ADMIN` — en place dans l'API ; le Back Office ne s'en sert pas encore |
+| Authentification | JWT HS256, un seul rôle `ADMIN` — en place dans l'API ; le Back Office range le jeton dans un cookie `httpOnly`, `Secure`, `SameSite=Lax` |
 
 ### Configurations TypeScript
 
@@ -202,7 +211,7 @@ Le script racine `dev` repose sur le shell (`&` + `wait`) : il fonctionne sous L
 
 ## 9. Décisions encore ouvertes
 
-Les décisions techniques verrouillées (Mongoose, mandats en collection séparée, slugs, pagination, compte `ADMIN` unique créé par script, JWT HS256 de 8 heures avec Argon2id, préfixe `/api/v1`, cinq types d'actualité, année Rotary explicite sur les contenus, impact optionnel sans faux contenu) sont listées dans `ARCHITECTURE.md`, section 14.
+Les décisions techniques verrouillées (Mongoose, mandats en collection séparée, slugs, pagination, compte `ADMIN` unique créé par script, JWT HS256 de 8 heures avec Argon2id, préfixe `/api/v1`, cinq types d'actualité, année Rotary explicite sur les contenus, impact optionnel sans faux contenu, aspect fonctionnel du Back Office, dates du Back Office en heure de Madagascar) sont listées dans `ARCHITECTURE.md`, section 14.
 
 Restent ouvertes :
 
@@ -210,18 +219,16 @@ Restent ouvertes :
 - sort du registre d'impact agrégé de la page Actions (il affiche encore « Donnée à venir », ce que la décision sur l'impact interdit : `DESIGN.md` et le Front Office seront alignés à la migration) ;
 - limite de taille des images, cache du Front Office, anti-spam du formulaire (au-delà de la limite de fréquence).
 
-Autres points repoussés : contenu de `packages/` ; solution d'internationalisation ; spécification visuelle du Back Office ; famille d'icônes du Front Office ; déploiement et CI/CD.
+Autres points repoussés : contenu de `packages/` ; solution d'internationalisation ; famille d'icônes du Front Office ; déploiement et CI/CD.
 
 ## 10. Périmètre et prochaines étapes
 
-**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary (modèle, calculs, liste publique, administration) ; authentification de l'administrateur (compte par commande manuelle, connexion, jeton, gardes, limitation des tentatives) ; membres et mandats (administration, ordre par année, annuaire public) ; actions (administration, slug, publication, impact, lectures publiques) ; actualités (administration, slug, publication, lectures publiques, archives par année) ; candidatures (dépôt public avec CV, consultation, téléchargement du CV, suppression, stockage du CV chez Cloudinary).
+**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary (modèle, calculs, liste publique, administration) ; authentification de l'administrateur (compte par commande manuelle, connexion, jeton, gardes, limitation des tentatives) ; membres et mandats (administration, ordre par année, annuaire public) ; actions (administration, slug, publication, impact, lectures publiques) ; actualités (administration, slug, publication, lectures publiques, archives par année) ; candidatures (dépôt public avec CV, consultation, téléchargement du CV, suppression, stockage du CV chez Cloudinary) ; Back Office (connexion et session, navigation, années Rotary, membres et mandats avec l'ordre d'une année, actions, actualités en heure de Madagascar, candidatures).
 
 **Prochaines étapes**, chacune sur demande explicite, selon `ARCHITECTURE.md` :
 
-1. stockage des images (portrait des membres, photographies des actions et des actualités) ;
-2. socle du Back Office (MUI, connexion, session, client API) ;
-3. écrans du Back Office ;
-4. connexion du Front Office à l'API.
+1. stockage des images (portrait des membres, photographies des actions et des actualités), puis leur saisie dans le Back Office ;
+2. connexion du Front Office à l'API.
 
 **Hors périmètre pour l'instant** : tests, CI/CD, Docker, déploiement, version anglaise, rôles autres que `ADMIN`, workflow de candidature.
 
@@ -231,10 +238,10 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 - **`@types/node`** : `^20` pour `web`/`admin`, `^24` pour `api`, alors que le projet cible Node 22.
 - **Node 22.18.0 local** : `@nestjs/cli` 12 demande Node `^22.22.3` ; `npm install` affiche des avertissements `EBADENGINE` sans conséquence constatée.
 - **Next.js 16** : des conventions ont changé (par exemple `proxy.ts` remplace `middleware.ts`). Consulter `node_modules/next/dist/docs/` avant d'écrire du code Next.js.
-- `apps/web` télécharge Open Sans au build (`next/font/google`). `apps/admin` charge encore les polices Geist du gabarit.
+- `apps/web` et `apps/admin` téléchargent Open Sans au build (`next/font/google`).
 - `next dev` génère `AGENTS.md` et `CLAUDE.md` dans `apps/web` et `apps/admin`.
 - Les README de `apps/*` sont ceux des gabarits.
-- `apps/api/.env.example` existe ; l'API refuse de démarrer sans `apps/api/.env` valide (`MONGODB_URI`, `JWT_SECRET`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`) ni sans base joignable. Les autres applications n'ont pas encore de `.env.example`.
+- `apps/api/.env.example` existe ; l'API refuse de démarrer sans `apps/api/.env` valide (`MONGODB_URI`, `JWT_SECRET`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`) ni sans base joignable. `apps/admin/.env.example` porte le nom `API_URL` ; `apps/admin/.env.local` se crée à la main. `apps/web` n'a pas encore de `.env.example`.
 - **Compte d'administration** : un seul, créé par `npm run seed:admin --workspace=api`. `ADMIN_EMAIL` et `ADMIN_PASSWORD` ne restent dans `apps/api/.env` que le temps de la commande. Relancée avec un autre email, la commande refuse ; changer d'email demande de retirer le compte à la main dans la base. Un changement de mot de passe n'invalide pas les jetons déjà délivrés ; seul un changement de `JWT_SECRET` les invalide tous.
 - **Suppression d'une année Rotary** : refusée (`409`) quand un mandat, une action ou une actualité la référence. Toute entité future qui référence une année ajoute son contrôle au même endroit (`rotary-years.service.ts`).
 - **Slug d'une actualité** : mêmes règles que pour une action, avec sa propre unicité (une action et une actualité peuvent partager un slug) et son propre slug réservé, `archives`, qui désigne la route `/news/archives` : la génération donne `archives-2`, et fourni explicitement il est refusé (« Ce slug est réservé. »). `years` n'est réservé que pour les actions.
@@ -248,7 +255,7 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 - **Registre d'impact de la page Actions : contradiction toujours ouverte.** `DESIGN.md`, section 10, prescrit la mention « Donnée à venir » ; `ARCHITECTURE.md` décide « pas de donnée, pas de section ». L'API suit `ARCHITECTURE.md`. À traiter à la migration du Front Office, en corrigeant `DESIGN.md` d'abord ; le registre agrégé lui-même n'a toujours pas d'entité.
 - **Code dupliqué, par décision** : le retrait des espaces et la contrainte « label d'année » existent dans `members/dto/`, `actions/dto/` et `news/dto/` (le retrait des espaces et le motif du téléphone aussi dans `applications/dto/`) ; la logique de slug du service (suffixe libre, slug réservé, nouvelles tentatives) et la mise en forme d'une année existent dans `actions.service.ts` et `news.service.ts`. Le porteur du projet a choisi de ne pas refactorer les fonctionnalités validées. Un regroupement dans `common/` reste possible, comme étape à part.
 - **Réordonnancement des mandats d'une année** : seule opération de l'API faite dans une transaction MongoDB (le cluster Atlas est un jeu de réplicas). Les ordres passent en négatif puis prennent leur place de 1 à n, pour ne jamais heurter l'index unique ; en cas d'échec, rien n'est modifié. Échanger deux ordres passe par ce réordonnancement : modifier un seul mandat vers un ordre déjà pris est refusé.
-- **Messages de conflit** : mandat en double, ordre déjà pris et année utilisée répondent tous le `409` générique « Conflit avec une ressource existante. » ; le futur Back Office les distinguera par l'opération demandée.
+- **Messages de conflit** : mandat en double, ordre déjà pris et année utilisée répondent tous le `409` générique « Conflit avec une ressource existante. » ; le Back Office les distingue par l'opération demandée, avec ses propres messages (`specs/008-back-office/contracts/screens.md`).
 - **Références dans les schémas Mongoose** : déclarer le type `SchemaTypes.ObjectId`, pas `Types.ObjectId`, sans quoi l'identifiant est enregistré en texte et les recherches par référence ne trouvent rien.
 - **Suppression et référence concurrentes** : les contrôles d'existence ne sont pas dans une transaction ; avec un seul administrateur, le risque d'un mandat orphelin est théorique et accepté pour la V1.
 - **CV chez un prestataire extérieur** : le CV et son nom d'origine sont des données personnelles confiées à Cloudinary. Le fichier y est déposé sous un identifiant aléatoire, sans nom de candidat, et n'a aucune adresse publique ; il ne se lit que par l'API, avec un jeton d'administrateur.
@@ -260,4 +267,10 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 - **Réglages Cloudinary** : sur un compte gratuit, la livraison des fichiers PDF peut être bloquée par un réglage de sécurité du compte ; à activer si la lecture d'un CV PDF est refusée.
 - **Limitation des tentatives de connexion** : par adresse IP vue par l'API. Derrière un hébergeur, il faudra déclarer le mandataire de confiance au déploiement.
 - Le journal de l'API ne doit contenir aucun nom d'hôte, adresse ni identifiant de la base : le journal de démarrage est filtré dans `main.ts` (classe `StartupLogger`, locale, à ne pas généraliser) et le filtre d'erreurs ne journalise jamais le message d'une erreur interne.
+- **Cookie de session du Back Office** : `Secure` partout, y compris en local. Chrome et Firefox l'acceptent sur `http://localhost` ; Safari non : la vérification locale se fait avec Chrome ou Firefox.
+- **Fuseau des actualités** : saisies et affichées en heure de Madagascar dans le Back Office, enregistrées en temps universel. Le Front Office affiche encore les dates en temps universel : à sa migration, il devra afficher celle des actualités dans le fuseau approprié. Les années Rotary sont bornées en temps universel : une actualité du 1er juillet avant 3 heures, heure de Madagascar, tombe dans l'année précédente selon l'API ; le Back Office le signale sans corriger.
+- **`@emotion/cache`** : sixième dépendance du Back Office, non prévue à l'origine. C'est une dépendance paire obligatoire de `@mui/material-nextjs` ; avec l'installation sans hoisting, elle n'est pas résolue si elle n'est pas déclarée.
+- **Journal de développement du Back Office** : `next dev` journalise par défaut les adresses appelées et les arguments des Server Actions, qui peuvent porter des données personnelles ; `apps/admin/next.config.ts` désactive ces deux journaux.
+- **Limite des connexions vue du Back Office** : c'est le serveur du Back Office qui appelle `POST /auth/login` ; l'API voit donc son adresse, et la limite de 5 par minute est partagée par tous ceux qui se connectent par lui.
+- **Lecture d'un CV volumineux** : le stockage borne chaque appel à 10 secondes ; sur une liaison lente, un CV de 5 Mo peut dépasser ce délai. Le Back Office affiche alors « Service indisponible. » et permet de réessayer.
 - Le Front Office affiche encore des contenus provisoires à remplacer avant mise en ligne (texte de présentation du club, photographies, adresses des réseaux sociaux).
