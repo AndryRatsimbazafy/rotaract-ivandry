@@ -191,7 +191,7 @@ Le compte d'administration. Hors des entités métier, nécessaire à l'authenti
 
 ## 2. Médias et fichiers
 
-**Aucun fournisseur n'est choisi ni intégré** **[ouvert]**. Seule l'abstraction est décidée : les modèles portent les références dont un futur fournisseur aura besoin, et le code ne connaît qu'une interface.
+**Le CV des candidatures est conservé chez Cloudinary** (décision du 2026-10-02) ; **le fournisseur des images n'est pas choisi** **[ouvert]**. Dans les deux cas l'abstraction demeure : les modèles portent les références dont le fournisseur a besoin, et le code métier ne connaît qu'une interface.
 
 `MediaRef` (image, sous-document embarqué) :
 
@@ -208,9 +208,9 @@ Le compte d'administration. Hors des entités métier, nécessaire à l'authenti
 | `credit` | string | non | |
 | `focus` | string | non | Point d'intérêt en syntaxe CSS (`"50% 30%"`). |
 
-`FileRef` (document, pour le CV) : `url` (oui), `publicId` (non), `name` (oui), `mimeType` (oui), `size` (oui). Le CV n'est jamais exposé par l'API publique ; son adresse ne doit pas être devinable ni publique **[ouvert, avec le choix du fournisseur]**.
+`FileRef` (document, pour le CV) : `publicId` (oui), `name` (oui), `mimeType` (oui), `size` (oui). Aucune `url` n'est enregistrée : le CV est déposé chez Cloudinary comme fichier brut (`raw`) en accès authentifié, sous un identifiant aléatoire, et n'a aucune adresse publique. `mimeType` est le type constaté par l'API sur le contenu. Le CV n'est jamais exposé par l'API publique ; ni son identifiant ni aucune adresse de stockage n'apparaît dans une réponse de l'API.
 
-Dans le code : un module `media` avec une **interface `StorageService`** (`upload`, `delete`, éventuellement `signedUrl`). L'implémentation concrète se branche quand le fournisseur est choisi ; les autres modules ne connaissent que l'interface. Pas de collection `media` : les références sont embarquées dans leur document, ce qui suffit tant qu'il n'y a pas de médiathèque partagée.
+Dans le code : un module `media` avec une **abstraction `StorageService`** (envoyer, lire, supprimer) et son implémentation Cloudinary, seule partie du code qui connaît le fournisseur ; les autres modules ne connaissent que l'abstraction. L'envoi, la lecture et la suppression se font côté serveur, par appels signés ; l'accès signé utilisé pour lire un fichier reste interne à l'implémentation. Une erreur du fournisseur devient `503` pour l'appelant, sans détail. Pas de collection `media` : les références sont embarquées dans leur document, ce qui suffit tant qu'il n'y a pas de médiathèque partagée.
 
 ## 3. MongoDB
 
@@ -326,7 +326,7 @@ Pas de déconnexion côté API (le jeton est sans état : le Back Office efface 
 | GET | `/news` | `year`, `type`, `q`, `page`, `limit` | Liste paginée, plus récente d'abord. Liste vide (`200`) si l'année n'existe pas |
 | GET | `/news/archives` | | Années qui ont des actualités publiées, avec leur nombre. Une entrée par année : `rotaryYear` dans la forme de `/rotary-years`, et `count`, le nombre d'actualités publiées |
 | GET | `/news/:slug` | | Détail |
-| POST | `/applications` | `multipart/form-data` | Dépôt d'une candidature. Limité en fréquence. Ne renvoie rien de la candidature. |
+| POST | `/applications` | `multipart/form-data` | Dépôt d'une candidature. Limité à 20 demandes par heure et par adresse IP. Ne renvoie rien de la candidature. `201` ; `400` (validation), `413` (CV trop lourd), `415` (type de fichier refusé), `429` (limite dépassée), `503` (stockage indisponible). |
 
 Un contenu non publié répond `404` sur la surface publique, comme s'il n'existait pas.
 
@@ -339,7 +339,7 @@ Un contenu non publié répond `404` sur la surface publique, comme s'il n'exist
 | Mandats | `GET /admin/mandates` (`year`, `member`) · `POST` · `PATCH /:id` (fonctions, ordre) · `DELETE /:id` · `PUT /admin/mandates/order` (réordonner une année : `{ rotaryYear, mandateIds[] }`) Création : `201`, ordre attribué automatiquement. Suppression : `204`. `409` pour un mandat déjà existant pour le couple (membre, année) ou un ordre déjà pris dans l'année. La liste de réordonnancement contient exactement tous les mandats de l'année, chacun une fois ; l'opération est indissociable et renvoie les mandats de l'année dans leur nouvel ordre. |
 | Actions | `GET /admin/actions` (`year`, `focusArea`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` Création : `201`. Suppression : `204`. `409` pour un slug déjà pris. |
 | Actualités | `GET /admin/news` (`year`, `type`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` Création : `201`. Suppression : `204`. `409` pour un slug déjà pris. |
-| Candidatures | `GET /admin/applications` (`q`, `from`, `to`, `page`, `limit`, `sort`) · `GET /:id` · `GET /:id/cv` (accès au fichier) · `DELETE /:id`. Consultation et suppression seulement : ni création, ni modification, ni statut. |
+| Candidatures | `GET /admin/applications` (`q`, `from`, `to`, `page`, `limit`, `sort`) · `GET /:id` · `GET /:id/cv` · `DELETE /:id`. Consultation et suppression seulement : ni création, ni modification, ni statut. `GET /:id/cv` : l'API renvoie le fichier lui-même, en pièce jointe et sans cache ; `404` si le fichier n'existe plus au stockage. Suppression : `204` ; elle retire le fichier puis la candidature ; un fichier déjà absent ne l'empêche pas (`204`) ; `503` si le stockage est indisponible, et la candidature est alors conservée. |
 | Médias | `POST /admin/media` (envoi d'une image → `MediaRef`) · `DELETE /admin/media` (par `publicId`). Forme définitive liée au futur fournisseur **[ouvert]**. |
 
 La publication passe par `PATCH` (`isPublished`), sans endpoint dédié. Les corps de création et de modification d'une action ou d'une actualité portent `rotaryYear` (identifiant), obligatoire à la création.
@@ -378,7 +378,7 @@ Changer le mot de passe en V1 : relancer le script d'initialisation. Pas de « m
 | **Tableaux** | `roles`, `focusAreas` : valeurs d'enum, sans doublon. `photos` : 20 au plus. `partners` : 20 au plus. |
 | **Identifiants** | ObjectId valide, sinon `400` (et non `500`). |
 | **Images** | JPEG, PNG ou WebP ; 10 Mo au plus. `alt`, `width`, `height` obligatoires. |
-| **CV** | PDF, DOC ou DOCX ; 5 Mo au plus ; type vérifié sur le contenu, pas seulement sur l'extension. Limites à confirmer **[ouvert]**. |
+| **CV** | PDF, DOC ou DOCX ; 5 Mo au plus (5 242 880 octets) ; un seul fichier, non vide. Le type est constaté par l'API sur le contenu, et l'extension doit concorder ; le type annoncé par le client n'est pas utilisé. |
 
 **Slug.** Généré automatiquement par le serveur à partir du titre quand il n'est pas fourni (sans accents, en minuscules, mots séparés par des tirets) ; en cas de collision, suffixe `-2`, `-3`. **Modifiable à la main par l'administrateur**, à la création comme ensuite ; un slug saisi déjà pris répond `409`. Modifier le titre ne régénère pas le slug. Changer le slug d'un contenu publié change son adresse publique : le Back Office le signale, sans l'empêcher. Un titre dont aucun slug ne peut être tiré est refusé (`400`) si aucun slug n'est fourni. `years` est réservé pour les actions : il désigne la route `/actions/years` ; la génération automatique passe à `years-2`, et fourni par l'administrateur il est refusé (`400`). `archives` est réservé pour les actualités : il désigne la route `/news/archives` ; la génération automatique passe à `archives-2`, et fourni par l'administrateur il est refusé (`400`).
 
@@ -399,7 +399,7 @@ Contrat commun des listes paginées :
 | **Actions** (admin) | oui | titre, résumé | `year`, `focusArea`, `published` | `-date` (défaut), `title`, `createdAt` |
 | **News** (public) | oui | titre, résumé | `year`, `type` | `-date` |
 | **News** (admin) | oui | titre, résumé | `year`, `type`, `published` | `-date` (défaut), `title`, `createdAt` |
-| **Applications** (admin) | oui | prénom, nom, email | `from`, `to` (date de candidature) | `-createdAt` (défaut), `lastName` |
+| **Applications** (admin) | oui | prénom, nom, email | `from`, `to` (date de candidature, bornes incluses) | `createdAt`, `lastName`, dans les deux sens ; `-createdAt` par défaut |
 | **RotaryYears** | non | non | | `-startDate` |
 
 `year` est toujours le **label** (`2026-2027`), jamais un identifiant : c'est ce que les adresses du Front Office portent déjà.
@@ -520,7 +520,7 @@ Aucune valeur réelle ici ni dans le code. Chaque application aura un `.env.exam
 | `JWT_EXPIRES_IN` | non | Défaut `8h`. Durée strictement positive et de 8 heures au plus : une valeur nulle ou supérieure à 8 heures empêche le démarrage. |
 | `CORS_ORIGINS` | non | Vide par défaut : aucun navigateur n'appelle l'API. À renseigner seulement si l'envoi direct de fichiers est retenu. |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | script seulement | Lus par le script d'initialisation, jamais par l'API en fonctionnement. |
-| Variables du stockage | à définir | Avec le futur fournisseur. Secrets. |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | **oui** | Stockage des CV. Secrets. L'API refuse de démarrer si l'une manque. Les variables du stockage des images restent à définir, avec leur fournisseur. |
 
 ### `apps/web`
 
@@ -729,7 +729,7 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 | 7 | **Applications** | Aucun workflow de statut. `applicantStatus` = Étudiant ou Professionnel. La candidature est enregistrée, puis consultable et supprimable par l'administrateur. |
 | 8 | **API** | Préfixe `/api/v1`. |
 | 9 | **Public / admin** | `/admin/*` protégé par JWT + `ADMIN`. Le Front Office n'a aucun accès aux endpoints d'administration. |
-| 10 | **Stockage** | Abstraction `StorageService` conservée. Aucun fournisseur choisi ni intégré. Les modèles (`MediaRef`, `FileRef`) portent les références utiles à un futur fournisseur. |
+| 10 | **Stockage** | Abstraction `StorageService` conservée. Cloudinary pour le CV des candidatures : fichier brut en accès authentifié, envoi côté serveur seulement, aucune référence de stockage dans les réponses de l'API. Une candidature et son CV sont conservés jusqu'à leur suppression par l'administrateur : aucune suppression automatique. Aucun fournisseur choisi pour les images ; `MediaRef` porte les références utiles à un futur fournisseur. |
 | 11 | **News** | Les cinq types du Front Office V1 uniquement. |
 | 12 | **Impact** | Optionnel. Aucun faux contenu : sans donnée d'impact, la section n'est pas affichée. |
 | 13 | **Année Rotary d'un contenu** | Référence explicite vers RotaryYear sur Action et News, choisie par l'administrateur. Jamais déduite en silence de la date. |
@@ -743,9 +743,8 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 | Sujet | Ce qu'il faut trancher | Bloque |
 |---|---|---|
 | **Fournisseur de stockage des images** | Lequel, et par quel chemin les fichiers sont envoyés (via l'API ou directement depuis le navigateur, ce qui ouvrirait CORS). | L'étape « stockage de fichiers », l'envoi de photos dans le Back Office |
-| **Stockage des CV** | Stockage privé recommandé ; durée de conservation des candidatures à fixer par le club (données personnelles). | L'étape « candidatures » |
 | **Registre d'impact agrégé de la page Actions** | Aucune entité ne le porte. À décider : le retirer, ou le faire saisir dans le Back Office. Dans les deux cas il ne s'affiche pas sans données, et `DESIGN.md` (section 10) est à aligner avant de toucher au Front Office. | La migration du Front Office |
-| **Limites des fichiers** | 10 Mo par image et 5 Mo par CV sont des propositions. | L'étape « stockage de fichiers » |
+| **Limites des fichiers** | 10 Mo par image est une proposition. (5 Mo par CV : confirmé.) | L'étape « stockage de fichiers » |
 | **Cache du Front Office** | 60 s de revalidation proposées. | La migration du Front Office |
 | **Anti-spam du formulaire** | Au-delà de la limite de fréquence, rien n'est prévu. | Rien dans l'immédiat |
 | **Spécification visuelle du Back Office** | À écrire, séparément de `DESIGN.md`. | Les écrans du Back Office |
@@ -760,7 +759,7 @@ Chaque étape démarre sur demande explicite.
 2. Authentification et script d'initialisation du compte.
 3. Années Rotary, puis membres et mandats.
 4. Actions, actualités.
-5. Stockage de fichiers, puis candidatures.
+5. Candidatures, avec le stockage de leur CV ; le stockage des images reste à faire.
 6. Socle du Back Office : MUI, connexion, session, client API, mise en page.
 7. Écrans du Back Office, ressource par ressource.
 8. Connexion du Front Office à l'API, en remplaçant le corps des fonctions de `src/data`.

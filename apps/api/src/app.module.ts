@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ActionsModule } from './actions/actions.module';
+import { ApplicationsModule } from './applications/applications.module';
 import { AuthModule } from './auth/auth.module';
 import { getAppConfig } from './config/app-config';
 import { EnvironmentVariables, validate } from './config/env.validation';
@@ -49,6 +50,7 @@ import { RotaryYearsModule } from './rotary-years/rotary-years.module';
     MembersModule,
     ActionsModule,
     NewsModule,
+    ApplicationsModule,
   ],
 })
 export class AppModule {}

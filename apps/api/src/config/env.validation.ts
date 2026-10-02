@@ -88,6 +88,16 @@ export class EnvironmentVariables {
 
   @Validate(IsOriginList)
   CORS_ORIGINS: string = '';
+
+  // Stockage des CV des candidatures.
+  @IsString()
+  CLOUDINARY_CLOUD_NAME: string;
+
+  @IsString()
+  CLOUDINARY_API_KEY: string;
+
+  @IsString()
+  CLOUDINARY_API_SECRET: string;
 }
 
 const RULES: Record<keyof EnvironmentVariables, string> = {
@@ -99,13 +109,16 @@ const RULES: Record<keyof EnvironmentVariables, string> = {
     'nombre suivi de s, m, h ou d ; durée strictement positive et de 8 heures au plus',
   CORS_ORIGINS:
     'origines séparées par des virgules ; chacune avec schéma et hôte, sans chemin',
+  CLOUDINARY_CLOUD_NAME: 'obligatoire ; nom du compte Cloudinary',
+  CLOUDINARY_API_KEY: "obligatoire ; clé d'API Cloudinary",
+  CLOUDINARY_API_SECRET: 'obligatoire ; secret Cloudinary',
 };
 
 const NAMES = Object.keys(RULES) as (keyof EnvironmentVariables)[];
 
 export class ConfigValidationError extends Error {}
 
-// Seules les variables du socle sont lues. Une variable vide compte comme absente.
+// Seules les variables déclarées ici sont lues. Une variable vide compte comme absente.
 export function validate(
   config: Record<string, unknown>,
 ): EnvironmentVariables {

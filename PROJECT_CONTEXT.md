@@ -91,11 +91,13 @@ Le gabarit `nest new` a été remplacé par le socle (spec `specs/001-api-founda
 - `actions/` : le modèle **Action** (spec `specs/005-actions/`) — titre, slug unique, résumé, description, date, année Rotary choisie par l'administrateur et jamais déduite de la date, domaines d'action (`focusAreas[]`, parmi les sept de `common/enums/focus-area.enum.ts`), impact facultatif embarqué, état de publication, ordre manuel facultatif. Administration sous `/api/v1/admin/actions` (liste paginée avec recherche, filtres et tri, consultation, création, modification qui publie et dépublie aussi, suppression). Lecture publique des seules actions publiées : `GET /api/v1/actions` (paginée ; tri par ordre quand il existe, puis date décroissante), `GET /api/v1/actions/years`, `GET /api/v1/actions/:slug`. Pas de photographies avant le stockage de fichiers.
 - `common/utils/slug.ts` : génération d'un slug depuis un titre, utilisée par les actions et les actualités.
 - `news/` : le modèle **News** (spec `specs/006-news/`, collection `news`) — titre, slug unique parmi les actualités, type parmi les cinq de `common/enums/news-type.enum.ts`, date et heure en un seul champ, année Rotary choisie par l'administrateur et jamais déduite de la date, lieu, résumé, contenu, état de publication. Entité distincte d'Action : ni impact, ni domaine, ni ordre manuel, ni mise « à la une ». Administration sous `/api/v1/admin/news` (liste paginée avec recherche, filtres et tri, consultation, création, modification qui publie et dépublie aussi, suppression). Lecture publique des seules actualités publiées : `GET /api/v1/news` (paginée, date décroissante), `GET /api/v1/news/archives` (une entrée par année Rotary, avec le nombre d'actualités publiées), `GET /api/v1/news/:slug`. Il n'existe pas de route `/news/years`. Pas de photographies avant le stockage de fichiers.
-- `apps/api/.env.example` liste les six variables, sans valeur. `apps/api/.env` est local et ignoré par Git.
+- `media/` : l'abstraction `StorageService` (envoyer, lire, supprimer un fichier) et son implémentation Cloudinary, `cloudinary-storage.service.ts`, **seul fichier du code qui connaît le fournisseur**. Appels signés, côté serveur seulement ; toute erreur du fournisseur devient une erreur de stockage sans détail, journalisée par son type.
+- `applications/` : le modèle **Application** (spec `specs/007-applications/`) — prénom, nom, email, téléphone, situation (`applicantStatus` : `etudiant` ou `professionnel`, `common/enums/applicant-status.enum.ts`), CV (`common/schemas/file-ref.schema.ts`) et date de candidature. Ni état de traitement, ni modification. Dépôt public `POST /api/v1/applications` en `multipart/form-data` (répond `{ "received": true }`, 20 demandes par heure et par adresse IP). Administration sous `/api/v1/admin/applications` : liste paginée (recherche, période, tri), fiche, CV renvoyé par l'API en téléchargement, suppression qui retire aussi le fichier. Aucune lecture publique ; aucune référence de stockage dans les réponses.
+- `apps/api/.env.example` liste les neuf variables, sans valeur. `apps/api/.env` est local et ignoré par Git.
 
 État : le code du socle est **implémenté** ; la **configuration** réelle (`apps/api/.env`) et le cluster MongoDB Atlas sont des **opérations manuelles** du porteur du projet, faites ; le socle a été vérifié contre Atlas (`specs/001-api-foundation/tasks.md`, T011, T016, T026). `PORT` absente ou vide vaut 4000.
 
-Six collections : `rotaryyears`, `admins`, `members`, `membermandates`, `actions`, `news`. Aucune gestion des comptes, aucun jeton de rafraîchissement. Une année Rotary référencée par un mandat, une action ou une actualité, brouillon compris, ne peut pas être supprimée (`409`). `JWT_EXPIRES_IN` : défaut `8h`, durée strictement positive et de 8 heures au plus, sinon l'API refuse de démarrer. La suite de la structure est décrite dans `ARCHITECTURE.md`, section 5.
+Sept collections : `rotaryyears`, `admins`, `members`, `membermandates`, `actions`, `news`, `applications`. Aucune gestion des comptes, aucun jeton de rafraîchissement. Une année Rotary référencée par un mandat, une action ou une actualité, brouillon compris, ne peut pas être supprimée (`409`). `JWT_EXPIRES_IN` : défaut `8h`, durée strictement positive et de 8 heures au plus, sinon l'API refuse de démarrer. La suite de la structure est décrite dans `ARCHITECTURE.md`, section 5.
 
 ## 4. Stack technique
 
@@ -116,7 +118,9 @@ Six collections : `rotaryyears`, `admins`, `members`, `membermandates`, `actions
 | En-têtes de sécurité (`api`) | `helmet` `^8` |
 | Jeton (`api`) | `@nestjs/jwt` `^12` |
 | Hachage du mot de passe (`api`) | `argon2` `^0.45` (module natif, binaire précompilé) |
-| Limitation de fréquence (`api`) | `@nestjs/throttler` `^6`, sur la connexion seulement |
+| Limitation de fréquence (`api`) | `@nestjs/throttler` `^6`, sur la connexion et sur le dépôt d'une candidature, route par route |
+| Stockage des CV (`api`) | `cloudinary` `^2` (client officiel) — compte et `apps/api/.env` renseignés à la main par le porteur du projet |
+| Réception de fichiers (`api`) | intercepteur de fichier de `@nestjs/platform-express` (`multer`), déjà présent ; en mémoire |
 | Base de données | MongoDB Atlas Free — connexion implémentée dans l'API ; cluster et `apps/api/.env` créés à la main par le porteur du projet ; connexion à Atlas vérifiée |
 | ODM | Mongoose `^9` + `@nestjs/mongoose` `^12` — installés, aucun modèle |
 | Authentification | JWT HS256, un seul rôle `ADMIN` — en place dans l'API ; le Back Office ne s'en sert pas encore |
@@ -194,7 +198,7 @@ Le script racine `dev` repose sur le shell (`&` + `wait`) : il fonctionne sous L
 - Cibles d'hébergement : Vercel (fronts) et Render (API).
 - **Design du Front Office** : `DESIGN.md` en est la source de vérité (éditorial premium, concept « Le journal du club », palette Rotary hiérarchisée, Open Sans et Georgia, pas de mode sombre en V1, WCAG 2.2 AA). Il vaut pour toutes les pages.
 - **Modèle métier** : Action et Actualité sont deux entités distinctes ; la fonction d'un membre n'est pas une propriété du membre mais d'un mandat par année Rotary, qui peut porter plusieurs fonctions ; une candidature est simplement enregistrée, **sans workflow de statut**.
-- **Fichiers** : le fournisseur de stockage n'est pas choisi ; les modèles restent indépendants de tout fournisseur.
+- **Fichiers** : le CV des candidatures est conservé chez Cloudinary (fichier brut, accès authentifié, sans adresse publique), derrière l'abstraction `StorageService` ; le fournisseur des images n'est pas choisi. Une candidature et son CV restent jusqu'à leur suppression par l'administrateur : aucune suppression automatique. CV : PDF, DOC ou DOCX, 5 Mo au plus.
 
 ## 9. Décisions encore ouvertes
 
@@ -203,19 +207,18 @@ Les décisions techniques verrouillées (Mongoose, mandats en collection sépar�
 Restent ouvertes :
 
 - fournisseur de stockage des images et chemin d'envoi des fichiers ;
-- stockage des CV et durée de conservation des candidatures ;
 - sort du registre d'impact agrégé de la page Actions (il affiche encore « Donnée à venir », ce que la décision sur l'impact interdit : `DESIGN.md` et le Front Office seront alignés à la migration) ;
-- limites de taille des fichiers, cache du Front Office, anti-spam du formulaire.
+- limite de taille des images, cache du Front Office, anti-spam du formulaire (au-delà de la limite de fréquence).
 
 Autres points repoussés : contenu de `packages/` ; solution d'internationalisation ; spécification visuelle du Back Office ; famille d'icônes du Front Office ; déploiement et CI/CD.
 
 ## 10. Périmètre et prochaines étapes
 
-**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary (modèle, calculs, liste publique, administration) ; authentification de l'administrateur (compte par commande manuelle, connexion, jeton, gardes, limitation des tentatives) ; membres et mandats (administration, ordre par année, annuaire public) ; actions (administration, slug, publication, impact, lectures publiques) ; actualités (administration, slug, publication, lectures publiques, archives par année).
+**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary (modèle, calculs, liste publique, administration) ; authentification de l'administrateur (compte par commande manuelle, connexion, jeton, gardes, limitation des tentatives) ; membres et mandats (administration, ordre par année, annuaire public) ; actions (administration, slug, publication, impact, lectures publiques) ; actualités (administration, slug, publication, lectures publiques, archives par année) ; candidatures (dépôt public avec CV, consultation, téléchargement du CV, suppression, stockage du CV chez Cloudinary).
 
 **Prochaines étapes**, chacune sur demande explicite, selon `ARCHITECTURE.md` :
 
-1. stockage de fichiers (dont le portrait des membres et les photographies des actions et des actualités), candidatures ;
+1. stockage des images (portrait des membres, photographies des actions et des actualités) ;
 2. socle du Back Office (MUI, connexion, session, client API) ;
 3. écrans du Back Office ;
 4. connexion du Front Office à l'API.
@@ -231,7 +234,7 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 - `apps/web` télécharge Open Sans au build (`next/font/google`). `apps/admin` charge encore les polices Geist du gabarit.
 - `next dev` génère `AGENTS.md` et `CLAUDE.md` dans `apps/web` et `apps/admin`.
 - Les README de `apps/*` sont ceux des gabarits.
-- `apps/api/.env.example` existe ; l'API refuse de démarrer sans `apps/api/.env` valide (`MONGODB_URI`, `JWT_SECRET`) ni sans base joignable. Les autres applications n'ont pas encore de `.env.example`.
+- `apps/api/.env.example` existe ; l'API refuse de démarrer sans `apps/api/.env` valide (`MONGODB_URI`, `JWT_SECRET`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`) ni sans base joignable. Les autres applications n'ont pas encore de `.env.example`.
 - **Compte d'administration** : un seul, créé par `npm run seed:admin --workspace=api`. `ADMIN_EMAIL` et `ADMIN_PASSWORD` ne restent dans `apps/api/.env` que le temps de la commande. Relancée avec un autre email, la commande refuse ; changer d'email demande de retirer le compte à la main dans la base. Un changement de mot de passe n'invalide pas les jetons déjà délivrés ; seul un changement de `JWT_SECRET` les invalide tous.
 - **Suppression d'une année Rotary** : refusée (`409`) quand un mandat, une action ou une actualité la référence. Toute entité future qui référence une année ajoute son contrôle au même endroit (`rotary-years.service.ts`).
 - **Slug d'une actualité** : mêmes règles que pour une action, avec sa propre unicité (une action et une actualité peuvent partager un slug) et son propre slug réservé, `archives`, qui désigne la route `/news/archives` : la génération donne `archives-2`, et fourni explicitement il est refusé (« Ce slug est réservé. »). `years` n'est réservé que pour les actions.
@@ -243,11 +246,18 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 - **Tri public des actions** : fait par une agrégation, parce qu'un tri simple placerait en tête les actions sans ordre. L'ordre est global, facultatif, non unique ; il n'existe aucune route de réordonnancement.
 - **Impact d'une action** : une modification remplace l'objet entier ; un objet sans rubrique n'est pas enregistré ; le champ est absent des réponses quand il est vide.
 - **Registre d'impact de la page Actions : contradiction toujours ouverte.** `DESIGN.md`, section 10, prescrit la mention « Donnée à venir » ; `ARCHITECTURE.md` décide « pas de donnée, pas de section ». L'API suit `ARCHITECTURE.md`. À traiter à la migration du Front Office, en corrigeant `DESIGN.md` d'abord ; le registre agrégé lui-même n'a toujours pas d'entité.
-- **Code dupliqué, par décision** : le retrait des espaces et la contrainte « label d'année » existent dans `members/dto/`, `actions/dto/` et `news/dto/` ; la logique de slug du service (suffixe libre, slug réservé, nouvelles tentatives) et la mise en forme d'une année existent dans `actions.service.ts` et `news.service.ts`. Le porteur du projet a choisi de ne pas refactorer les fonctionnalités validées. Un regroupement dans `common/` reste possible, comme étape à part.
+- **Code dupliqué, par décision** : le retrait des espaces et la contrainte « label d'année » existent dans `members/dto/`, `actions/dto/` et `news/dto/` (le retrait des espaces et le motif du téléphone aussi dans `applications/dto/`) ; la logique de slug du service (suffixe libre, slug réservé, nouvelles tentatives) et la mise en forme d'une année existent dans `actions.service.ts` et `news.service.ts`. Le porteur du projet a choisi de ne pas refactorer les fonctionnalités validées. Un regroupement dans `common/` reste possible, comme étape à part.
 - **Réordonnancement des mandats d'une année** : seule opération de l'API faite dans une transaction MongoDB (le cluster Atlas est un jeu de réplicas). Les ordres passent en négatif puis prennent leur place de 1 à n, pour ne jamais heurter l'index unique ; en cas d'échec, rien n'est modifié. Échanger deux ordres passe par ce réordonnancement : modifier un seul mandat vers un ordre déjà pris est refusé.
 - **Messages de conflit** : mandat en double, ordre déjà pris et année utilisée répondent tous le `409` générique « Conflit avec une ressource existante. » ; le futur Back Office les distinguera par l'opération demandée.
 - **Références dans les schémas Mongoose** : déclarer le type `SchemaTypes.ObjectId`, pas `Types.ObjectId`, sans quoi l'identifiant est enregistré en texte et les recherches par référence ne trouvent rien.
 - **Suppression et référence concurrentes** : les contrôles d'existence ne sont pas dans une transaction ; avec un seul administrateur, le risque d'un mandat orphelin est théorique et accepté pour la V1.
+- **CV chez un prestataire extérieur** : le CV et son nom d'origine sont des données personnelles confiées à Cloudinary. Le fichier y est déposé sous un identifiant aléatoire, sans nom de candidat, et n'a aucune adresse publique ; il ne se lit que par l'API, avec un jeton d'administrateur.
+- **Cohérence entre la base et le stockage** : il n'existe pas de transaction entre MongoDB et Cloudinary. Au dépôt, le fichier n'est envoyé qu'après toutes les vérifications ; si l'enregistrement échoue ensuite, le fichier est retiré, et si ce retrait échoue son identifiant est journalisé. À la suppression, le fichier part d'abord : stockage indisponible, `503` et la candidature est conservée ; fichier déjà absent, la candidature est supprimée quand même (`204`) et le journal note le fait avec l'identifiant de la candidature. `404` pour un fichier disparu ne concerne que la lecture du CV.
+- **Type du CV** : constaté par l'API sur les premiers octets, sans bibliothèque (`applications/cv-file.ts`) ; l'extension doit concorder. La signature DOC est celle de tous les anciens documents Office : un ancien classeur renommé en `.doc` passerait. Limite acceptée.
+- **Limite de fréquence du dépôt** : 20 par heure et par adresse IP, compteur en mémoire, distinct de celui de la connexion, remis à zéro au redémarrage. Le formulaire sera envoyé par le serveur du Front Office : tous les visiteurs partageront alors le même compteur.
+- **Messages de réception de fichier** : NestJS produit des messages anglais pour un fichier trop lourd ou mal placé ; `applications/cv-upload.interceptor.ts` les remplace, sans toucher au filtre commun.
+- **Divergences du Front Office sur les candidatures** : le formulaire nomme la situation `status` (l'API attend `applicantStatus`) et accepte tout téléphone d'au moins 8 chiffres, là où l'API n'admet que chiffres, espaces, `+`, `-`, `.` et parenthèses. Sujets de migration du Front Office.
+- **Réglages Cloudinary** : sur un compte gratuit, la livraison des fichiers PDF peut être bloquée par un réglage de sécurité du compte ; à activer si la lecture d'un CV PDF est refusée.
 - **Limitation des tentatives de connexion** : par adresse IP vue par l'API. Derrière un hébergeur, il faudra déclarer le mandataire de confiance au déploiement.
 - Le journal de l'API ne doit contenir aucun nom d'hôte, adresse ni identifiant de la base : le journal de démarrage est filtré dans `main.ts` (classe `StartupLogger`, locale, à ne pas généraliser) et le filtre d'erreurs ne journalise jamais le message d'une erreur interne.
 - Le Front Office affiche encore des contenus provisoires à remplacer avant mise en ligne (texte de présentation du club, photographies, adresses des réseaux sociaux).
