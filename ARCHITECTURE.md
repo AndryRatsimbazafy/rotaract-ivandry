@@ -333,7 +333,7 @@ Un contenu non publié répond `404` sur la surface publique, comme s'il n'exist
 
 | Ressource | Endpoints |
 |---|---|
-| Années | `GET /admin/rotary-years` · `POST` (`{ startYear }`) · `DELETE /:id` (refusé si utilisée). Pas de modification : tout se calcule depuis l'année de début. |
+| Années | `GET /admin/rotary-years` · `POST` (`{ startYear }`) · `DELETE /:id` (refusé si utilisée). Pas de modification : tout se calcule depuis l'année de début. Création : `201`. Suppression : `204` sans corps ; `400` si l'identifiant est mal formé, `404` si l'année n'existe pas. |
 | Membres | `GET /admin/members` (`year`, `role`, `q`, `page`, `limit`, `sort`) · `GET /:id` (avec tous ses mandats) · `POST` · `PATCH /:id` · `DELETE /:id` |
 | Mandats | `GET /admin/mandates` (`year`, `member`) · `POST` · `PATCH /:id` (fonctions, ordre) · `DELETE /:id` · `PUT /admin/mandates/order` (réordonner une année : `{ rotaryYear, mandateIds[] }`) |
 | Actions | `GET /admin/actions` (`year`, `focusArea`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` |
@@ -349,10 +349,10 @@ La publication passe par `PATCH` (`isPublished`), sans endpoint dédié. Les cor
 
 | Sujet | Décision |
 |---|---|
-| **Compte** | **Un seul compte `ADMIN` en V1**, un document dans `admins`. Créé **uniquement** par un script lancé à la main (`npm run seed:admin --workspace=api`), qui lit `ADMIN_EMAIL` et `ADMIN_PASSWORD` dans l'environnement. Aucun endpoint de création, **aucun écran de gestion des comptes**. |
+| **Compte** | **Un seul compte `ADMIN` en V1**, un document dans `admins`. Créé **uniquement** par un script lancé à la main (`npm run seed:admin --workspace=api`), qui lit `ADMIN_EMAIL` et `ADMIN_PASSWORD` dans l'environnement. Aucun endpoint de création, **aucun écran de gestion des comptes**. Relancé avec l'email du compte existant, le script remplace le mot de passe ; avec un autre email, il refuse et ne modifie rien. |
 | **Mot de passe** | Jamais stocké ni journalisé. Haché en **Argon2id** (paquet `argon2`). Longueur minimale : 12 caractères. |
 | **Login** | `POST /auth/login`. Réponse identique que l'email soit inconnu ou le mot de passe faux (`401`, même message). Limité à 5 tentatives par minute et par adresse IP. |
-| **Jeton** | JWT signé HS256 avec `JWT_SECRET`. Contenu : `sub` (id du compte), `role: "ADMIN"`, `iat`, `exp`. Expiration : **8 heures**. **Aucun jeton de rafraîchissement en V1** : à l'expiration, on se reconnecte. |
+| **Jeton** | JWT signé HS256 avec `JWT_SECRET`. Contenu : `sub` (id du compte), `role: "ADMIN"`, `iat`, `exp`. Expiration : **8 heures**. **Aucun jeton de rafraîchissement en V1** : à l'expiration, on se reconnecte. La durée vient de `JWT_EXPIRES_IN` : 8 heures par défaut, jamais plus. Un changement de mot de passe n'invalide pas les jetons déjà délivrés. |
 | **Transport** | En-tête `Authorization: Bearer <jeton>`, envoyé par le serveur du Back Office. |
 | **Garde** | `JwtAuthGuard` vérifie la signature et l'expiration, recharge le compte, l'attache à la requête. Mise en œuvre avec `@nestjs/jwt` et une garde écrite à la main, sans Passport (une seule stratégie, donc pas besoin de la couche). |
 | **Rôle** | `RolesGuard` avec le décorateur `@Roles('ADMIN')`, posé sur chaque contrôleur d'administration. |
@@ -516,7 +516,7 @@ Aucune valeur réelle ici ni dans le code. Chaque application aura un `.env.exam
 | `NODE_ENV` | non | `development` ou `production`. |
 | `MONGODB_URI` | **oui** | Secret. Chaîne de connexion Atlas, avec le nom de la base. |
 | `JWT_SECRET` | **oui** | Secret. 32 caractères au moins, générés aléatoirement. Exigé dès le socle, utilisé à partir de l'authentification. L'API refuse de démarrer s'il manque. |
-| `JWT_EXPIRES_IN` | non | Défaut et valeur décidée : `8h`. |
+| `JWT_EXPIRES_IN` | non | Défaut `8h`. Durée strictement positive et de 8 heures au plus : une valeur nulle ou supérieure à 8 heures empêche le démarrage. |
 | `CORS_ORIGINS` | non | Vide par défaut : aucun navigateur n'appelle l'API. À renseigner seulement si l'envoi direct de fichiers est retenu. |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | script seulement | Lus par le script d'initialisation, jamais par l'API en fonctionnement. |
 | Variables du stockage | à définir | Avec le futur fournisseur. Secrets. |

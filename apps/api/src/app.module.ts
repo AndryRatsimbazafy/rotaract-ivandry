@@ -2,6 +2,8 @@ import { join } from 'node:path';
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { AuthModule } from './auth/auth.module';
 import { getAppConfig } from './config/app-config';
 import { EnvironmentVariables, validate } from './config/env.validation';
 import { HealthModule } from './health/health.module';
@@ -32,7 +34,14 @@ import { RotaryYearsModule } from './rotary-years/rotary-years.module';
         },
       }),
     }),
+    // Aucune garde de limitation globale : elle n'est posée que sur la
+    // connexion (auth.controller.ts). Compteur en mémoire.
+    ThrottlerModule.forRoot({
+      throttlers: [{ limit: 5, ttl: 60_000 }],
+      errorMessage: 'Trop de requêtes. Réessayez plus tard.',
+    }),
     HealthModule,
+    AuthModule,
     RotaryYearsModule,
   ],
 })

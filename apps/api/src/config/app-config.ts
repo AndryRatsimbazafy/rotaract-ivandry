@@ -1,5 +1,9 @@
 import { ConfigService } from '@nestjs/config';
-import { EnvironmentVariables, parseOrigins } from './env.validation';
+import {
+  durationToSeconds,
+  EnvironmentVariables,
+  parseOrigins,
+} from './env.validation';
 
 export type AppConfig = {
   port: number;
@@ -7,6 +11,7 @@ export type AppConfig = {
   mongodbUri: string;
   jwtSecret: string;
   jwtExpiresIn: string;
+  jwtExpiresInSeconds: number;
   corsOrigins: string[];
 };
 
@@ -19,6 +24,9 @@ export function getAppConfig(
     mongodbUri: config.get('MONGODB_URI', { infer: true }),
     jwtSecret: config.get('JWT_SECRET', { infer: true }),
     jwtExpiresIn: config.get('JWT_EXPIRES_IN', { infer: true }),
+    jwtExpiresInSeconds: durationToSeconds(
+      config.get('JWT_EXPIRES_IN', { infer: true }),
+    ),
     corsOrigins: parseOrigins(config.get('CORS_ORIGINS', { infer: true })),
   };
 }

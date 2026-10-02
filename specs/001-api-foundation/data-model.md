@@ -14,7 +14,7 @@ Lue dans les variables d'environnement, validée une fois au démarrage, puis im
 | `JWT_SECRET` | oui | | 32 caractères au moins | oui |
 | `PORT` | non | `4000` | Entier de 1 à 65535 | non |
 | `NODE_ENV` | non | `development` | `development` ou `production` | non |
-| `JWT_EXPIRES_IN` | non | `8h` | Nombre suivi de `s`, `m`, `h` ou `d` | non |
+| `JWT_EXPIRES_IN` | non | `8h` | Nombre suivi de `s`, `m`, `h` ou `d` ; durée strictement positive et de 8 heures au plus (règle resserrée par `003-admin-auth`) | non |
 | `CORS_ORIGINS` | non | vide | Origines séparées par des virgules ; chacune avec schéma et hôte, sans chemin | non |
 
 Règles :

@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT — Rotaract Club Ivandry
 
-> Document de référence du projet. État au 2026-10-01 : le Front Office V1 est terminé et audité (données locales, aucune connexion à l'API) ; l'architecture du Backend et du Back Office est spécifiée dans `ARCHITECTURE.md`, ses décisions principales sont verrouillées ; le socle de l'API (`apps/api`) est en place, avec une première ressource métier en lecture seule, les années Rotary ; `apps/admin` est encore le gabarit d'origine.
+> Document de référence du projet. État au 2026-10-01 : le Front Office V1 est terminé et audité (données locales, aucune connexion à l'API) ; l'architecture du Backend et du Back Office est spécifiée dans `ARCHITECTURE.md`, ses décisions principales sont verrouillées ; le socle de l'API (`apps/api`) est en place, avec l'authentification de l'administrateur et une première ressource métier, les années Rotary, administrable ; `apps/admin` est encore le gabarit d'origine.
 
 ## 1. Objectif du projet
 
@@ -83,12 +83,14 @@ Le gabarit `nest new` a été remplacé par le socle (spec `specs/001-api-founda
 - `config/` : règles des variables d'environnement et accès typé à la configuration.
 - `common/` : format d'erreur unique en français (`filters/`) et validation des entrées (`pipes/`).
 - `health/` : `GET /api/v1/health`, route technique qui lit l'état de la connexion à la base (`200` ou `503`).
-- `rotary-years/` : modèle RotaryYear (seul `startYear` est enregistré, index unique) et `GET /api/v1/rotary-years`, liste publique des années avec `label`, `startDate`, `endDate` et `isCurrent` calculés (spec `specs/002-rotary-years/`, temps 1). Les calculs sont dans `common/utils/rotary-year.ts`. **Aucune route `/admin`** : la création, la liste d'administration et la suppression des années sont reportées à l'authentification. Aucune année n'est créée par le code.
+- `rotary-years/` : modèle RotaryYear (seul `startYear` est enregistré, index unique) et `GET /api/v1/rotary-years`, liste publique des années avec `label`, `startDate`, `endDate` et `isCurrent` calculés (spec `specs/002-rotary-years/`, temps 1). Les calculs sont dans `common/utils/rotary-year.ts`. Opérations d'administration sous `/api/v1/admin/rotary-years`, protégées (spec `specs/003-admin-auth/`) : liste, création (`201`, doublon `409`), suppression (`204`, identifiant mal formé `400`, année inconnue `404`). Aucune année n'est créée par le code.
+- `auth/` : compte d'administration unique (collection `admins`, mot de passe haché en Argon2id) ; `POST /api/v1/auth/login` (jeton JWT HS256, 8 heures au plus, même `401` pour un email inconnu et un mot de passe faux, limité à 5 demandes par minute et par adresse IP) ; `GET /api/v1/auth/me` ; deux gardes, `JwtAuthGuard` et `RolesGuard` avec `@Roles('ADMIN')`, posées sur la classe de chaque contrôleur d'administration. Le compte se crée et son mot de passe se change **uniquement** par `npm run seed:admin --workspace=api`, qui lit `ADMIN_EMAIL` et `ADMIN_PASSWORD` placés temporairement dans `apps/api/.env` ; l'API ne les lit jamais.
+- `common/pipes/parse-object-id.pipe.ts` : identifiant mal formé, `400` « Identifiant invalide. ».
 - `apps/api/.env.example` liste les six variables, sans valeur. `apps/api/.env` est local et ignoré par Git.
 
 État : le code du socle est **implémenté** ; la **configuration** réelle (`apps/api/.env`) et le cluster MongoDB Atlas sont des **opérations manuelles** du porteur du projet, faites ; le socle a été vérifié contre Atlas (`specs/001-api-foundation/tasks.md`, T011, T016, T026). `PORT` absente ou vide vaut 4000.
 
-Une seule collection, `rotaryyears`. Aucune authentification, aucune route d'administration, aucun autre module métier. La suite de la structure est décrite dans `ARCHITECTURE.md`, section 5.
+Deux collections : `rotaryyears` et `admins`. Aucun autre module métier, aucune gestion des comptes, aucun jeton de rafraîchissement. `JWT_EXPIRES_IN` : défaut `8h`, durée strictement positive et de 8 heures au plus, sinon l'API refuse de démarrer. La suite de la structure est décrite dans `ARCHITECTURE.md`, section 5.
 
 ## 4. Stack technique
 
@@ -107,9 +109,12 @@ Une seule collection, `rotaryyears`. Aucune authentification, aucune route d'adm
 | Configuration (`api`) | `@nestjs/config` `^12` |
 | Validation (`api`) | `class-validator` `^0.15`, `class-transformer` `^0.5` |
 | En-têtes de sécurité (`api`) | `helmet` `^8` |
+| Jeton (`api`) | `@nestjs/jwt` `^12` |
+| Hachage du mot de passe (`api`) | `argon2` `^0.45` (module natif, binaire précompilé) |
+| Limitation de fréquence (`api`) | `@nestjs/throttler` `^6`, sur la connexion seulement |
 | Base de données | MongoDB Atlas Free — connexion implémentée dans l'API ; cluster et `apps/api/.env` créés à la main par le porteur du projet ; connexion à Atlas vérifiée |
 | ODM | Mongoose `^9` + `@nestjs/mongoose` `^12` — installés, aucun modèle |
-| Authentification | JWT — non installée |
+| Authentification | JWT HS256, un seul rôle `ADMIN` — en place dans l'API ; le Back Office ne s'en sert pas encore |
 
 ### Configurations TypeScript
 
@@ -201,17 +206,16 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 
 ## 10. Périmètre et prochaines étapes
 
-**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary, temps 1 (modèle, calculs, liste publique).
+**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary (modèle, calculs, liste publique, administration) ; authentification de l'administrateur (compte par commande manuelle, connexion, jeton, gardes, limitation des tentatives).
 
 **Prochaines étapes**, chacune sur demande explicite, selon `ARCHITECTURE.md` :
 
-1. authentification et compte `ADMIN`, **avec les opérations d'administration des années Rotary** reportées par `specs/002-rotary-years/` (création, liste d'administration, suppression : contrat dans `specs/002-rotary-years/contracts/rotary-years.md`, exigences FR-016 à FR-025) ;
-2. membres et mandats ;
-3. actions, actualités ;
-4. stockage de fichiers, candidatures ;
-5. socle du Back Office (MUI, connexion, session, client API) ;
-6. écrans du Back Office ;
-7. connexion du Front Office à l'API.
+1. membres et mandats ;
+2. actions, actualités ;
+3. stockage de fichiers, candidatures ;
+4. socle du Back Office (MUI, connexion, session, client API) ;
+5. écrans du Back Office ;
+6. connexion du Front Office à l'API.
 
 **Hors périmètre pour l'instant** : tests, CI/CD, Docker, déploiement, version anglaise, rôles autres que `ADMIN`, workflow de candidature.
 
@@ -225,5 +229,8 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 - `next dev` génère `AGENTS.md` et `CLAUDE.md` dans `apps/web` et `apps/admin`.
 - Les README de `apps/*` sont ceux des gabarits.
 - `apps/api/.env.example` existe ; l'API refuse de démarrer sans `apps/api/.env` valide (`MONGODB_URI`, `JWT_SECRET`) ni sans base joignable. Les autres applications n'ont pas encore de `.env.example`.
+- **Compte d'administration** : un seul, créé par `npm run seed:admin --workspace=api`. `ADMIN_EMAIL` et `ADMIN_PASSWORD` ne restent dans `apps/api/.env` que le temps de la commande. Relancée avec un autre email, la commande refuse ; changer d'email demande de retirer le compte à la main dans la base. Un changement de mot de passe n'invalide pas les jetons déjà délivrés ; seul un changement de `JWT_SECRET` les invalide tous.
+- **Suppression d'une année Rotary** : aucune entité ne référence encore une année, donc toute année est supprimable. Chaque fonctionnalité qui introduit une référence (mandats, actions, actualités) doit ajouter son refus `409`.
+- **Limitation des tentatives de connexion** : par adresse IP vue par l'API. Derrière un hébergeur, il faudra déclarer le mandataire de confiance au déploiement.
 - Le journal de l'API ne doit contenir aucun nom d'hôte, adresse ni identifiant de la base : le journal de démarrage est filtré dans `main.ts` (classe `StartupLogger`, locale, à ne pas généraliser) et le filtre d'erreurs ne journalise jamais le message d'une erreur interne.
 - Le Front Office affiche encore des contenus provisoires à remplacer avant mise en ligne (texte de présentation du club, photographies, adresses des réseaux sociaux).

@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
@@ -40,5 +44,32 @@ export class RotaryYearsService {
       ...rotaryYearBounds(startYear),
       isCurrent: isCurrentRotaryYear(startYear, now),
     }));
+  }
+
+  async create(startYear: number): Promise<RotaryYearView> {
+    try {
+      const year = await this.rotaryYearModel.create({ startYear });
+      return {
+        id: year.id as string,
+        startYear,
+        label: rotaryYearLabel(startYear),
+        ...rotaryYearBounds(startYear),
+        isCurrent: isCurrentRotaryYear(startYear, new Date()),
+      };
+    } catch (error) {
+      // Clé dupliquée sur l'index unique : couvre aussi deux demandes
+      // simultanées, ce qu'une lecture préalable ne ferait pas.
+      if ((error as { code?: unknown }).code === 11000) {
+        throw new ConflictException('Cette année Rotary existe déjà.');
+      }
+      throw error;
+    }
+  }
+
+  async remove(id: string): Promise<void> {
+    const deleted = await this.rotaryYearModel.findByIdAndDelete(id).exec();
+    if (!deleted) {
+      throw new NotFoundException();
+    }
   }
 }

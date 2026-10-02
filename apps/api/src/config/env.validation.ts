@@ -32,6 +32,33 @@ export function parseOrigins(value: string): string[] {
     .filter((origin) => origin !== '');
 }
 
+const SECONDS_PER_UNIT = { s: 1, m: 60, h: 3600, d: 86400 } as const;
+
+export const MAX_TOKEN_DURATION_SECONDS = 8 * 3600;
+
+// « 8h », « 480m »… en secondes ; NaN si la valeur n'a pas ce format.
+export function durationToSeconds(value: string): number {
+  const match = /^(\d+)([smhd])$/.exec(value);
+  if (!match) {
+    return Number.NaN;
+  }
+  return (
+    Number(match[1]) *
+    SECONDS_PER_UNIT[match[2] as keyof typeof SECONDS_PER_UNIT]
+  );
+}
+
+@ValidatorConstraint({ name: 'isTokenDuration' })
+class IsTokenDuration implements ValidatorConstraintInterface {
+  validate(value: unknown): boolean {
+    if (typeof value !== 'string') {
+      return false;
+    }
+    const seconds = durationToSeconds(value);
+    return seconds > 0 && seconds <= MAX_TOKEN_DURATION_SECONDS;
+  }
+}
+
 @ValidatorConstraint({ name: 'isOriginList' })
 class IsOriginList implements ValidatorConstraintInterface {
   validate(value: unknown): boolean {
@@ -56,8 +83,7 @@ export class EnvironmentVariables {
   @IsIn(['development', 'production'])
   NODE_ENV: 'development' | 'production' = 'development';
 
-  @IsString()
-  @Matches(/^\d+[smhd]$/)
+  @Validate(IsTokenDuration)
   JWT_EXPIRES_IN: string = '8h';
 
   @Validate(IsOriginList)
@@ -69,7 +95,8 @@ const RULES: Record<keyof EnvironmentVariables, string> = {
   JWT_SECRET: 'obligatoire ; 32 caractères au moins',
   PORT: 'entier de 1 à 65535',
   NODE_ENV: 'development ou production',
-  JWT_EXPIRES_IN: 'nombre suivi de s, m, h ou d',
+  JWT_EXPIRES_IN:
+    'nombre suivi de s, m, h ou d ; durée strictement positive et de 8 heures au plus',
   CORS_ORIGINS:
     'origines séparées par des virgules ; chacune avec schéma et hôte, sans chemin',
 };
