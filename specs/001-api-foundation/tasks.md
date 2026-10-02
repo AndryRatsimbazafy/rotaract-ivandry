@@ -76,12 +76,12 @@ Tout le code vit dans `apps/api/`. Les commandes npm se lancent depuis la racine
 
 ### Implementation for User Story 2
 
-- [ ] T011 [US2] (manuel) Créer le cluster MongoDB Atlas Free, un utilisateur de base, autoriser l'adresse IP du poste, puis copier `apps/api/.env.example` en `apps/api/.env` et y renseigner `MONGODB_URI` et `JWT_SECRET`. Ne rien commiter de ce fichier.
+- [X] T011 [US2] (manuel) Créer le cluster MongoDB Atlas Free, un utilisateur de base, autoriser l'adresse IP du poste, puis copier `apps/api/.env.example` en `apps/api/.env` et y renseigner `MONGODB_URI` et `JWT_SECRET`. Ne rien commiter de ce fichier.
 - [X] T012 [US2] Dans `apps/api/src/app.module.ts`, déclarer `MongooseModule.forRootAsync` alimenté par la configuration : adresse `MONGODB_URI`, `retryAttempts: 3`, `retryDelay: 2000`, `serverSelectionTimeoutMS: 5000`, `verboseRetryLog: false` (research.md, décision 3). Journaliser « Connexion à la base de données établie. » quand la connexion est ouverte. Ne déclarer aucun modèle ni aucune collection (FR-014).
 - [X] T013 [US2] Dans `apps/api/src/main.ts`, vérifier que l'échec de connexion aboutit au `catch` de T004 avec le message « Connexion à la base de données impossible. », sans adresse, nom d'hôte ni identifiant (FR-012, FR-013). Distinguer ce message de celui de la validation de configuration.
 - [X] T014 [P] [US2] Créer `apps/api/src/health/health.controller.ts` : `GET health` qui lit l'état de la connexion Mongoose injectée. Connectée : renvoyer `{ "status": "ok", "database": "up" }`. Sinon : lever une `ServiceUnavailableException` avec le message « La base de données ne répond pas. ». Aucun `ping`, aucune autre information dans la réponse (`contracts/health.md`, FR-024).
 - [X] T015 [US2] Créer `apps/api/src/health/health.module.ts` et l'importer dans `apps/api/src/app.module.ts`. Dépend de T014.
-- [ ] T016 [US2] Vérification manuelle : dérouler `quickstart.md`, section 2. Si le cluster n'est pas disponible, le signaler explicitement et ne vérifier que l'échec de connexion. *État : vérifié sur une base temporaire locale seulement (connexion, `200`, aucune collection, `503`, hôte injoignable). Reste à vérifier contre MongoDB Atlas : démarrage réussi, mot de passe faux, absence de collection dans Atlas.*
+- [X] T016 [US2] Vérification manuelle : dérouler `quickstart.md`, section 2. Si le cluster n'est pas disponible, le signaler explicitement et ne vérifier que l'échec de connexion. *État : vérifié d'abord sur une base temporaire locale, puis contre MongoDB Atlas par le porteur du projet, qui l'a confirmé le 2026-10-02.*
 
 **Checkpoint** : l'API connectée répond `200` sur `/api/v1/health` ; avec une base injoignable, elle s'arrête avec un message générique.
 
@@ -126,7 +126,7 @@ Tout le code vit dans `apps/api/`. Les commandes npm se lancent depuis la racine
 - [X] T023 Formater et contrôler : `npm run format --workspace=api`, puis `npm run lint`, `npm run build:api` et `npm run build:web` depuis la racine. Corriger toute erreur dans `apps/api` uniquement.
 - [X] T024 Contrôle de non-régression et de secrets : `git status` ne montre aucun fichier modifié dans `apps/web`, `apps/admin` ni `DESIGN.md` ; `apps/api/.env` n'apparaît pas ; une recherche de la valeur de `JWT_SECRET` et du mot de passe de la base dans les fichiers suivis par Git ne renvoie rien (SC-003, SC-008).
 - [X] T025 [P] Mettre à jour `PROJECT_CONTEXT.md` (sections « apps/api », « Stack technique », « Périmètre et prochaines étapes », « Points d'attention ») et la ligne d'état de `CLAUDE.md` : l'API n'est plus un gabarit, le socle est en place, les six dépendances sont installées, `apps/api/.env.example` existe.
-- [ ] T026 Dérouler `quickstart.md` en entier une dernière fois et consigner, pour chaque section, ce qui a été vérifié et ce qui ne l'a pas été. *État : sections 1, 3, 4 et 5 déroulées ; section 2 non déroulée contre Atlas (voir T016). À refaire en entier après T011.*
+- [X] T026 Dérouler `quickstart.md` en entier une dernière fois et consigner, pour chaque section, ce qui a été vérifié et ce qui ne l'a pas été. *État : quickstart déroulé en entier contre MongoDB Atlas par le porteur du projet, qui l'a confirmé le 2026-10-02.*
 
 ---
 

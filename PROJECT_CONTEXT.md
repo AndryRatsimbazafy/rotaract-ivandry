@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT — Rotaract Club Ivandry
 
-> Document de référence du projet. État au 2026-10-01 : le Front Office V1 est terminé et audité (données locales, aucune connexion à l'API) ; l'architecture du Backend et du Back Office est spécifiée dans `ARCHITECTURE.md`, ses décisions principales sont verrouillées ; le socle de l'API (`apps/api`) est en place, sans aucune fonctionnalité métier ; `apps/admin` est encore le gabarit d'origine.
+> Document de référence du projet. État au 2026-10-01 : le Front Office V1 est terminé et audité (données locales, aucune connexion à l'API) ; l'architecture du Backend et du Back Office est spécifiée dans `ARCHITECTURE.md`, ses décisions principales sont verrouillées ; le socle de l'API (`apps/api`) est en place, avec une première ressource métier en lecture seule, les années Rotary ; `apps/admin` est encore le gabarit d'origine.
 
 ## 1. Objectif du projet
 
@@ -82,12 +82,13 @@ Le gabarit `nest new` a été remplacé par le socle (spec `specs/001-api-founda
 - `app.module.ts` : configuration (`@nestjs/config`, fichier `apps/api/.env`, validée au démarrage) et connexion à MongoDB (`@nestjs/mongoose`).
 - `config/` : règles des variables d'environnement et accès typé à la configuration.
 - `common/` : format d'erreur unique en français (`filters/`) et validation des entrées (`pipes/`).
-- `health/` : `GET /api/v1/health`, seule route de l'API, qui lit l'état de la connexion à la base (`200` ou `503`).
+- `health/` : `GET /api/v1/health`, route technique qui lit l'état de la connexion à la base (`200` ou `503`).
+- `rotary-years/` : modèle RotaryYear (seul `startYear` est enregistré, index unique) et `GET /api/v1/rotary-years`, liste publique des années avec `label`, `startDate`, `endDate` et `isCurrent` calculés (spec `specs/002-rotary-years/`, temps 1). Les calculs sont dans `common/utils/rotary-year.ts`. **Aucune route `/admin`** : la création, la liste d'administration et la suppression des années sont reportées à l'authentification. Aucune année n'est créée par le code.
 - `apps/api/.env.example` liste les six variables, sans valeur. `apps/api/.env` est local et ignoré par Git.
 
-État : le code du socle est **implémenté** ; la **configuration** réelle (`apps/api/.env`) et le cluster MongoDB Atlas sont des **opérations manuelles** du porteur du projet, et la vérification du socle contre Atlas reste à faire (`specs/001-api-foundation/tasks.md`, T011, T016, T026). `PORT` absente ou vide vaut 4000.
+État : le code du socle est **implémenté** ; la **configuration** réelle (`apps/api/.env`) et le cluster MongoDB Atlas sont des **opérations manuelles** du porteur du projet, faites ; le socle a été vérifié contre Atlas (`specs/001-api-foundation/tasks.md`, T011, T016, T026). `PORT` absente ou vide vaut 4000.
 
-Aucun modèle, aucune collection, aucune route métier, aucune authentification. La suite de la structure est décrite dans `ARCHITECTURE.md`, section 5.
+Une seule collection, `rotaryyears`. Aucune authentification, aucune route d'administration, aucun autre module métier. La suite de la structure est décrite dans `ARCHITECTURE.md`, section 5.
 
 ## 4. Stack technique
 
@@ -106,7 +107,7 @@ Aucun modèle, aucune collection, aucune route métier, aucune authentification.
 | Configuration (`api`) | `@nestjs/config` `^12` |
 | Validation (`api`) | `class-validator` `^0.15`, `class-transformer` `^0.5` |
 | En-têtes de sécurité (`api`) | `helmet` `^8` |
-| Base de données | MongoDB Atlas Free — connexion implémentée dans l'API ; création du cluster et de `apps/api/.env` : opération manuelle du porteur du projet ; connexion réelle à Atlas non encore vérifiée |
+| Base de données | MongoDB Atlas Free — connexion implémentée dans l'API ; cluster et `apps/api/.env` créés à la main par le porteur du projet ; connexion à Atlas vérifiée |
 | ODM | Mongoose `^9` + `@nestjs/mongoose` `^12` — installés, aucun modèle |
 | Authentification | JWT — non installée |
 
@@ -200,12 +201,12 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 
 ## 10. Périmètre et prochaines étapes
 
-**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé).
+**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary, temps 1 (modèle, calculs, liste publique).
 
 **Prochaines étapes**, chacune sur demande explicite, selon `ARCHITECTURE.md` :
 
-1. authentification et compte `ADMIN` ;
-2. années Rotary, membres et mandats ;
+1. authentification et compte `ADMIN`, **avec les opérations d'administration des années Rotary** reportées par `specs/002-rotary-years/` (création, liste d'administration, suppression : contrat dans `specs/002-rotary-years/contracts/rotary-years.md`, exigences FR-016 à FR-025) ;
+2. membres et mandats ;
 3. actions, actualités ;
 4. stockage de fichiers, candidatures ;
 5. socle du Back Office (MUI, connexion, session, client API) ;

@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { getAppConfig } from './config/app-config';
 import { EnvironmentVariables, validate } from './config/env.validation';
 import { HealthModule } from './health/health.module';
+import { RotaryYearsModule } from './rotary-years/rotary-years.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { HealthModule } from './health/health.module';
       }),
     }),
     HealthModule,
+    RotaryYearsModule,
   ],
 })
 export class AppModule {}
