@@ -58,7 +58,7 @@ Une personne membre du club. **La fonction n'est pas une propriété du membre**
 | `firstName` | string | oui | oui | |
 | `lastName` | string | oui | oui | |
 | `occupation` | string | non | oui | Profession ou études. |
-| `portrait` | MediaRef | non | oui | Voir 2. |
+| `portrait` | MediaRef | non | oui | Voir 2. Non mis en œuvre avant le stockage de fichiers. |
 | `email` | string | non | **non** | Usage interne au Back Office. |
 | `phone` | string | non | **non** | Usage interne au Back Office. |
 
@@ -74,10 +74,11 @@ La présence d'un membre au club pendant une année Rotary, avec ses fonctions c
 | `member` | ObjectId → Member | oui | |
 | `rotaryYear` | ObjectId → RotaryYear | oui | |
 | `roles` | MemberRole[] | oui | **Zéro, une ou plusieurs** fonctions. Tableau vide = membre sans fonction cette année-là. Sans doublon. |
-| `order` | number | oui | Ordre d'affichage dans l'année, choisi par le club (`DESIGN.md` : jamais un classement par fonction). |
+| `order` | number | oui | Ordre d'affichage dans l'année, choisi par le club (`DESIGN.md` : jamais un classement par fonction). Entier supérieur ou égal à 1, **unique dans son année**. |
 
 - **Un seul mandat par couple (membre, année)** : index unique. Plusieurs fonctions la même année = plusieurs valeurs dans `roles`, pas plusieurs mandats.
 - Supprimer un membre supprime ses mandats (dans le service).
+- **Ordre.** Jamais fourni à la création : il est attribué automatiquement, au plus grand ordre de l'année plus un (1 pour le premier mandat de l'année). Un ordre déjà pris dans l'année est refusé (`409`). Les trous sont permis après une modification ou une suppression ; seul le réordonnancement de l'année les referme, en réécrivant les ordres de 1 à n.
 - Une même fonction peut être tenue par deux personnes la même année : rien ne l'interdit, et l'index des fonctions du Front Office le gère déjà.
 
 `MemberRole` (valeurs exactes, identiques à celles de `apps/web`) :
@@ -213,13 +214,13 @@ Dans le code : un module `media` avec une **interface `StorageService`** (`uploa
 
 ## 3. MongoDB
 
-Atlas Free (M0). Sept collections, aucune transaction requise.
+Atlas Free (M0). Sept collections ; une seule transaction, pour le réordonnancement des mandats d'une année.
 
 | Collection | Références | Index |
 |---|---|---|
 | `rotaryyears` | | `startYear` unique |
 | `members` | | `lastName, firstName` ; texte sur `firstName, lastName` (recherche) |
-| `membermandates` | `member`, `rotaryYear` | **`(member, rotaryYear)` unique** ; `(rotaryYear, order)` ; `(rotaryYear, roles)` |
+| `membermandates` | `member`, `rotaryYear` | **`(member, rotaryYear)` unique** ; **`(rotaryYear, order)` unique** ; `(rotaryYear, roles)` |
 | `actions` | `rotaryYear` | `slug` unique ; `(isPublished, date)` ; `(rotaryYear, isPublished)` ; `focusAreas` ; texte sur `title, summary` |
 | `news` | `rotaryYear` | `slug` unique ; `(isPublished, date)` ; `(rotaryYear, isPublished)` ; `type` ; texte sur `title, summary` |
 | `applications` | | `createdAt` ; texte sur `firstName, lastName, email` |
@@ -317,8 +318,8 @@ Pas de déconnexion côté API (le jeton est sans état : le Back Office efface 
 | Méthode | Chemin | Paramètres | Sert à |
 |---|---|---|---|
 | GET | `/rotary-years` | | Années existantes, avec `label`, dates et `isCurrent` calculés |
-| GET | `/members` | `year` (label, défaut : année courante), `limit` | Annuaire d'une année, dans l'ordre du club, avec les fonctions de l'année |
-| GET | `/members/years` | | Années qui ont au moins un membre |
+| GET | `/members` | `year` (label, défaut : année courante), `limit` | Annuaire d'une année, dans l'ordre du club, avec les fonctions de l'année. Liste vide (`200`) si l'année n'existe pas ou s'il n'y a pas d'année courante |
+| GET | `/members/years` | | Années qui ont au moins un membre, dans la même forme que `/rotary-years` |
 | GET | `/actions` | `year`, `focusArea`, `q`, `page`, `limit` | Liste paginée |
 | GET | `/actions/years` | | Années qui ont au moins une action publiée |
 | GET | `/actions/:slug` | | Détail (page à venir côté Front Office) |
@@ -334,8 +335,8 @@ Un contenu non publié répond `404` sur la surface publique, comme s'il n'exist
 | Ressource | Endpoints |
 |---|---|
 | Années | `GET /admin/rotary-years` · `POST` (`{ startYear }`) · `DELETE /:id` (refusé si utilisée). Pas de modification : tout se calcule depuis l'année de début. Création : `201`. Suppression : `204` sans corps ; `400` si l'identifiant est mal formé, `404` si l'année n'existe pas. |
-| Membres | `GET /admin/members` (`year`, `role`, `q`, `page`, `limit`, `sort`) · `GET /:id` (avec tous ses mandats) · `POST` · `PATCH /:id` · `DELETE /:id` |
-| Mandats | `GET /admin/mandates` (`year`, `member`) · `POST` · `PATCH /:id` (fonctions, ordre) · `DELETE /:id` · `PUT /admin/mandates/order` (réordonner une année : `{ rotaryYear, mandateIds[] }`) |
+| Membres | `GET /admin/members` (`year`, `role`, `q`, `page`, `limit`, `sort`) · `GET /:id` (avec tous ses mandats) · `POST` · `PATCH /:id` · `DELETE /:id` Création : `201`. Suppression : `204`. |
+| Mandats | `GET /admin/mandates` (`year`, `member`) · `POST` · `PATCH /:id` (fonctions, ordre) · `DELETE /:id` · `PUT /admin/mandates/order` (réordonner une année : `{ rotaryYear, mandateIds[] }`) Création : `201`, ordre attribué automatiquement. Suppression : `204`. `409` pour un mandat déjà existant pour le couple (membre, année) ou un ordre déjà pris dans l'année. La liste de réordonnancement contient exactement tous les mandats de l'année, chacun une fois ; l'opération est indissociable et renvoie les mandats de l'année dans leur nouvel ordre. |
 | Actions | `GET /admin/actions` (`year`, `focusArea`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` |
 | Actualités | `GET /admin/news` (`year`, `type`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` |
 | Candidatures | `GET /admin/applications` (`q`, `from`, `to`, `page`, `limit`, `sort`) · `GET /:id` · `GET /:id/cv` (accès au fichier) · `DELETE /:id`. Consultation et suppression seulement : ni création, ni modification, ni statut. |

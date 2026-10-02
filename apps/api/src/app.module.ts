@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { getAppConfig } from './config/app-config';
 import { EnvironmentVariables, validate } from './config/env.validation';
 import { HealthModule } from './health/health.module';
+import { MembersModule } from './members/members.module';
 import { RotaryYearsModule } from './rotary-years/rotary-years.module';
 
 @Module({
@@ -43,6 +44,7 @@ import { RotaryYearsModule } from './rotary-years/rotary-years.module';
     HealthModule,
     AuthModule,
     RotaryYearsModule,
+    MembersModule,
   ],
 })
 export class AppModule {}

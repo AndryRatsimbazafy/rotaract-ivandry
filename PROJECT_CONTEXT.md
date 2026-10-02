@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT — Rotaract Club Ivandry
 
-> Document de référence du projet. État au 2026-10-01 : le Front Office V1 est terminé et audité (données locales, aucune connexion à l'API) ; l'architecture du Backend et du Back Office est spécifiée dans `ARCHITECTURE.md`, ses décisions principales sont verrouillées ; le socle de l'API (`apps/api`) est en place, avec l'authentification de l'administrateur et une première ressource métier, les années Rotary, administrable ; `apps/admin` est encore le gabarit d'origine.
+> Document de référence du projet. État au 2026-10-01 : le Front Office V1 est terminé et audité (données locales, aucune connexion à l'API) ; l'architecture du Backend et du Back Office est spécifiée dans `ARCHITECTURE.md`, ses décisions principales sont verrouillées ; le socle de l'API (`apps/api`) est en place, avec l'authentification de l'administrateur et deux domaines métier administrables, les années Rotary et les membres avec leurs mandats ; `apps/admin` est encore le gabarit d'origine.
 
 ## 1. Objectif du projet
 
@@ -86,11 +86,13 @@ Le gabarit `nest new` a été remplacé par le socle (spec `specs/001-api-founda
 - `rotary-years/` : modèle RotaryYear (seul `startYear` est enregistré, index unique) et `GET /api/v1/rotary-years`, liste publique des années avec `label`, `startDate`, `endDate` et `isCurrent` calculés (spec `specs/002-rotary-years/`, temps 1). Les calculs sont dans `common/utils/rotary-year.ts`. Opérations d'administration sous `/api/v1/admin/rotary-years`, protégées (spec `specs/003-admin-auth/`) : liste, création (`201`, doublon `409`), suppression (`204`, identifiant mal formé `400`, année inconnue `404`). Aucune année n'est créée par le code.
 - `auth/` : compte d'administration unique (collection `admins`, mot de passe haché en Argon2id) ; `POST /api/v1/auth/login` (jeton JWT HS256, 8 heures au plus, même `401` pour un email inconnu et un mot de passe faux, limité à 5 demandes par minute et par adresse IP) ; `GET /api/v1/auth/me` ; deux gardes, `JwtAuthGuard` et `RolesGuard` avec `@Roles('ADMIN')`, posées sur la classe de chaque contrôleur d'administration. Le compte se crée et son mot de passe se change **uniquement** par `npm run seed:admin --workspace=api`, qui lit `ADMIN_EMAIL` et `ADMIN_PASSWORD` placés temporairement dans `apps/api/.env` ; l'API ne les lit jamais.
 - `common/pipes/parse-object-id.pipe.ts` : identifiant mal formé, `400` « Identifiant invalide. ».
+- `members/` : un module pour deux modèles (spec `specs/004-members/`). **Member** : prénom, nom, profession ou études, email et téléphone (internes, jamais publics) ; pas de portrait avant le stockage de fichiers. **MemberMandate** : la présence d'un membre une année Rotary, avec ses fonctions (`roles[]`, parmi les dix de `common/enums/member-role.enum.ts`) et son ordre d'affichage ; un seul mandat par couple (membre, année), un ordre unique par année. Administration sous `/api/v1/admin/members` (liste paginée, fiche avec tous les mandats, création, modification où `null` efface un champ facultatif, suppression qui emporte les mandats) et `/api/v1/admin/mandates` (liste, création avec ordre attribué automatiquement, modification des fonctions et de l'ordre, suppression, `PUT order` pour réordonner une année). Lecture publique : `GET /api/v1/members` (annuaire d'une année, année courante par défaut, liste vide si elle n'existe pas) et `GET /api/v1/members/years`.
+- `common/dto/pagination-query.dto.ts` : contrat commun des listes paginées (`page`, `limit` de 20 par défaut, 100 au plus).
 - `apps/api/.env.example` liste les six variables, sans valeur. `apps/api/.env` est local et ignoré par Git.
 
 État : le code du socle est **implémenté** ; la **configuration** réelle (`apps/api/.env`) et le cluster MongoDB Atlas sont des **opérations manuelles** du porteur du projet, faites ; le socle a été vérifié contre Atlas (`specs/001-api-foundation/tasks.md`, T011, T016, T026). `PORT` absente ou vide vaut 4000.
 
-Deux collections : `rotaryyears` et `admins`. Aucun autre module métier, aucune gestion des comptes, aucun jeton de rafraîchissement. `JWT_EXPIRES_IN` : défaut `8h`, durée strictement positive et de 8 heures au plus, sinon l'API refuse de démarrer. La suite de la structure est décrite dans `ARCHITECTURE.md`, section 5.
+Quatre collections : `rotaryyears`, `admins`, `members`, `membermandates`. Aucune gestion des comptes, aucun jeton de rafraîchissement. Une année Rotary référencée par un mandat ne peut plus être supprimée (`409`). `JWT_EXPIRES_IN` : défaut `8h`, durée strictement positive et de 8 heures au plus, sinon l'API refuse de démarrer. La suite de la structure est décrite dans `ARCHITECTURE.md`, section 5.
 
 ## 4. Stack technique
 
@@ -206,16 +208,15 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 
 ## 10. Périmètre et prochaines étapes
 
-**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary (modèle, calculs, liste publique, administration) ; authentification de l'administrateur (compte par commande manuelle, connexion, jeton, gardes, limitation des tentatives).
+**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary (modèle, calculs, liste publique, administration) ; authentification de l'administrateur (compte par commande manuelle, connexion, jeton, gardes, limitation des tentatives) ; membres et mandats (administration, ordre par année, annuaire public).
 
 **Prochaines étapes**, chacune sur demande explicite, selon `ARCHITECTURE.md` :
 
-1. membres et mandats ;
-2. actions, actualités ;
-3. stockage de fichiers, candidatures ;
-4. socle du Back Office (MUI, connexion, session, client API) ;
-5. écrans du Back Office ;
-6. connexion du Front Office à l'API.
+1. actions, actualités ;
+2. stockage de fichiers (dont le portrait des membres), candidatures ;
+3. socle du Back Office (MUI, connexion, session, client API) ;
+4. écrans du Back Office ;
+5. connexion du Front Office à l'API.
 
 **Hors périmètre pour l'instant** : tests, CI/CD, Docker, déploiement, version anglaise, rôles autres que `ADMIN`, workflow de candidature.
 
@@ -230,7 +231,11 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 - Les README de `apps/*` sont ceux des gabarits.
 - `apps/api/.env.example` existe ; l'API refuse de démarrer sans `apps/api/.env` valide (`MONGODB_URI`, `JWT_SECRET`) ni sans base joignable. Les autres applications n'ont pas encore de `.env.example`.
 - **Compte d'administration** : un seul, créé par `npm run seed:admin --workspace=api`. `ADMIN_EMAIL` et `ADMIN_PASSWORD` ne restent dans `apps/api/.env` que le temps de la commande. Relancée avec un autre email, la commande refuse ; changer d'email demande de retirer le compte à la main dans la base. Un changement de mot de passe n'invalide pas les jetons déjà délivrés ; seul un changement de `JWT_SECRET` les invalide tous.
-- **Suppression d'une année Rotary** : aucune entité ne référence encore une année, donc toute année est supprimable. Chaque fonctionnalité qui introduit une référence (mandats, actions, actualités) doit ajouter son refus `409`.
+- **Suppression d'une année Rotary** : refusée (`409`) quand un mandat la référence. Les actions et les actualités devront ajouter leur propre contrôle au même endroit (`rotary-years.service.ts`).
+- **Réordonnancement des mandats d'une année** : seule opération de l'API faite dans une transaction MongoDB (le cluster Atlas est un jeu de réplicas). Les ordres passent en négatif puis prennent leur place de 1 à n, pour ne jamais heurter l'index unique ; en cas d'échec, rien n'est modifié. Échanger deux ordres passe par ce réordonnancement : modifier un seul mandat vers un ordre déjà pris est refusé.
+- **Messages de conflit** : mandat en double, ordre déjà pris et année utilisée répondent tous le `409` générique « Conflit avec une ressource existante. » ; le futur Back Office les distinguera par l'opération demandée.
+- **Références dans les schémas Mongoose** : déclarer le type `SchemaTypes.ObjectId`, pas `Types.ObjectId`, sans quoi l'identifiant est enregistré en texte et les recherches par référence ne trouvent rien.
+- **Suppression et référence concurrentes** : les contrôles d'existence ne sont pas dans une transaction ; avec un seul administrateur, le risque d'un mandat orphelin est théorique et accepté pour la V1.
 - **Limitation des tentatives de connexion** : par adresse IP vue par l'API. Derrière un hébergeur, il faudra déclarer le mandataire de confiance au déploiement.
 - Le journal de l'API ne doit contenir aucun nom d'hôte, adresse ni identifiant de la base : le journal de démarrage est filtré dans `main.ts` (classe `StartupLogger`, locale, à ne pas généraliser) et le filtre d'erreurs ne journalise jamais le message d'une erreur interne.
 - Le Front Office affiche encore des contenus provisoires à remplacer avant mise en ligne (texte de présentation du club, photographies, adresses des réseaux sociaux).
