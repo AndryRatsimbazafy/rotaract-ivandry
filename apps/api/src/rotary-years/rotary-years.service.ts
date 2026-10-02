@@ -10,6 +10,7 @@ import {
   rotaryYearBounds,
   rotaryYearLabel,
 } from '../common/utils/rotary-year';
+import { Action } from '../actions/schemas/action.schema';
 import { MemberMandate } from '../members/schemas/member-mandate.schema';
 import { RotaryYear } from './schemas/rotary-year.schema';
 
@@ -29,6 +30,7 @@ export class RotaryYearsService {
     private readonly rotaryYearModel: Model<RotaryYear>,
     @InjectModel(MemberMandate.name)
     private readonly mandateModel: Model<MemberMandate>,
+    @InjectModel(Action.name) private readonly actionModel: Model<Action>,
   ) {}
 
   async findAll(): Promise<RotaryYearView[]> {
@@ -73,6 +75,10 @@ export class RotaryYearsService {
     // Une année référencée ne se supprime pas. Chaque entité qui référence une
     // année ajoute ici son contrôle.
     if (await this.mandateModel.exists({ rotaryYear: id }).exec()) {
+      throw new ConflictException();
+    }
+    // Brouillons compris.
+    if (await this.actionModel.exists({ rotaryYear: id }).exec()) {
       throw new ConflictException();
     }
     const deleted = await this.rotaryYearModel.findByIdAndDelete(id).exec();

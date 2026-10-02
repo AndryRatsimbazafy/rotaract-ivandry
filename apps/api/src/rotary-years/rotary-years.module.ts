@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { Action, ActionSchema } from '../actions/schemas/action.schema';
 import { AuthModule } from '../auth/auth.module';
 import {
   MemberMandate,
@@ -15,8 +16,10 @@ import { RotaryYear, RotaryYearSchema } from './schemas/rotary-year.schema';
     AuthModule,
     MongooseModule.forFeature([
       { name: RotaryYear.name, schema: RotaryYearSchema },
-      // Lu pour refuser la suppression d'une année référencée par un mandat.
+      // Lus pour refuser la suppression d'une année référencée par un mandat
+      // ou par une action.
       { name: MemberMandate.name, schema: MemberMandateSchema },
+      { name: Action.name, schema: ActionSchema },
     ]),
   ],
   controllers: [RotaryYearsPublicController, RotaryYearsAdminController],

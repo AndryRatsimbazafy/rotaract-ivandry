@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT — Rotaract Club Ivandry
 
-> Document de référence du projet. État au 2026-10-01 : le Front Office V1 est terminé et audité (données locales, aucune connexion à l'API) ; l'architecture du Backend et du Back Office est spécifiée dans `ARCHITECTURE.md`, ses décisions principales sont verrouillées ; le socle de l'API (`apps/api`) est en place, avec l'authentification de l'administrateur et deux domaines métier administrables, les années Rotary et les membres avec leurs mandats ; `apps/admin` est encore le gabarit d'origine.
+> Document de référence du projet. État au 2026-10-01 : le Front Office V1 est terminé et audité (données locales, aucune connexion à l'API) ; l'architecture du Backend et du Back Office est spécifiée dans `ARCHITECTURE.md`, ses décisions principales sont verrouillées ; le socle de l'API (`apps/api`) est en place, avec l'authentification de l'administrateur et trois domaines métier administrables : les années Rotary, les membres avec leurs mandats, et les actions ; `apps/admin` est encore le gabarit d'origine.
 
 ## 1. Objectif du projet
 
@@ -88,11 +88,13 @@ Le gabarit `nest new` a été remplacé par le socle (spec `specs/001-api-founda
 - `common/pipes/parse-object-id.pipe.ts` : identifiant mal formé, `400` « Identifiant invalide. ».
 - `members/` : un module pour deux modèles (spec `specs/004-members/`). **Member** : prénom, nom, profession ou études, email et téléphone (internes, jamais publics) ; pas de portrait avant le stockage de fichiers. **MemberMandate** : la présence d'un membre une année Rotary, avec ses fonctions (`roles[]`, parmi les dix de `common/enums/member-role.enum.ts`) et son ordre d'affichage ; un seul mandat par couple (membre, année), un ordre unique par année. Administration sous `/api/v1/admin/members` (liste paginée, fiche avec tous les mandats, création, modification où `null` efface un champ facultatif, suppression qui emporte les mandats) et `/api/v1/admin/mandates` (liste, création avec ordre attribué automatiquement, modification des fonctions et de l'ordre, suppression, `PUT order` pour réordonner une année). Lecture publique : `GET /api/v1/members` (annuaire d'une année, année courante par défaut, liste vide si elle n'existe pas) et `GET /api/v1/members/years`.
 - `common/dto/pagination-query.dto.ts` : contrat commun des listes paginées (`page`, `limit` de 20 par défaut, 100 au plus).
+- `actions/` : le modèle **Action** (spec `specs/005-actions/`) — titre, slug unique, résumé, description, date, année Rotary choisie par l'administrateur et jamais déduite de la date, domaines d'action (`focusAreas[]`, parmi les sept de `common/enums/focus-area.enum.ts`), impact facultatif embarqué, état de publication, ordre manuel facultatif. Administration sous `/api/v1/admin/actions` (liste paginée avec recherche, filtres et tri, consultation, création, modification qui publie et dépublie aussi, suppression). Lecture publique des seules actions publiées : `GET /api/v1/actions` (paginée ; tri par ordre quand il existe, puis date décroissante), `GET /api/v1/actions/years`, `GET /api/v1/actions/:slug`. Pas de photographies avant le stockage de fichiers.
+- `common/utils/slug.ts` : génération d'un slug depuis un titre ; les actualités s'en serviront.
 - `apps/api/.env.example` liste les six variables, sans valeur. `apps/api/.env` est local et ignoré par Git.
 
 État : le code du socle est **implémenté** ; la **configuration** réelle (`apps/api/.env`) et le cluster MongoDB Atlas sont des **opérations manuelles** du porteur du projet, faites ; le socle a été vérifié contre Atlas (`specs/001-api-foundation/tasks.md`, T011, T016, T026). `PORT` absente ou vide vaut 4000.
 
-Quatre collections : `rotaryyears`, `admins`, `members`, `membermandates`. Aucune gestion des comptes, aucun jeton de rafraîchissement. Une année Rotary référencée par un mandat ne peut plus être supprimée (`409`). `JWT_EXPIRES_IN` : défaut `8h`, durée strictement positive et de 8 heures au plus, sinon l'API refuse de démarrer. La suite de la structure est décrite dans `ARCHITECTURE.md`, section 5.
+Cinq collections : `rotaryyears`, `admins`, `members`, `membermandates`, `actions`. Aucune gestion des comptes, aucun jeton de rafraîchissement. Une année Rotary référencée par un mandat ou par une action, brouillon compris, ne peut pas être supprimée (`409`). `JWT_EXPIRES_IN` : défaut `8h`, durée strictement positive et de 8 heures au plus, sinon l'API refuse de démarrer. La suite de la structure est décrite dans `ARCHITECTURE.md`, section 5.
 
 ## 4. Stack technique
 
@@ -208,12 +210,12 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 
 ## 10. Périmètre et prochaines étapes
 
-**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary (modèle, calculs, liste publique, administration) ; authentification de l'administrateur (compte par commande manuelle, connexion, jeton, gardes, limitation des tentatives) ; membres et mandats (administration, ordre par année, annuaire public).
+**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible, sur données locales) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary (modèle, calculs, liste publique, administration) ; authentification de l'administrateur (compte par commande manuelle, connexion, jeton, gardes, limitation des tentatives) ; membres et mandats (administration, ordre par année, annuaire public) ; actions (administration, slug, publication, impact, lectures publiques).
 
 **Prochaines étapes**, chacune sur demande explicite, selon `ARCHITECTURE.md` :
 
-1. actions, actualités ;
-2. stockage de fichiers (dont le portrait des membres), candidatures ;
+1. actualités ;
+2. stockage de fichiers (dont le portrait des membres et les photographies des actions), candidatures ;
 3. socle du Back Office (MUI, connexion, session, client API) ;
 4. écrans du Back Office ;
 5. connexion du Front Office à l'API.
@@ -231,7 +233,13 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 - Les README de `apps/*` sont ceux des gabarits.
 - `apps/api/.env.example` existe ; l'API refuse de démarrer sans `apps/api/.env` valide (`MONGODB_URI`, `JWT_SECRET`) ni sans base joignable. Les autres applications n'ont pas encore de `.env.example`.
 - **Compte d'administration** : un seul, créé par `npm run seed:admin --workspace=api`. `ADMIN_EMAIL` et `ADMIN_PASSWORD` ne restent dans `apps/api/.env` que le temps de la commande. Relancée avec un autre email, la commande refuse ; changer d'email demande de retirer le compte à la main dans la base. Un changement de mot de passe n'invalide pas les jetons déjà délivrés ; seul un changement de `JWT_SECRET` les invalide tous.
-- **Suppression d'une année Rotary** : refusée (`409`) quand un mandat la référence. Les actions et les actualités devront ajouter leur propre contrôle au même endroit (`rotary-years.service.ts`).
+- **Suppression d'une année Rotary** : refusée (`409`) quand un mandat ou une action la référence. Les actualités devront ajouter leur propre contrôle au même endroit (`rotary-years.service.ts`).
+- **Slug d'une action** : généré depuis le titre à la création seulement, avec suffixe `-2`, `-3` en cas de collision ; jamais régénéré quand le titre change ; un slug fourni déjà pris répond `409`. `years` est réservé à la route `/actions/years` : la génération donne `years-2`, et fourni explicitement il est refusé (« Ce slug est réservé. »).
+- **Publication d'une action** : `publishedAt` est posé à la première publication et n'est jamais réécrit ; une action créée publiée le reçoit égal à sa date de création. Ni transaction ni verrou : la V1 suppose un seul administrateur.
+- **Tri public des actions** : fait par une agrégation, parce qu'un tri simple placerait en tête les actions sans ordre. L'ordre est global, facultatif, non unique ; il n'existe aucune route de réordonnancement.
+- **Impact d'une action** : une modification remplace l'objet entier ; un objet sans rubrique n'est pas enregistré ; le champ est absent des réponses quand il est vide.
+- **Registre d'impact de la page Actions : contradiction toujours ouverte.** `DESIGN.md`, section 10, prescrit la mention « Donnée à venir » ; `ARCHITECTURE.md` décide « pas de donnée, pas de section ». L'API suit `ARCHITECTURE.md`. À traiter à la migration du Front Office, en corrigeant `DESIGN.md` d'abord ; le registre agrégé lui-même n'a toujours pas d'entité.
+- **Aides de validation dupliquées** : le retrait des espaces et la contrainte « label d'année » existent dans `members/dto/` et dans `actions/dto/`, par choix de ne pas refactorer `004-members`. À regrouper dans `common/` si les actualités en ont besoin à leur tour.
 - **Réordonnancement des mandats d'une année** : seule opération de l'API faite dans une transaction MongoDB (le cluster Atlas est un jeu de réplicas). Les ordres passent en négatif puis prennent leur place de 1 à n, pour ne jamais heurter l'index unique ; en cas d'échec, rien n'est modifié. Échanger deux ordres passe par ce réordonnancement : modifier un seul mandat vers un ordre déjà pris est refusé.
 - **Messages de conflit** : mandat en double, ordre déjà pris et année utilisée répondent tous le `409` générique « Conflit avec une ressource existante. » ; le futur Back Office les distinguera par l'opération demandée.
 - **Références dans les schémas Mongoose** : déclarer le type `SchemaTypes.ObjectId`, pas `Types.ObjectId`, sans quoi l'identifiant est enregistré en texte et les recherches par référence ne trouvent rien.
