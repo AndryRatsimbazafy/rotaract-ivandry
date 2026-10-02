@@ -12,6 +12,7 @@ import {
 } from '../common/utils/rotary-year';
 import { Action } from '../actions/schemas/action.schema';
 import { MemberMandate } from '../members/schemas/member-mandate.schema';
+import { News } from '../news/schemas/news.schema';
 import { RotaryYear } from './schemas/rotary-year.schema';
 
 export type RotaryYearView = {
@@ -31,6 +32,7 @@ export class RotaryYearsService {
     @InjectModel(MemberMandate.name)
     private readonly mandateModel: Model<MemberMandate>,
     @InjectModel(Action.name) private readonly actionModel: Model<Action>,
+    @InjectModel(News.name) private readonly newsModel: Model<News>,
   ) {}
 
   async findAll(): Promise<RotaryYearView[]> {
@@ -79,6 +81,9 @@ export class RotaryYearsService {
     }
     // Brouillons compris.
     if (await this.actionModel.exists({ rotaryYear: id }).exec()) {
+      throw new ConflictException();
+    }
+    if (await this.newsModel.exists({ rotaryYear: id }).exec()) {
       throw new ConflictException();
     }
     const deleted = await this.rotaryYearModel.findByIdAndDelete(id).exec();

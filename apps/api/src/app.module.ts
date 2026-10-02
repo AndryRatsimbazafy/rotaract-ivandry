@@ -9,6 +9,7 @@ import { getAppConfig } from './config/app-config';
 import { EnvironmentVariables, validate } from './config/env.validation';
 import { HealthModule } from './health/health.module';
 import { MembersModule } from './members/members.module';
+import { NewsModule } from './news/news.module';
 import { RotaryYearsModule } from './rotary-years/rotary-years.module';
 
 @Module({
@@ -47,6 +48,7 @@ import { RotaryYearsModule } from './rotary-years/rotary-years.module';
     RotaryYearsModule,
     MembersModule,
     ActionsModule,
+    NewsModule,
   ],
 })
 export class AppModule {}

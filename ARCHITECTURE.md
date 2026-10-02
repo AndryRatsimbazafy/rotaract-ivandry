@@ -142,14 +142,14 @@ Une actualité du club. **Entité distincte d'Action** : la date y domine, il n'
 | `title` | string | oui | |
 | `slug` | string | oui | **Unique.** |
 | `type` | NewsType | oui | |
-| `date` | Date | oui | |
+| `date` | Date | oui | Un seul champ de date et heure ; ni heure séparée, ni date de fin. |
 | `rotaryYear` | ObjectId → RotaryYear | oui | Référence explicite, choisie par l'administrateur, comme pour Action. |
-| `location` | string | non | Déjà affiché par le Front Office. |
+| `location` | string | non | Déjà affiché par le Front Office. 1 à 120 caractères. |
 | `summary` | string | non | |
 | `content` | string | non | Texte brut, paragraphes séparés par une ligne vide. |
-| `photos` | MediaRef[] | oui | Peut être vide. |
+| `photos` | MediaRef[] | oui | Peut être vide. Non mis en œuvre avant le stockage de fichiers. |
 | `isPublished` | boolean | oui | `false` par défaut. |
-| `publishedAt` | Date | non | |
+| `publishedAt` | Date | non | Posé à la première publication. Conservé à la dépublication et à la republication. Une actualité peut être créée directement publiée. Jamais fourni en entrée. |
 
 `NewsType` : **les cinq types du Front Office V1, et seulement ceux-là.**
 
@@ -323,8 +323,8 @@ Pas de déconnexion côté API (le jeton est sans état : le Back Office efface 
 | GET | `/actions` | `year`, `focusArea`, `q`, `page`, `limit` | Liste paginée. Liste vide (`200`) si l'année n'existe pas |
 | GET | `/actions/years` | | Années qui ont au moins une action publiée |
 | GET | `/actions/:slug` | | Détail (page à venir côté Front Office) |
-| GET | `/news` | `year`, `type`, `q`, `page`, `limit` | Liste paginée, plus récente d'abord |
-| GET | `/news/archives` | | Années qui ont des actualités publiées, avec leur nombre |
+| GET | `/news` | `year`, `type`, `q`, `page`, `limit` | Liste paginée, plus récente d'abord. Liste vide (`200`) si l'année n'existe pas |
+| GET | `/news/archives` | | Années qui ont des actualités publiées, avec leur nombre. Une entrée par année : `rotaryYear` dans la forme de `/rotary-years`, et `count`, le nombre d'actualités publiées |
 | GET | `/news/:slug` | | Détail |
 | POST | `/applications` | `multipart/form-data` | Dépôt d'une candidature. Limité en fréquence. Ne renvoie rien de la candidature. |
 
@@ -338,7 +338,7 @@ Un contenu non publié répond `404` sur la surface publique, comme s'il n'exist
 | Membres | `GET /admin/members` (`year`, `role`, `q`, `page`, `limit`, `sort`) · `GET /:id` (avec tous ses mandats) · `POST` · `PATCH /:id` · `DELETE /:id` Création : `201`. Suppression : `204`. |
 | Mandats | `GET /admin/mandates` (`year`, `member`) · `POST` · `PATCH /:id` (fonctions, ordre) · `DELETE /:id` · `PUT /admin/mandates/order` (réordonner une année : `{ rotaryYear, mandateIds[] }`) Création : `201`, ordre attribué automatiquement. Suppression : `204`. `409` pour un mandat déjà existant pour le couple (membre, année) ou un ordre déjà pris dans l'année. La liste de réordonnancement contient exactement tous les mandats de l'année, chacun une fois ; l'opération est indissociable et renvoie les mandats de l'année dans leur nouvel ordre. |
 | Actions | `GET /admin/actions` (`year`, `focusArea`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` Création : `201`. Suppression : `204`. `409` pour un slug déjà pris. |
-| Actualités | `GET /admin/news` (`year`, `type`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` |
+| Actualités | `GET /admin/news` (`year`, `type`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` Création : `201`. Suppression : `204`. `409` pour un slug déjà pris. |
 | Candidatures | `GET /admin/applications` (`q`, `from`, `to`, `page`, `limit`, `sort`) · `GET /:id` · `GET /:id/cv` (accès au fichier) · `DELETE /:id`. Consultation et suppression seulement : ni création, ni modification, ni statut. |
 | Médias | `POST /admin/media` (envoi d'une image → `MediaRef`) · `DELETE /admin/media` (par `publicId`). Forme définitive liée au futur fournisseur **[ouvert]**. |
 
@@ -380,7 +380,7 @@ Changer le mot de passe en V1 : relancer le script d'initialisation. Pas de « m
 | **Images** | JPEG, PNG ou WebP ; 10 Mo au plus. `alt`, `width`, `height` obligatoires. |
 | **CV** | PDF, DOC ou DOCX ; 5 Mo au plus ; type vérifié sur le contenu, pas seulement sur l'extension. Limites à confirmer **[ouvert]**. |
 
-**Slug.** Généré automatiquement par le serveur à partir du titre quand il n'est pas fourni (sans accents, en minuscules, mots séparés par des tirets) ; en cas de collision, suffixe `-2`, `-3`. **Modifiable à la main par l'administrateur**, à la création comme ensuite ; un slug saisi déjà pris répond `409`. Modifier le titre ne régénère pas le slug. Changer le slug d'un contenu publié change son adresse publique : le Back Office le signale, sans l'empêcher. Un titre dont aucun slug ne peut être tiré est refusé (`400`) si aucun slug n'est fourni. `years` est réservé pour les actions : il désigne la route `/actions/years` ; la génération automatique passe à `years-2`, et fourni par l'administrateur il est refusé (`400`).
+**Slug.** Généré automatiquement par le serveur à partir du titre quand il n'est pas fourni (sans accents, en minuscules, mots séparés par des tirets) ; en cas de collision, suffixe `-2`, `-3`. **Modifiable à la main par l'administrateur**, à la création comme ensuite ; un slug saisi déjà pris répond `409`. Modifier le titre ne régénère pas le slug. Changer le slug d'un contenu publié change son adresse publique : le Back Office le signale, sans l'empêcher. Un titre dont aucun slug ne peut être tiré est refusé (`400`) si aucun slug n'est fourni. `years` est réservé pour les actions : il désigne la route `/actions/years` ; la génération automatique passe à `years-2`, et fourni par l'administrateur il est refusé (`400`). `archives` est réservé pour les actualités : il désigne la route `/news/archives` ; la génération automatique passe à `archives-2`, et fourni par l'administrateur il est refusé (`400`).
 
 ## 9. Filtres, pagination, tri
 
