@@ -63,9 +63,12 @@ export function NewsFeature({ item }: NewsFeatureProps) {
           <h2 id="une-titre" className={styles.title}>
             {item ? item.title : placeholder.title}
           </h2>
-          <p className={styles.summary}>
-            {item ? item.summary : placeholder.summary}
-          </p>
+          {/* Une actualité sans résumé n'a pas de ligne de résumé. */}
+          {!item || item.summary ? (
+            <p className={styles.summary}>
+              {item ? item.summary : placeholder.summary}
+            </p>
+          ) : null}
           {item?.location ? (
             <p className={`meta ${styles.location}`}>
               <span className="label">{newsFeature.locationLabel}</span>{" "}
@@ -75,8 +78,8 @@ export function NewsFeature({ item }: NewsFeatureProps) {
           {item && hasDetail ? (
             <details className={styles.more}>
               <summary className={styles.moreSummary}>{newsFeature.more}</summary>
-              {item.body?.map((paragraph) => (
-                <p key={paragraph} className={styles.paragraph}>
+              {item.body?.map((paragraph, position) => (
+                <p key={position} className={styles.paragraph}>
                   {paragraph}
                 </p>
               ))}

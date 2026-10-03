@@ -1,20 +1,40 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { JoinReminder } from "@/components/sections/JoinReminder";
 import { Onward } from "@/components/sections/Onward";
-import { newsOnward } from "@/content/news";
+import { ListSkeleton } from "@/components/ui/PageSkeleton";
+import { newsOnward, newsRegister } from "@/content/news";
 import { newsPage } from "@/content/pages";
-import { getNews, getNewsArchives, getNewsCount } from "@/data/news";
-import { currentRotaryYear } from "@/lib/rotary-year";
+import {
+  getNews,
+  getNewsArchives,
+  getNewsCount,
+  type NewsList,
+} from "@/data/news";
+import { getCurrentRotaryYear } from "@/data/rotary-years";
 import { single } from "@/lib/search-params";
 import { NewsArchives } from "./_sections/NewsArchives";
 import { NewsFeature } from "./_sections/NewsFeature";
 import { NewsOpening } from "./_sections/NewsOpening";
-import { NewsRegister } from "./_sections/NewsRegister";
+import { NewsRegister, newsListKey } from "./_sections/NewsRegister";
 
 export const metadata: Metadata = {
   title: newsPage.title,
   description: newsPage.description,
 };
+
+/** La plus récente du choix courant, à la une. */
+async function Feature({
+  list,
+  isPending,
+}: {
+  list: Promise<NewsList>;
+  isPending: boolean;
+}) {
+  const [feature] = (await list).news;
+
+  return feature || isPending ? <NewsFeature item={feature} /> : null;
+}
 
 export default async function NewsPage(props: PageProps<"/actualites">) {
   const query = await props.searchParams;
@@ -23,27 +43,33 @@ export default async function NewsPage(props: PageProps<"/actualites">) {
     rotaryYear: single(query.annee),
   };
 
-  const [news, archives, count] = await Promise.all([
-    getNews(filters),
+  // La liste n'est pas attendue ici : la une et le fil ont leur propre attente.
+  const list = getNews(filters);
+  const [archives, count, currentYear] = await Promise.all([
     getNewsArchives(),
     getNewsCount(),
+    getCurrentRotaryYear(),
   ]);
-  // La plus récente est à la une, les suivantes forment le fil.
-  const [feature, ...rest] = news;
 
   return (
     <>
-      <NewsOpening rotaryYear={currentRotaryYear} count={count} />
-      {feature || count === 0 ? <NewsFeature item={feature} /> : null}
-      <NewsRegister
-        items={rest}
-        isPending={count === 0}
-        hasFeature={Boolean(feature)}
-        filters={filters}
-      />
+      <NewsOpening rotaryYear={currentYear} count={count} />
+      <Suspense
+        key={newsListKey(filters)}
+        fallback={
+          <ListSkeleton
+            label={newsRegister.loadingLabel}
+            shape="feature"
+            standalone
+          />
+        }
+      >
+        <Feature list={list} isPending={count === 0} />
+      </Suspense>
+      <NewsRegister list={list} isPending={count === 0} filters={filters} />
       <NewsArchives
         archives={archives}
-        currentYear={currentRotaryYear}
+        currentYear={currentYear}
         filters={filters}
       />
       <Onward label={newsOnward.label} links={newsOnward.links} />

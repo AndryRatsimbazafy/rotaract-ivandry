@@ -1,12 +1,14 @@
 import Image from "next/image";
 import { site } from "@/config/site";
 import { rotaryYearLabel } from "@/content/common";
-import { currentRotaryYear } from "@/lib/rotary-year";
+import { getCurrentRotaryYear } from "@/data/rotary-years";
 import { SiteNav } from "./SiteNav";
 import { SocialLinks } from "./SocialLinks";
 import styles from "./SiteFooter.module.css";
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const currentYear = await getCurrentRotaryYear();
+
   return (
     <footer className={styles.footer}>
       <div className={`container ${styles.inner}`}>
@@ -26,7 +28,7 @@ export function SiteFooter() {
           <p className={`label ${styles.dateline}`}>
             <span>{site.location}</span>
             <span>
-              {rotaryYearLabel} {currentRotaryYear}
+              {rotaryYearLabel} {currentYear}
             </span>
           </p>
           <div className={styles.social}>

@@ -1,12 +1,14 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { PhotoFrame } from "@/components/media/PhotoFrame";
 import { ArrowLink } from "@/components/ui/ArrowLink";
+import { ListSkeleton } from "@/components/ui/PageSkeleton";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { routes } from "@/config/routes";
 import { actionsIndex } from "@/content/actions";
-import { pendingLabel } from "@/content/common";
+import { incompleteLabel, pendingLabel } from "@/content/common";
 import { focusAreas } from "@/content/home";
-import type { ActionFilters } from "@/data/actions";
+import type { ActionFilters, ActionList } from "@/data/actions";
 import type { Action, ActionImpact } from "@/types/action";
 import type { Photo } from "@/types/media";
 import type { RotaryYear } from "@/types/rotary-year";
@@ -26,7 +28,9 @@ interface Entry {
   summary?: string;
   /** L'essentiel, toujours visible. */
   impact?: string;
-  /** La fiche complète, dépliable. */
+  /** La description, paragraphe par paragraphe, dans la fiche dépliable. */
+  description: string[];
+  /** Les rubriques d'impact renseignées, dans la fiche dépliable. */
   facts: { label: string; value: string }[];
   photos: Photo[];
 }
@@ -51,17 +55,21 @@ function toFacts(impact: ActionImpact | undefined) {
 }
 
 function toEntry(action: Action): Entry {
-  const area = focusAreas.areas.find((item) => item.id === action.focusArea);
+  // Une action peut relever de plusieurs domaines, ou d'aucun.
+  const areas = focusAreas.areas.filter((item) =>
+    action.focusAreas.includes(item.id),
+  );
 
   return {
     key: action.id,
     meta: [
       `${actionsIndex.yearLabel} ${action.rotaryYear}`,
-      ...(area ? [area.title] : []),
+      ...areas.map((area) => area.title),
     ],
     title: action.title,
     summary: action.summary,
     impact: action.impact?.results ?? action.impact?.beneficiaries,
+    description: action.description ?? [],
     facts: toFacts(action.impact),
     photos: action.photos,
   };
@@ -76,6 +84,7 @@ function placeholderEntries(): Entry[] {
     title,
     summary,
     impact,
+    description: [],
     facts: [],
     photos: [],
   }));
@@ -91,20 +100,33 @@ function filterHref(filters: ActionFilters) {
 }
 
 interface ActionsIndexProps {
-  actions: Action[];
+  /** La lecture des actions du filtre, attendue dans la seule zone de liste. */
+  list: Promise<ActionList>;
   /** Vrai tant qu'aucune action n'est publiée, tous filtres confondus. */
   isPending: boolean;
   years: RotaryYear[];
   filters: ActionFilters;
 }
 
+/** La mention de liste incomplète, une fois la lecture terminée. */
+async function IncompleteNote({ list }: { list: Promise<ActionList> }) {
+  const { complete } = await list;
+
+  return complete ? null : (
+    <p className={`meta ${styles.note}`}>{incompleteLabel}</p>
+  );
+}
+
 export function ActionsIndex({
-  actions,
+  list,
   isPending,
   years,
   filters,
 }: ActionsIndexProps) {
-  const entries = isPending ? placeholderEntries() : actions.map(toEntry);
+  // Une frontière d'attente par filtre : à chaque changement, la zone de liste
+  // montre son squelette pendant la lecture, tandis que le titre et les filtres
+  // restent en place (le focus du lien choisi est conservé).
+  const listKey = `${filters.rotaryYear ?? ""}|${filters.focusArea ?? ""}`;
   const currentArea = focusAreas.areas.find(
     (area) => area.id === filters.focusArea,
   );
@@ -123,6 +145,9 @@ export function ActionsIndex({
             {isPending ? (
               <p className={`meta ${styles.note}`}>{pendingLabel}</p>
             ) : null}
+            <Suspense key={listKey} fallback={null}>
+              <IncompleteNote list={list} />
+            </Suspense>
           </div>
 
           {/* L'index des filtres : des liens, qui changent l'adresse de la page. */}
@@ -194,83 +219,115 @@ export function ActionsIndex({
           </nav>
         </div>
 
-        {entries.length === 0 ? (
-          <div className={styles.empty}>
-            <p>{actionsIndex.empty}</p>
-            <ArrowLink href={filterHref({})}>{actionsIndex.reset}</ArrowLink>
-          </div>
-        ) : (
-          <div className={isPending ? styles.pending : undefined}>
-            {entries.map((entry, index) => {
-              const variant = VARIANTS[index % VARIANTS.length];
-              const more = entry.photos.slice(1);
-
-              return (
-                <article
-                  key={entry.key}
-                  className={`grid ${styles.entry} ${variant.name}`}
-                >
-                  <ul className={`meta ${styles.meta}`}>
-                    {entry.meta.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                  <h3 className={styles.name}>{entry.title}</h3>
-                  <div className={styles.media}>
-                    <PhotoFrame
-                      photo={entry.photos[0]}
-                      brief={actionsIndex.photoBrief}
-                      format={variant.format}
-                      sizes={variant.sizes}
-                      tone="paper"
-                      className={styles.frame}
-                    />
-                  </div>
-                  <div className={styles.body}>
-                    {entry.summary ? (
-                      <p className={styles.text}>{entry.summary}</p>
-                    ) : null}
-                    {entry.impact ? (
-                      <p className={styles.impact}>{entry.impact}</p>
-                    ) : null}
-                    {entry.facts.length > 0 || more.length > 0 ? (
-                      <details className={styles.more}>
-                        <summary className={styles.moreSummary}>
-                          {actionsIndex.moreLabel}
-                        </summary>
-                        {entry.facts.length > 0 ? (
-                          <dl className={styles.facts}>
-                            {entry.facts.map((fact) => (
-                              <div key={fact.label}>
-                                <dt className="label">{fact.label}</dt>
-                                <dd>{fact.value}</dd>
-                              </div>
-                            ))}
-                          </dl>
-                        ) : null}
-                        {more.length > 0 ? (
-                          <div className={styles.plate}>
-                            {more.map((photo) => (
-                              <PhotoFrame
-                                key={photo.src}
-                                photo={photo}
-                                brief={actionsIndex.photoBrief}
-                                format="3:2"
-                                sizes="(min-width: 1024px) 20vw, 45vw"
-                                className={styles.plateFrame}
-                              />
-                            ))}
-                          </div>
-                        ) : null}
-                      </details>
-                    ) : null}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        )}
+        <Suspense
+          key={listKey}
+          fallback={
+            <ListSkeleton label={actionsIndex.loadingLabel} shape="entry" />
+          }
+        >
+          <ActionsEntries list={list} isPending={isPending} />
+        </Suspense>
       </div>
     </section>
+  );
+}
+
+/** Les actions du filtre, une à une, ou l'état « aucun résultat ». */
+async function ActionsEntries({
+  list,
+  isPending,
+}: {
+  list: Promise<ActionList>;
+  isPending: boolean;
+}) {
+  const { actions } = await list;
+  const entries = isPending ? placeholderEntries() : actions.map(toEntry);
+
+  return (
+    <>
+      {entries.length === 0 ? (
+        <div className={styles.empty}>
+          <p>{actionsIndex.empty}</p>
+          <ArrowLink href={filterHref({})}>{actionsIndex.reset}</ArrowLink>
+        </div>
+      ) : (
+        <div className={isPending ? styles.pending : undefined}>
+          {entries.map((entry, index) => {
+            const variant = VARIANTS[index % VARIANTS.length];
+            const more = entry.photos.slice(1);
+
+            return (
+              <article
+                key={entry.key}
+                className={`grid ${styles.entry} ${variant.name}`}
+              >
+                <ul className={`meta ${styles.meta}`}>
+                  {entry.meta.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+                <h3 className={styles.name}>{entry.title}</h3>
+                <div className={styles.media}>
+                  <PhotoFrame
+                    photo={entry.photos[0]}
+                    brief={actionsIndex.photoBrief}
+                    format={variant.format}
+                    sizes={variant.sizes}
+                    tone="paper"
+                    className={styles.frame}
+                  />
+                </div>
+                <div className={styles.body}>
+                  {entry.summary ? (
+                    <p className={styles.text}>{entry.summary}</p>
+                  ) : null}
+                  {entry.impact ? (
+                    <p className={styles.impact}>{entry.impact}</p>
+                  ) : null}
+                  {entry.description.length > 0 ||
+                  entry.facts.length > 0 ||
+                  more.length > 0 ? (
+                    <details className={styles.more}>
+                      <summary className={styles.moreSummary}>
+                        {actionsIndex.moreLabel}
+                      </summary>
+                      {entry.description.map((paragraph, position) => (
+                        <p key={position} className={styles.text}>
+                          {paragraph}
+                        </p>
+                      ))}
+                      {entry.facts.length > 0 ? (
+                        <dl className={styles.facts}>
+                          {entry.facts.map((fact) => (
+                            <div key={fact.label}>
+                              <dt className="label">{fact.label}</dt>
+                              <dd>{fact.value}</dd>
+                            </div>
+                          ))}
+                        </dl>
+                      ) : null}
+                      {more.length > 0 ? (
+                        <div className={styles.plate}>
+                          {more.map((photo) => (
+                            <PhotoFrame
+                              key={photo.src}
+                              photo={photo}
+                              brief={actionsIndex.photoBrief}
+                              format="3:2"
+                              sizes="(min-width: 1024px) 20vw, 45vw"
+                              className={styles.plateFrame}
+                            />
+                          ))}
+                        </div>
+                      ) : null}
+                    </details>
+                  ) : null}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </>
   );
 }

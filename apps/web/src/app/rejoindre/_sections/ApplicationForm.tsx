@@ -3,16 +3,16 @@
 import { useState, type FormEvent } from "react";
 import button from "@/components/ui/button.module.css";
 import { joinApplication } from "@/content/join";
-import { submitApplication } from "@/data/applications";
-import type {
-  ApplicantStatus,
-  ApplicationField,
-  MembershipApplication,
-} from "@/types/application";
+import { submitApplication, type SubmissionResult } from "@/data/applications";
+import type { ApplicantStatus, ApplicationField } from "@/types/application";
 import styles from "./ApplicationForm.module.css";
 
 type Errors = Partial<Record<ApplicationField, string>>;
-type Outcome = "idle" | "sending" | "sent" | "not-connected";
+type Outcome = "idle" | "sending" | "sent" | "too-many" | "unavailable";
+
+/** Règles de l'API, reprises pour éviter un aller-retour ; elle reste l'autorité. */
+const CV_MAX_BYTES = 5 * 1024 * 1024;
+const PHONE_PATTERN = /^(?=(?:\D*\d){8})[\d\s+\-.()]+$/;
 
 const { fields, statuses, errors: messages } = joinApplication;
 const statusValues = Object.keys(statuses) as ApplicantStatus[];
@@ -23,13 +23,13 @@ function text(data: FormData, name: ApplicationField) {
 }
 
 /** Lit le formulaire et dit ce qui manque, champ par champ. */
-function read(data: FormData): { errors: Errors; application?: MembershipApplication } {
+function read(data: FormData): { errors: Errors; isValid: boolean } {
   const errors: Errors = {};
   const firstName = text(data, "firstName");
   const lastName = text(data, "lastName");
   const email = text(data, "email");
   const phone = text(data, "phone");
-  const status = text(data, "status") as ApplicantStatus | "";
+  const applicantStatus = text(data, "applicantStatus") as ApplicantStatus | "";
   const cv = data.get("cv");
 
   if (!firstName) errors.firstName = messages.firstName;
@@ -37,15 +37,12 @@ function read(data: FormData): { errors: Errors; application?: MembershipApplica
   if (!email) errors.email = messages.email;
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = messages.emailFormat;
   if (!phone) errors.phone = messages.phone;
-  else if (phone.replace(/\D/g, "").length < 8) errors.phone = messages.phoneFormat;
-  if (!status) errors.status = messages.status;
+  else if (!PHONE_PATTERN.test(phone)) errors.phone = messages.phoneFormat;
+  if (!applicantStatus) errors.applicantStatus = messages.applicantStatus;
   if (!(cv instanceof File) || cv.size === 0) errors.cv = messages.cv;
+  else if (cv.size > CV_MAX_BYTES) errors.cv = joinApplication.cvTooLarge;
 
-  if (Object.keys(errors).length > 0 || !status || !(cv instanceof File)) {
-    return { errors };
-  }
-
-  return { errors, application: { firstName, lastName, email, phone, status, cv } };
+  return { errors, isValid: Object.keys(errors).length === 0 };
 }
 
 export function ApplicationForm() {
@@ -55,22 +52,45 @@ export function ApplicationForm() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
-    const result = read(new FormData(form));
+    const data = new FormData(form);
+    const result = read(data);
     setErrors(result.errors);
 
-    if (!result.application) {
+    if (!result.isValid) {
       setOutcome("idle");
-      // Le focus va au premier champ en erreur, dans l'ordre du formulaire.
-      const first = (Object.keys(fields) as ApplicationField[]).find(
-        (name) => result.errors[name],
-      );
-      form.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
+      focusFirstError(form, result.errors);
       return;
     }
 
+    // Le retour est immédiat : l'envoi est annoncé dès le clic.
     setOutcome("sending");
-    const submission = await submitApplication(result.application);
-    setOutcome(submission.ok ? "sent" : "not-connected");
+    let submission: SubmissionResult;
+    try {
+      submission = await submitApplication(data);
+    } catch {
+      // Envoi interrompu, ou refusé avant d'atteindre l'API.
+      submission = { ok: false, reason: "unavailable" };
+    }
+
+    if (submission.ok) {
+      form.reset();
+      setOutcome("sent");
+    } else if ("fieldErrors" in submission) {
+      // Refus de l'API sur un champ : son message, sous le champ.
+      setErrors(submission.fieldErrors);
+      setOutcome("idle");
+      focusFirstError(form, submission.fieldErrors);
+    } else {
+      setOutcome(submission.reason);
+    }
+  }
+
+  /** Le focus va au premier champ en erreur, dans l'ordre du formulaire. */
+  function focusFirstError(form: HTMLFormElement, found: Errors) {
+    const first = (Object.keys(fields) as ApplicationField[]).find(
+      (name) => found[name],
+    );
+    form.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
   }
 
   /** Attributs communs d'un champ : son erreur lui est reliée. */
@@ -152,18 +172,23 @@ export function ApplicationForm() {
         role="radiogroup"
         aria-required="true"
         className={styles.group}
-        {...describe("status")}
+        {...describe("applicantStatus")}
       >
-        <legend>{fields.status}</legend>
+        <legend>{fields.applicantStatus}</legend>
         <div className={styles.choices}>
           {statusValues.map((value) => (
             <label key={value} className={styles.choice}>
-              <input type="radio" name="status" value={value} required />
+              <input
+                type="radio"
+                name="applicantStatus"
+                value={value}
+                required
+              />
               {statuses[value]}
             </label>
           ))}
         </div>
-        {errorOf("status")}
+        {errorOf("applicantStatus")}
       </fieldset>
 
       <div className={styles.field}>
@@ -198,14 +223,9 @@ export function ApplicationForm() {
       </button>
 
       <div role="status" className={styles.outcome}>
-        {outcome === "not-connected" ? (
-          <>
-            <p className={styles.outcomeTitle}>
-              {joinApplication.notConnectedTitle}
-            </p>
-            <p>{joinApplication.notConnected}</p>
-          </>
-        ) : null}
+        {outcome === "sending" ? <p>{joinApplication.sending}</p> : null}
+        {outcome === "too-many" ? <p>{joinApplication.tooMany}</p> : null}
+        {outcome === "unavailable" ? <p>{joinApplication.unavailable}</p> : null}
         {outcome === "sent" ? (
           <>
             <p className={styles.outcomeTitle}>{joinApplication.sentTitle}</p>

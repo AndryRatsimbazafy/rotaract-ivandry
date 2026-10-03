@@ -33,8 +33,9 @@ export const membersDirectory = {
   yearLabel: rotaryYearLabel,
   countOne: "membre",
   countMany: "membres",
-  demoNote: "Profils de démonstration",
   portraitBrief: "Portrait.",
+  /** Libellé accessible de l'attente pendant la lecture de l'annuaire. */
+  loadingLabel: "Chargement des membres",
   /** Suivi de l'année, par exemple « … 2025-2026 ne sont pas encore publiés. » */
   emptyBefore: "Les membres de l'année",
   emptyAfter: "ne sont pas encore publiés.",

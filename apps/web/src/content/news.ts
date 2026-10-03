@@ -43,6 +43,8 @@ export const newsRegister = {
   label: "Le fil",
   title: "Toutes les actualités",
   rubricsLabel: "Rubriques",
+  /** Libellé accessible de l'attente pendant la lecture des actualités. */
+  loadingLabel: "Chargement des actualités",
   allRubrics: "Tout",
   columns: { date: "Date", title: "Actualité", type: "Rubrique" },
   more: "Lire la suite",

@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
 import { JoinReminder } from "@/components/sections/JoinReminder";
 import { actionsPage } from "@/content/pages";
-import {
-  getActionCount,
-  getActions,
-  getActionYears,
-  getImpactIndicators,
-} from "@/data/actions";
-import { currentRotaryYear } from "@/lib/rotary-year";
+import { getActionCount, getActions, getActionYears } from "@/data/actions";
+import { getCurrentRotaryYear } from "@/data/rotary-years";
 import { single } from "@/lib/search-params";
 import { ActionDefinition } from "./_sections/ActionDefinition";
 import { ActionsIndex } from "./_sections/ActionsIndex";
 import { ActionsOpening } from "./_sections/ActionsOpening";
-import { ImpactLedger } from "./_sections/ImpactLedger";
 
 export const metadata: Metadata = {
   title: actionsPage.title,
@@ -26,26 +20,26 @@ export default async function ActionsPage(props: PageProps<"/actions">) {
     focusArea: single(query.domaine),
   };
 
-  const [actions, publishedYears, count, indicators] = await Promise.all([
-    getActions(filters),
+  // La liste n'est pas attendue ici : sa zone a sa propre attente.
+  const list = getActions(filters);
+  const [publishedYears, count, currentYear] = await Promise.all([
     getActionYears(),
     getActionCount(),
-    getImpactIndicators(),
+    getCurrentRotaryYear(),
   ]);
   // Tant qu'aucune action n'est publiée, seule l'année en cours est proposée.
-  const years = publishedYears.length > 0 ? publishedYears : [currentRotaryYear];
+  const years = publishedYears.length > 0 ? publishedYears : [currentYear];
 
   return (
     <>
-      <ActionsOpening rotaryYear={currentRotaryYear} count={count} />
+      <ActionsOpening rotaryYear={currentYear} count={count} />
       <ActionDefinition />
       <ActionsIndex
-        actions={actions}
+        list={list}
         isPending={count === 0}
         years={years}
         filters={filters}
       />
-      <ImpactLedger indicators={indicators} />
       <JoinReminder />
     </>
   );

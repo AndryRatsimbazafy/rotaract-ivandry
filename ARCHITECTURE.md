@@ -1,7 +1,7 @@
 # ARCHITECTURE : Backend et Back Office
 
 > Référence technique avant implémentation de `apps/api` et `apps/admin`, et de la connexion de `apps/web` à l'API.
-> État au 2026-10-02. **Implémenté** : l'API (étapes 1 à 5 de la section 15) et le Back Office (étapes 6 et 7). **Restent à faire** : le stockage des images, et la connexion du Front Office à l'API (étape 8), qui utilise toujours ses données locales.
+> État au 2026-10-02. **Implémenté** : l'API (étapes 1 à 5 de la section 15), le Back Office (étapes 6 et 7) et la connexion du Front Office à l'API (étape 8, fonctionnalité 009). **Reste à faire** : le stockage des images.
 > Les décisions verrouillées et les décisions encore ouvertes sont listées en section 14 ; les points marqués **[ouvert]** y renvoient. Une décision qui change se corrige ici avant de se corriger dans le code.
 > La direction visuelle du Front Office reste dans `DESIGN.md` ; le contexte général dans `PROJECT_CONTEXT.md`.
 
@@ -406,13 +406,14 @@ Contrat commun des listes paginées :
 
 ## 10. Front Office → API
 
-**`apps/web` continue d'utiliser ses données locales.** La migration vers l'API est une étape ultérieure, lancée sur demande ; cette section en fixe seulement le contrat.
+**`apps/web` est relié à l'API depuis la fonctionnalité 009.** Cette section en fixe le contrat.
 
 ### Mode de consommation
 
 - Les fonctions de `apps/web/src/data/*.ts` (`getActions`, `getNews`, `getMembers`, …) sont déjà asynchrones et déjà la seule porte d'accès aux données. À la connexion, **seul leur corps change** : il appelle l'API. Les pages et les composants ne bougent pas.
 - Appels depuis le serveur Next.js uniquement, avec `API_URL` (variable serveur). Un petit client `src/lib/api.ts` centralise l'adresse, le traitement des erreurs et le cache.
-- Cache : `fetch` avec revalidation par durée (60 s proposées) **[ouvert]**. Une invalidation à la demande depuis le Back Office pourra venir ensuite.
+- Cache : `fetch` avec revalidation par durée, configurée à environ 60 secondes. L'objectif est qu'un changement fait dans le Back Office soit visible en une minute environ, **sans garantie à la seconde près** ; une visite ne déclenche pas systématiquement une lecture de l'API. Une revalidation qui échoue ne remplace pas volontairement par un état vide un contenu déjà correctement mis en cache ; cela vaut tant que le cache existe (il est propre au serveur du site ; un build ou un redéploiement peut le vider). Pour que cette règle tienne, les pages de lecture, accueil compris, sont rendues à la demande à partir de ce cache : une page régénérée statiquement relirait au premier plan une entrée périmée et enregistrerait l'état vide si l'API ne répondait pas. Une invalidation à la demande depuis le Back Office pourra venir ensuite.
+- Listes longues : les listes d'actions et d'actualités sont lues en entier, par pages de 100 éléments au plus ; aucune pagination n'est visible sur le site.
 - Le formulaire de candidature passe par une Server Action qui transmet le `multipart` à `POST /applications` : le navigateur ne parle jamais à l'API.
 - Si l'API ne répond pas : la page affiche ses emplacements sans contenu, comme aujourd'hui, plutôt qu'une erreur.
 
@@ -463,13 +464,13 @@ Format unique, pour les deux surfaces :
 | `MembershipApplication` | `status` | `applicantStatus` | Renommage |
 | `ImpactIndicator` | | (aucune entité) | Voir « Écarts » ci-dessous |
 
-### Écarts à traiter lors de la migration
+### Écarts traités à la migration
 
-Trois décisions de ce document ne sont pas encore reflétées par le Front Office V1 ni par `DESIGN.md`, volontairement laissés intacts à ce stade :
+Trois décisions de ce document n'étaient pas reflétées par le Front Office V1 ni par `DESIGN.md`. La fonctionnalité 009 les a traitées :
 
-1. **Impact sans faux contenu.** Le registre d'impact de la page Actions affiche aujourd'hui cinq indicateurs avec la mention « Donnée à venir », et `DESIGN.md` (section 10) prescrit cette mention. La décision est désormais : pas de donnée, pas de section. À la migration, le registre ne s'affiche que s'il a des données réelles, et `DESIGN.md` est corrigé d'abord. Aucune entité ne porte ce registre agrégé pour l'instant **[ouvert]**.
-2. **Année Rotary explicite.** Le Front Office déduit l'année d'une actualité de sa date ; il lira l'année fournie par l'API.
-3. **Fuseau des actualités.** Le Front Office affiche aujourd'hui les dates en temps universel. La date d'une actualité est saisie en heure de Madagascar (voir 11) : à la migration, il l'affichera dans le fuseau approprié.
+1. **Impact sans faux contenu.** Le registre d'impact de la page Actions affichait cinq indicateurs avec la mention « Donnée à venir », que `DESIGN.md` (section 10) prescrivait. La décision est : pas de donnée, pas de section. `DESIGN.md` a été corrigé d'abord, puis le registre et la mention ont été retirés du Front Office. Aucune entité ne porte ce registre agrégé pour l'instant **[ouvert]**.
+2. **Année Rotary explicite.** Le Front Office déduisait l'année d'une actualité de sa date ; il lit l'année fournie par l'API.
+3. **Fuseau des actualités.** Le Front Office affichait les dates en temps universel. La date d'une actualité est saisie en heure de Madagascar (voir 11) : le Front Office affiche son jour et son mois en heure de Madagascar, jamais l'heure, et groupe son fil par mois dans ce fuseau.
 
 ## 11. Back Office → API
 
@@ -742,11 +743,12 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 | 12 | **Impact** | Optionnel. Aucun faux contenu : sans donnée d'impact, la section n'est pas affichée. |
 | 13 | **Année Rotary d'un contenu** | Référence explicite vers RotaryYear sur Action et News, choisie par l'administrateur. Jamais déduite en silence de la date. |
 | 14 | **RotaryYear** | Identifiée par son année de début. Label et dates calculés. Aucun booléen « courant » stocké. |
-| 15 | **Front Office** | Reste sur ses données locales. La migration vers l'API est une étape ultérieure. |
+| 15 | **Front Office** | Relié à l'API depuis la fonctionnalité 009 : lectures publiques par `src/data/*`, candidature par une Server Action. |
 | 16 | **Route de santé** | `GET /api/v1/health`, route technique publique : `200` si l'API et la base répondent, `503` si la base n'est pas joignable, aucune information sensible. Mise en place par le socle. |
 | 17 | **En-têtes de sécurité** | `helmet` sur toutes les réponses, mis en place par le socle. La limitation de fréquence (`@nestjs/throttler`) arrive avec l'authentification. |
 | 18 | **Aspect du Back Office** | Direction fonctionnelle, distincte de `DESIGN.md` : lisibilité, densité adaptée à l'administration, formulaires clairs, tableaux et listes efficaces, états d'attente, d'erreur et de liste vide, confirmation des suppressions, retour après chaque opération. Aucun document visuel distinct : un seul thème MUI, détaillé par le plan de la fonctionnalité 008. |
-| 19 | **Dates du Back Office** | La date d'une actualité est saisie en date et heure, en heure de Madagascar, et convertie en temps universel avant l'enregistrement. Le Back Office affiche en heure de Madagascar la date des actualités et les dates de création, de première publication et de candidature, quel que soit le fuseau de l'ordinateur. L'API n'enregistre et ne renvoie que du temps universel. |
+| 19 | **Dates du Back Office** | La date d'une actualité est saisie en date et heure, en heure de Madagascar, et convertie en temps universel avant l'enregistrement. Le Back Office affiche en heure de Madagascar la date des actualités et les dates de création, de première publication et de candidature, quel que soit le fuseau de l'ordinateur. L'API n'enregistre et ne renvoie que du temps universel. Le Front Office affiche le jour et le mois d'une actualité en heure de Madagascar, sans l'heure. |
+| 20 | **Cache du Front Office** | Revalidation par durée, configurée à environ 60 secondes, sans garantie à la seconde près. Une visite ne déclenche pas systématiquement une lecture de l'API. Une revalidation qui échoue ne remplace pas volontairement par un état vide un contenu déjà correctement mis en cache. Les listes d'actions et d'actualités sont lues en entier, par pages de 100 ; aucune pagination n'est visible. |
 
 ### Encore ouvertes
 
@@ -755,7 +757,6 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 | **Fournisseur de stockage des images** | Lequel, et par quel chemin les fichiers sont envoyés (via l'API ou directement depuis le navigateur, ce qui ouvrirait CORS). | L'étape « stockage de fichiers », l'envoi de photos dans le Back Office |
 | **Registre d'impact agrégé de la page Actions** | Aucune entité ne le porte. À décider : le retirer, ou le faire saisir dans le Back Office. Dans les deux cas il ne s'affiche pas sans données, et `DESIGN.md` (section 10) est à aligner avant de toucher au Front Office. | La migration du Front Office |
 | **Limites des fichiers** | 10 Mo par image est une proposition. (5 Mo par CV : confirmé.) | L'étape « stockage de fichiers » |
-| **Cache du Front Office** | 60 s de revalidation proposées. | La migration du Front Office |
 | **Anti-spam du formulaire** | Au-delà de la limite de fréquence, rien n'est prévu. | Rien dans l'immédiat |
 
 Rien de ce qui est ouvert ne bloque les trois premières étapes (socle de l'API, authentification, années, membres et mandats), ni les actions et actualités hors envoi de photos.

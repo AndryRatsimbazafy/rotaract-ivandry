@@ -1,9 +1,9 @@
 import type { RotaryYear } from "@/types/rotary-year";
 
-/** Année Rotary en cours : du 1er juillet 2026 au 30 juin 2027. */
-export const currentRotaryYear: RotaryYear = "2026-2027";
-
-/** Année Rotary d'une date : elle commence le 1er juillet. */
+/**
+ * Année Rotary d'une date : elle commence le 1er juillet. Ne sert qu'au repli
+ * de l'année en cours, quand l'API n'en fournit pas.
+ */
 export function rotaryYearOf(isoDate: string): RotaryYear {
   const date = new Date(isoDate);
   const year = date.getUTCFullYear();

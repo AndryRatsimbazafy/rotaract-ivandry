@@ -1,18 +1,17 @@
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { memberRoleLabels, membersFunctions } from "@/content/members";
-import { rolesForYear } from "@/data/members";
 import type { Member, MemberRole } from "@/types/member";
 import styles from "./MembersFunctions.module.css";
 
 const roles = Object.keys(memberRoleLabels) as MemberRole[];
 
 interface MembersFunctionsProps {
+  /** Les membres de l'année affichée, avec leurs fonctions de cette année. */
   members: Member[];
-  year: string;
 }
 
 /** L'index inverse de l'annuaire : pour chaque fonction, qui la tient. */
-export function MembersFunctions({ members, year }: MembersFunctionsProps) {
+export function MembersFunctions({ members }: MembersFunctionsProps) {
   return (
     <section className={styles.field} aria-labelledby="fonctions-titre">
       <div className={`container grid ${styles.layout}`}>
@@ -29,7 +28,7 @@ export function MembersFunctions({ members, year }: MembersFunctionsProps) {
         <dl className={styles.index}>
           {roles.map((role) => {
             const holders = members.filter((member) =>
-              rolesForYear(member, year).includes(role),
+              member.roles.includes(role),
             );
 
             return (

@@ -1,0 +1,77 @@
+/*
+ * Attente : blocs sobres, aux dimensions de la zone qu'ils remplacent.
+ * Aucune animation. Hauteurs relevées sur les pages réelles (1280, 768 et
+ * 375 px).
+ */
+
+.skeleton {
+  padding-block: var(--space-48) var(--space-96);
+}
+
+.opening,
+.entry,
+.row,
+.feature,
+.lead,
+.plates > div {
+  background: var(--color-silver);
+  opacity: 0.45;
+}
+
+/* L'ouverture d'une page de liste : de 470 à 980 px selon la page et l'écran. */
+.opening {
+  height: clamp(28rem, 62svh, 56rem);
+  margin-bottom: var(--space-96);
+}
+
+/* Une section entière remplacée : l'espacement vertical d'une section. */
+.standalone {
+  padding-block: var(--space-96);
+}
+
+.list {
+  display: grid;
+  row-gap: var(--space-32);
+  margin-top: var(--space-48);
+}
+
+/* Une action : de 340 à 900 px ; une photographie et son texte. */
+.entry {
+  height: clamp(24rem, 50vw, 42rem);
+}
+
+/* Une ligne du fil des actualités : de 100 à 200 px. */
+.row {
+  height: var(--space-128);
+}
+
+/* L'actualité à la une : de 590 à 900 px. */
+.feature {
+  height: clamp(36rem, 60vw, 52rem);
+}
+
+/* L'annuaire : une personne en grand format, puis trois portraits. */
+.lead {
+  width: min(100%, 26rem);
+  aspect-ratio: 4 / 5;
+}
+
+.plates {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-24);
+}
+
+.plates > div {
+  aspect-ratio: 4 / 5;
+}
+
+@media (min-width: 768px) {
+  .plates {
+    gap: var(--space-48);
+  }
+}
+
+.standalone .list {
+  margin-top: 0;
+}

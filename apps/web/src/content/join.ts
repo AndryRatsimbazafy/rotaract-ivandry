@@ -94,8 +94,11 @@ export const joinApplication: {
   submit: string;
   errorPrefix: string;
   errors: Record<ApplicationField, string> & { emailFormat: string; phoneFormat: string };
-  notConnectedTitle: string;
-  notConnected: string;
+  cvTooLarge: string;
+  cvFormat: string;
+  sending: string;
+  tooMany: string;
+  unavailable: string;
   sentTitle: string;
   sent: string;
 } = {
@@ -109,11 +112,11 @@ export const joinApplication: {
     lastName: "Nom",
     email: "Email",
     phone: "Téléphone",
-    status: "Statut",
+    applicantStatus: "Statut",
     cv: "CV",
   },
   statuses: { etudiant: "Étudiant", professionnel: "Professionnel" },
-  cvHint: "Un fichier PDF ou Word.",
+  cvHint: "Un fichier PDF ou Word, de 5 Mo au plus.",
   required: "Tous les champs sont obligatoires.",
   submit: "Envoyer ma candidature",
   errorPrefix: "Erreur",
@@ -124,12 +127,15 @@ export const joinApplication: {
     emailFormat: "Vérifiez l'adresse email : elle doit ressembler à nom@exemple.org.",
     phone: "Indiquez votre numéro de téléphone.",
     phoneFormat: "Vérifiez le numéro de téléphone : il doit contenir au moins huit chiffres.",
-    status: "Choisissez votre statut.",
+    applicantStatus: "Choisissez votre statut.",
     cv: "Joignez votre CV.",
   },
-  notConnectedTitle: "Formulaire vérifié, mais pas encore envoyé",
-  notConnected:
-    "Vos réponses sont complètes. L'envoi des candidatures n'est pas encore activé sur ce site : aucune donnée n'a été transmise au club.",
+  cvTooLarge: "Le fichier est trop volumineux.",
+  cvFormat: "Le format du CV n’est pas accepté.",
+  sending: "Envoi en cours…",
+  tooMany: "Trop de demandes. Veuillez réessayer plus tard.",
+  unavailable:
+    "Service temporairement indisponible. Veuillez réessayer plus tard.",
   sentTitle: "Candidature envoyée",
   sent: "Merci. Le club vous invite ensuite à une réunion ou à une action.",
 };

@@ -5,7 +5,6 @@ import { routes } from "@/config/routes";
 import { pendingLabel } from "@/content/common";
 import { membersPreview } from "@/content/home";
 import { memberRoleLabels } from "@/content/members";
-import { rolesForYear } from "@/data/members";
 import type { Member } from "@/types/member";
 import type { RotaryYear } from "@/types/rotary-year";
 import styles from "./MembersPreview.module.css";
@@ -39,9 +38,7 @@ export function MembersPreview({ members, rotaryYear }: MembersPreviewProps) {
     : members.map((member) => ({
         key: member.id,
         name: `${member.firstName} ${member.lastName}`,
-        roles: rolesForYear(member, rotaryYear).map(
-          (role) => memberRoleLabels[role],
-        ),
+        roles: member.roles.map((role) => memberRoleLabels[role]),
       }));
   const portraits = members
     .map((member) => member.portrait)

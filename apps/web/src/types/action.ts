@@ -17,17 +17,15 @@ export interface Action {
   slug: string;
   title: string;
   summary?: string;
+  /** Description longue, un paragraphe par élément. */
+  description?: string[];
+  /** Date de l'action, au format ISO 8601. Elle n'est pas affichée. */
+  date: string;
+  /** Année choisie par le club pour cette action, jamais déduite de la date. */
   rotaryYear: RotaryYear;
-  /** Identifiant de l'axe stratégique du Rotary auquel l'action se rattache. */
-  focusArea?: string;
+  /** Domaines d'action du Rotary : aucun, un ou plusieurs. */
+  focusAreas: string[];
+  /** Toujours vide tant que l'API ne fournit pas de photographie. */
   photos: Photo[];
   impact?: ActionImpact;
-}
-
-/** Ligne du registre d'impact : cumul sur l'ensemble des actions. */
-export interface ImpactIndicator {
-  id: string;
-  label: string;
-  /** Absente tant que la donnée n'est pas fournie. Jamais estimée. */
-  value?: string;
 }

@@ -14,26 +14,22 @@ export type MemberRole =
   | "protocole"
   | "secretaire";
 
-/** Présence d'un membre au club pour une année Rotary donnée. */
-export interface MemberMandate {
-  rotaryYear: RotaryYear;
-  /**
-   * Fonctions exercées cette année-là. Un membre peut en cumuler plusieurs
-   * au cours d'une même année ; la liste est vide pour un membre sans fonction.
-   * D'une année à l'autre, elles peuvent changer.
-   */
-  roles: MemberRole[];
-}
-
+/** Un membre du club, tel qu'il se présente pour une année Rotary donnée. */
 export interface Member {
   id: string;
   firstName: string;
   lastName: string;
   /** Profession ou études. */
   occupation?: string;
+  /** Absent tant que l'API ne fournit pas de portrait. */
   portrait?: Photo;
-  /** Une entrée par année Rotary. */
-  mandates: MemberMandate[];
-  /** Profil fictif, montré comme un emplacement et jamais comme une personne. */
-  isDemo?: boolean;
+  /** L'année Rotary de ce mandat. */
+  rotaryYear: RotaryYear;
+  /**
+   * Fonctions exercées cette année-là : aucune, une ou plusieurs. D'une année
+   * à l'autre, elles peuvent changer.
+   */
+  roles: MemberRole[];
+  /** Rang d'affichage dans l'année, choisi par le club. */
+  order: number;
 }

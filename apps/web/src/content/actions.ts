@@ -40,6 +40,8 @@ export const actionsIndex = {
   areaFilter: { label: "Domaine d'action", all: "Tous les domaines" },
   yearLabel: rotaryYearLabel,
   moreLabel: "Fiche de l'action",
+  /** Libellé accessible de l'attente pendant la lecture de la liste. */
+  loadingLabel: "Chargement des actions",
   photoBrief: "Photographie principale de l'action.",
   impactLabels: {
     objective: "Objectif",
@@ -53,12 +55,4 @@ export const actionsIndex = {
   reset: "Voir toutes les actions",
   // Affiché tant qu'aucune action n'est publiée : le même emplacement que sur l'accueil.
   placeholder: latestActions.placeholder,
-};
-
-export const impactLedger = {
-  number: "03",
-  label: "Impact",
-  title: "Ce que les actions ont changé",
-  intro: "Le cumul de toutes les actions du club, mis à jour à chaque publication.",
-  pending: "Donnée à venir",
 };

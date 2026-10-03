@@ -177,21 +177,6 @@
   margin-top: var(--space-8);
 }
 
-/* ---- Profils de démonstration : montrés comme des emplacements ---- */
-
-.demo .name {
-  color: var(--text-placeholder);
-}
-
-.demo .roles {
-  color: var(--text-secondary);
-}
-
-.demo .lineList,
-.demo .lineItem {
-  border-color: var(--border-rule);
-}
-
 @media (min-width: 768px) {
   .plateItem,
   .plateItem:nth-child(odd),

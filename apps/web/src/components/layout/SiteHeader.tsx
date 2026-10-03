@@ -3,15 +3,18 @@ import Link from "next/link";
 import { routes } from "@/config/routes";
 import { site } from "@/config/site";
 import { rotaryYearLabel } from "@/content/common";
-import { currentRotaryYear } from "@/lib/rotary-year";
+import { getCurrentRotaryYear } from "@/data/rotary-years";
 import { MobileMenu } from "./MobileMenu";
 import { SiteNav } from "./SiteNav";
 import { SocialLinks } from "./SocialLinks";
 import styles from "./SiteHeader.module.css";
 
-const dateline = [site.location, `${rotaryYearLabel} ${currentRotaryYear}`];
+export async function SiteHeader() {
+  const dateline = [
+    site.location,
+    `${rotaryYearLabel} ${await getCurrentRotaryYear()}`,
+  ];
 
-export function SiteHeader() {
   return (
     <>
       {/* La « une » du journal : lieu et année, au-dessus de l'en-tête. */}

@@ -3,7 +3,6 @@ import { ArrowLink } from "@/components/ui/ArrowLink";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { routes } from "@/config/routes";
 import { memberRoleLabels, membersDirectory } from "@/content/members";
-import { rolesForYear } from "@/data/members";
 import type { Member } from "@/types/member";
 import styles from "./MembersDirectory.module.css";
 
@@ -12,13 +11,13 @@ const PLATE_SIZE = 3;
 
 interface ProfileProps {
   member: Member;
-  year: string;
   /** Niveau de titre du nom, selon la place du profil dans la page. */
   level: "lead" | "plate" | "line";
 }
 
-function Profile({ member, year, level }: ProfileProps) {
-  const roles = rolesForYear(member, year);
+function Profile({ member, level }: ProfileProps) {
+  // Les fonctions de l'année affichée sont fournies avec le membre.
+  const roles = member.roles;
   const name = `${member.firstName} ${member.lastName}`;
 
   return (
@@ -72,12 +71,11 @@ export function MembersDirectory({
   const [lead, ...others] = members;
   const plate = others.slice(0, PLATE_SIZE);
   const lines = others.slice(PLATE_SIZE);
-  const isDemo = members.some((member) => member.isDemo);
 
   return (
     <section
       id="annuaire"
-      className={isDemo ? `${styles.sheet} ${styles.demo}` : styles.sheet}
+      className={styles.sheet}
       aria-labelledby="annuaire-titre"
     >
       <div className="container">
@@ -98,7 +96,6 @@ export function MembersDirectory({
               {members.length > 1
                 ? membersDirectory.countMany
                 : membersDirectory.countOne}
-              {isDemo ? <span>{membersDirectory.demoNote}</span> : null}
             </p>
           ) : null}
         </div>
@@ -118,14 +115,14 @@ export function MembersDirectory({
         ) : (
           <>
             <div className="grid">
-              <Profile member={lead} year={year} level="lead" />
+              <Profile member={lead} level="lead" />
             </div>
 
             {plate.length > 0 ? (
               <ul className={`grid ${styles.plateList}`}>
                 {plate.map((member) => (
                   <li key={member.id} className={styles.plateItem}>
-                    <Profile member={member} year={year} level="plate" />
+                    <Profile member={member} level="plate" />
                   </li>
                 ))}
               </ul>
@@ -135,7 +132,7 @@ export function MembersDirectory({
               <ul className={styles.lineList}>
                 {lines.map((member) => (
                   <li key={member.id} className={styles.lineItem}>
-                    <Profile member={member} year={year} level="line" />
+                    <Profile member={member} level="line" />
                   </li>
                 ))}
               </ul>
