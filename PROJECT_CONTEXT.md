@@ -78,8 +78,8 @@ Interface d'administration, en français, sur les opérations `/admin/*` de l'AP
 - **Protection** : `src/proxy.ts` (présence du cookie), layout protégé (`GET /auth/me`), puis chaque appel à l'API ; un `401` efface la session et ramène à la connexion.
 - **Listes** : recherche, filtres, tri et page vivent dans l'adresse ; ce sont exactement ceux des contrats de l'API.
 - **Dates** : `src/lib/dates.ts` est le seul fichier à connaître le fuseau. Une actualité se saisit en date et heure de Madagascar, convertie en temps universel sur le serveur ; les dates sont formatées sur le serveur, jamais dans le navigateur.
-- **Aspect** : un seul thème MUI, fonctionnel et dense (`src/theme/theme.ts`) ; `DESIGN.md` ne s'y applique pas.
-- **Hors de ce qui est construit** : photographies et portraits (stockage des images non décidé), gestion de compte, aperçu du Front Office.
+- **Aspect** : un seul thème MUI, fonctionnel et dense (`src/theme/theme.ts`) ; `DESIGN.md` ne s'y applique pas. Décision du 2026-10-13 : refonte complète selon la direction « La grille » de l'application de trésorerie du club (`rotaract-app/rotaract-ivandry-runner`), consignée dans `apps/admin/DESIGN.md` par la fonctionnalité 010 (`ARCHITECTURE.md`, décision 18).
+- **Hors de ce qui est construit** : photographies et portraits (stockage des images décidé, pas encore construit), gestion de compte, aperçu du Front Office.
 
 Technique : MUI 9 et Emotion 11 (six dépendances), Open Sans par `next/font/google` ; aucune bibliothèque de formulaires, de dates, de tableaux ni de glisser-déposer. Variable : `API_URL`, côté serveur seulement (`apps/admin/.env.local`, à créer à la main ; `apps/admin/.env.example` en porte le nom). Structure : `ARCHITECTURE.md`, section 11. Documents : `specs/008-back-office/`.
 
@@ -207,7 +207,7 @@ Le script racine `dev` repose sur le shell (`&` + `wait`) : il fonctionne sous L
 - Cibles d'hébergement : Vercel (fronts) et Render (API).
 - **Design du Front Office** : `DESIGN.md` en est la source de vérité (éditorial premium, concept « Le journal du club », palette Rotary hiérarchisée, Open Sans et Georgia, pas de mode sombre en V1, WCAG 2.2 AA). Il vaut pour toutes les pages.
 - **Modèle métier** : Action et Actualité sont deux entités distinctes ; la fonction d'un membre n'est pas une propriété du membre mais d'un mandat par année Rotary, qui peut porter plusieurs fonctions ; une candidature est simplement enregistrée, **sans workflow de statut**.
-- **Fichiers** : le CV des candidatures est conservé chez Cloudinary (fichier brut, accès authentifié, sans adresse publique), derrière l'abstraction `StorageService` ; le fournisseur des images n'est pas choisi. Une candidature et son CV restent jusqu'à leur suppression par l'administrateur : aucune suppression automatique. CV : PDF, DOC ou DOCX, 5 Mo au plus.
+- **Fichiers** : le CV des candidatures est conservé chez Cloudinary (fichier brut, accès authentifié, sans adresse publique), derrière l'abstraction `StorageService` ; les images (portraits, photographies) le seront aussi, envoyées par le Back Office à l'API, 5 Mo au plus. Une candidature et son CV restent jusqu'à leur suppression par l'administrateur : aucune suppression automatique. CV : PDF, DOC ou DOCX, 5 Mo au plus.
 
 ## 9. Décisions encore ouvertes
 
@@ -215,9 +215,8 @@ Les décisions techniques verrouillées (Mongoose, mandats en collection sépar�
 
 Restent ouvertes :
 
-- fournisseur de stockage des images et chemin d'envoi des fichiers ;
 - sort du registre d'impact agrégé de la page Actions (retiré de `DESIGN.md` et du Front Office par la fonctionnalité 009 ; reste à décider s'il existera un jour, saisi dans le Back Office) ;
-- limite de taille des images, anti-spam du formulaire (au-delà de la limite de fréquence).
+- anti-spam du formulaire (au-delà de la limite de fréquence).
 
 Autres points repoussés : contenu de `packages/` ; solution d'internationalisation ; famille d'icônes du Front Office ; déploiement et CI/CD.
 
@@ -227,7 +226,8 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 
 **Prochaines étapes**, chacune sur demande explicite, selon `ARCHITECTURE.md` :
 
-1. stockage des images (portrait des membres, photographies des actions et des actualités), puis leur saisie dans le Back Office et leur affichage dans le Front Office.
+1. refonte visuelle du Back Office selon la direction « La grille » (fonctionnalité 010) ;
+2. stockage des images chez Cloudinary (portrait des membres, photographies des actions et des actualités, 5 Mo au plus, envoi par l'API), puis leur saisie dans le Back Office et leur affichage dans le Front Office (fonctionnalité 011).
 
 **Hors périmètre pour l'instant** : tests, CI/CD, Docker, déploiement, version anglaise, rôles autres que `ADMIN`, workflow de candidature.
 

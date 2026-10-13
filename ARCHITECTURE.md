@@ -1,7 +1,7 @@
 # ARCHITECTURE : Backend et Back Office
 
 > Référence technique avant implémentation de `apps/api` et `apps/admin`, et de la connexion de `apps/web` à l'API.
-> État au 2026-10-02. **Implémenté** : l'API (étapes 1 à 5 de la section 15), le Back Office (étapes 6 et 7) et la connexion du Front Office à l'API (étape 8, fonctionnalité 009). **Reste à faire** : le stockage des images.
+> État au 2026-10-02. **Implémenté** : l'API (étapes 1 à 5 de la section 15), le Back Office (étapes 6 et 7) et la connexion du Front Office à l'API (étape 8, fonctionnalité 009). **Reste à faire** : la refonte visuelle du Back Office (fonctionnalité 010), puis le stockage des images (fonctionnalité 011).
 > Les décisions verrouillées et les décisions encore ouvertes sont listées en section 14 ; les points marqués **[ouvert]** y renvoient. Une décision qui change se corrige ici avant de se corriger dans le code.
 > La direction visuelle du Front Office reste dans `DESIGN.md` ; le contexte général dans `PROJECT_CONTEXT.md`.
 
@@ -191,7 +191,7 @@ Le compte d'administration. Hors des entités métier, nécessaire à l'authenti
 
 ## 2. Médias et fichiers
 
-**Le CV des candidatures est conservé chez Cloudinary** (décision du 2026-10-02) ; **le fournisseur des images n'est pas choisi** **[ouvert]**. Dans les deux cas l'abstraction demeure : les modèles portent les références dont le fournisseur a besoin, et le code métier ne connaît qu'une interface.
+**Le CV des candidatures est conservé chez Cloudinary** (décision du 2026-10-02) ; **les images aussi** (décision du 2026-10-13) : portraits des membres, photographies des actions et des actualités, avec le même compte et les mêmes variables `CLOUDINARY_*`. Une image est envoyée par le Back Office à l'API, qui la dépose chez Cloudinary : aucun envoi direct du navigateur vers le fournisseur, aucun CORS à ouvrir. Dans les deux cas l'abstraction demeure : les modèles portent les références dont le fournisseur a besoin, et le code métier ne connaît qu'une interface.
 
 `MediaRef` (image, sous-document embarqué) :
 
@@ -340,7 +340,7 @@ Un contenu non publié répond `404` sur la surface publique, comme s'il n'exist
 | Actions | `GET /admin/actions` (`year`, `focusArea`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` Création : `201`. Suppression : `204`. `409` pour un slug déjà pris. |
 | Actualités | `GET /admin/news` (`year`, `type`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` Création : `201`. Suppression : `204`. `409` pour un slug déjà pris. |
 | Candidatures | `GET /admin/applications` (`q`, `from`, `to`, `page`, `limit`, `sort`) · `GET /:id` · `GET /:id/cv` · `DELETE /:id`. Consultation et suppression seulement : ni création, ni modification, ni statut. `GET /:id/cv` : l'API renvoie le fichier lui-même, en pièce jointe et sans cache ; `404` si le fichier n'existe plus au stockage. Suppression : `204` ; elle retire le fichier puis la candidature ; un fichier déjà absent ne l'empêche pas (`204`) ; `503` si le stockage est indisponible, et la candidature est alors conservée. |
-| Médias | `POST /admin/media` (envoi d'une image → `MediaRef`) · `DELETE /admin/media` (par `publicId`). Forme définitive liée au futur fournisseur **[ouvert]**. |
+| Médias | `POST /admin/media` (envoi d'une image → `MediaRef`) · `DELETE /admin/media` (par `publicId`). Forme définitive fixée par la fonctionnalité du stockage des images (Cloudinary, envoi par l'API). |
 
 La publication passe par `PATCH` (`isPublished`), sans endpoint dédié. Les corps de création et de modification d'une action ou d'une actualité portent `rotaryYear` (identifiant), obligatoire à la création.
 
@@ -377,7 +377,7 @@ Changer le mot de passe en V1 : relancer le script d'initialisation. Pas de « m
 | **Enums** | `MemberRole`, `FocusArea`, `NewsType`, `ApplicantStatus` : valeurs de la section 1 uniquement. |
 | **Tableaux** | `roles`, `focusAreas` : valeurs d'enum, sans doublon. `photos` : 20 au plus. `partners` : 20 au plus. |
 | **Identifiants** | ObjectId valide, sinon `400` (et non `500`). |
-| **Images** | JPEG, PNG ou WebP ; 10 Mo au plus. `alt`, `width`, `height` obligatoires. |
+| **Images** | JPEG, PNG ou WebP ; 5 Mo au plus (5 242 880 octets). `alt`, `width`, `height` obligatoires. |
 | **CV** | PDF, DOC ou DOCX ; 5 Mo au plus (5 242 880 octets) ; un seul fichier, non vide. Le type est constaté par l'API sur le contenu, et l'extension doit concorder ; le type annoncé par le client n'est pas utilisé. |
 
 **Slug.** Généré automatiquement par le serveur à partir du titre quand il n'est pas fourni (sans accents, en minuscules, mots séparés par des tirets) ; en cas de collision, suffixe `-2`, `-3`. **Modifiable à la main par l'administrateur**, à la création comme ensuite ; un slug saisi déjà pris répond `409`. Modifier le titre ne régénère pas le slug. Changer le slug d'un contenu publié change son adresse publique : le Back Office le signale, sans l'empêcher. Un titre dont aucun slug ne peut être tiré est refusé (`400`) si aucun slug n'est fourni. `years` est réservé pour les actions : il désigne la route `/actions/years` ; la génération automatique passe à `years-2`, et fourni par l'administrateur il est refusé (`400`). `archives` est réservé pour les actualités : il désigne la route `/news/archives` ; la génération automatique passe à `archives-2`, et fourni par l'administrateur il est refusé (`400`).
@@ -485,7 +485,7 @@ Le Back Office est une application Next.js dont **le serveur fait l'intermédiai
 - **Erreurs.** `401` : cookie effacé, redirection vers `/connexion`. `403` : page d'accès refusé. `400` avec `details` : chaque message est rendu sous son champ. `409` : message en tête de formulaire. Erreur réseau ou `5xx` : message générique, la saisie est conservée.
 - **Déconnexion.** Une Server Action efface le cookie et redirige.
 - **Dates et fuseau.** La date d'une actualité se saisit en date et heure, **en heure de Madagascar** ; le Back Office la convertit en temps universel avant de l'envoyer à l'API, qui n'enregistre que du temps universel. Le Back Office l'affiche en heure de Madagascar, quel que soit le fuseau de l'ordinateur de l'administrateur ; il affiche de même les dates de création, de première publication et de candidature. La date d'une action est une date sans heure, affichée telle qu'elle est enregistrée. L'API et ses contrats ne changent pas.
-- **Envoi de fichiers.** Dépend de la stratégie de stockage : un passage par le serveur Next.js est limité en taille sur Vercel (environ 4,5 Mo), ce qui est trop peu pour des photographies de 2400 px. Un envoi direct du navigateur vers l'API ou vers le fournisseur sera probablement nécessaire ; c'est le seul cas où CORS devrait être ouvert. **[ouvert]**
+- **Envoi de fichiers.** Décidé le 2026-10-13 : une image passe du navigateur au serveur Next.js du Back Office, puis à l'API, qui la dépose chez Cloudinary ; le navigateur n'appelle toujours pas l'API et CORS reste fermé. Point d'attention pour la fonctionnalité du stockage des images : le corps d'une Server Action est limité par défaut (1 Mo, réglable) et un passage par Vercel l'est à environ 4,5 Mo, en dessous de la limite de 5 Mo par image ; le plan de cette fonctionnalité doit dire comment une image de 5 Mo passe (réglage du corps, réduction dans le navigateur avant l'envoi, ou autre).
 
 ### Structure
 
@@ -508,7 +508,7 @@ apps/admin/src/
 
 Les adresses des écrans sont `/connexion`, `/`, `/annees`, `/membres`, `/actions`, `/actualites`, `/candidatures` et leurs sous-adresses ; aucune n'est sous `/admin`, qui désigne les routes de l'API.
 
-Interface en français. MUI installé : `@mui/material`, `@emotion/react`, `@emotion/styled`, `@mui/material-nextjs`, `@mui/icons-material`, et `@emotion/cache`, dépendance paire obligatoire de `@mui/material-nextjs` que l'installation sans hoisting ne rend pas accessible autrement. Les tableaux utilisent le `Table` de MUI ; `@mui/x-data-grid` ne s'ajoute que si un besoin le justifie. **Aspect.** `DESIGN.md` ne régit pas le Back Office. Sa direction est fonctionnelle : lisibilité, densité adaptée à l'administration, formulaires clairs, tableaux et listes efficaces, états d'attente, d'erreur et de liste vide, confirmation des suppressions, retour après chaque opération, adaptation raisonnable aux écrans. Un seul thème MUI pour tous les écrans ; ses détails (couleurs, typographie, densité) sont fixés par `specs/008-back-office/plan.md`.
+Interface en français. MUI installé : `@mui/material`, `@emotion/react`, `@emotion/styled`, `@mui/material-nextjs`, `@mui/icons-material`, et `@emotion/cache`, dépendance paire obligatoire de `@mui/material-nextjs` que l'installation sans hoisting ne rend pas accessible autrement. Les tableaux utilisent le `Table` de MUI ; `@mui/x-data-grid` ne s'ajoute que si un besoin le justifie. **Aspect.** `DESIGN.md` ne régit pas le Back Office. Depuis le 2026-10-13, sa direction visuelle reprend celle de l'application de trésorerie du club (`rotaract-app/rotaract-ivandry-runner`, son `DESIGN.md` « La grille ») : grille dense à filets, couleurs officielles Rotary, coins de 2px, boutons chanfreinés, Open Sans et Red Hat Mono, thèmes clair et sombre, barre latérale et barre supérieure, aperçu à droite des tables, recherche Ctrl+K. La fonctionnalité 010 l'adapte au Back Office et la consigne dans `apps/admin/DESIGN.md`, qui devient la référence visuelle du Back Office. Les exigences fonctionnelles restent : états d'attente, d'erreur et de liste vide, confirmation des suppressions, retour après chaque opération.
 
 ### Types partagés
 
@@ -738,7 +738,7 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 | 7 | **Applications** | Aucun workflow de statut. `applicantStatus` = Étudiant ou Professionnel. La candidature est enregistrée, puis consultable et supprimable par l'administrateur. |
 | 8 | **API** | Préfixe `/api/v1`. |
 | 9 | **Public / admin** | `/admin/*` protégé par JWT + `ADMIN`. Le Front Office n'a aucun accès aux endpoints d'administration. |
-| 10 | **Stockage** | Abstraction `StorageService` conservée. Cloudinary pour le CV des candidatures : fichier brut en accès authentifié, envoi côté serveur seulement, aucune référence de stockage dans les réponses de l'API. Une candidature et son CV sont conservés jusqu'à leur suppression par l'administrateur : aucune suppression automatique. Aucun fournisseur choisi pour les images ; `MediaRef` porte les références utiles à un futur fournisseur. |
+| 10 | **Stockage** | Abstraction `StorageService` conservée. Cloudinary pour le CV des candidatures : fichier brut en accès authentifié, envoi côté serveur seulement, aucune référence de stockage dans les réponses de l'API. Une candidature et son CV sont conservés jusqu'à leur suppression par l'administrateur : aucune suppression automatique. Cloudinary aussi pour les images (2026-10-13), envoyées par le Back Office à l'API, jamais directement du navigateur vers le fournisseur ; 5 Mo au plus par image. |
 | 11 | **News** | Les cinq types du Front Office V1 uniquement. |
 | 12 | **Impact** | Optionnel. Aucun faux contenu : sans donnée d'impact, la section n'est pas affichée. |
 | 13 | **Année Rotary d'un contenu** | Référence explicite vers RotaryYear sur Action et News, choisie par l'administrateur. Jamais déduite en silence de la date. |
@@ -746,7 +746,7 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 | 15 | **Front Office** | Relié à l'API depuis la fonctionnalité 009 : lectures publiques par `src/data/*`, candidature par une Server Action. |
 | 16 | **Route de santé** | `GET /api/v1/health`, route technique publique : `200` si l'API et la base répondent, `503` si la base n'est pas joignable, aucune information sensible. Mise en place par le socle. |
 | 17 | **En-têtes de sécurité** | `helmet` sur toutes les réponses, mis en place par le socle. La limitation de fréquence (`@nestjs/throttler`) arrive avec l'authentification. |
-| 18 | **Aspect du Back Office** | Direction fonctionnelle, distincte de `DESIGN.md` : lisibilité, densité adaptée à l'administration, formulaires clairs, tableaux et listes efficaces, états d'attente, d'erreur et de liste vide, confirmation des suppressions, retour après chaque opération. Aucun document visuel distinct : un seul thème MUI, détaillé par le plan de la fonctionnalité 008. |
+| 18 | **Aspect du Back Office** | Distinct de `DESIGN.md`. Révisé le 2026-10-13 : direction « La grille » de l'application de trésorerie du club (`rotaract-app/rotaract-ivandry-runner`), complète (thèmes clair et sombre, Red Hat Mono, barre latérale et barre supérieure, barre d'onglets sur téléphone, aperçu à droite des tables, recherche Ctrl+K), adaptée par la fonctionnalité 010 et consignée dans `apps/admin/DESIGN.md`. Restent exigés : états d'attente, d'erreur et de liste vide, confirmation des suppressions, retour après chaque opération. |
 | 19 | **Dates du Back Office** | La date d'une actualité est saisie en date et heure, en heure de Madagascar, et convertie en temps universel avant l'enregistrement. Le Back Office affiche en heure de Madagascar la date des actualités et les dates de création, de première publication et de candidature, quel que soit le fuseau de l'ordinateur. L'API n'enregistre et ne renvoie que du temps universel. Le Front Office affiche le jour et le mois d'une actualité en heure de Madagascar, sans l'heure. |
 | 20 | **Cache du Front Office** | Revalidation par durée, configurée à environ 60 secondes, sans garantie à la seconde près. Une visite ne déclenche pas systématiquement une lecture de l'API. Une revalidation qui échoue ne remplace pas volontairement par un état vide un contenu déjà correctement mis en cache. Les listes d'actions et d'actualités sont lues en entier, par pages de 100 ; aucune pagination n'est visible. |
 
@@ -754,9 +754,7 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 
 | Sujet | Ce qu'il faut trancher | Bloque |
 |---|---|---|
-| **Fournisseur de stockage des images** | Lequel, et par quel chemin les fichiers sont envoyés (via l'API ou directement depuis le navigateur, ce qui ouvrirait CORS). | L'étape « stockage de fichiers », l'envoi de photos dans le Back Office |
-| **Registre d'impact agrégé de la page Actions** | Aucune entité ne le porte. À décider : le retirer, ou le faire saisir dans le Back Office. Dans les deux cas il ne s'affiche pas sans données, et `DESIGN.md` (section 10) est à aligner avant de toucher au Front Office. | La migration du Front Office |
-| **Limites des fichiers** | 10 Mo par image est une proposition. (5 Mo par CV : confirmé.) | L'étape « stockage de fichiers » |
+| **Registre d'impact agrégé de la page Actions** | Aucune entité ne le porte. À décider : le retirer, ou le faire saisir dans le Back Office. Dans les deux cas il ne s'affiche pas sans données, et `DESIGN.md` (section 10) est à aligner avant de toucher au Front Office. | Rien dans l'immédiat |
 | **Anti-spam du formulaire** | Au-delà de la limite de fréquence, rien n'est prévu. | Rien dans l'immédiat |
 
 Rien de ce qui est ouvert ne bloque les trois premières étapes (socle de l'API, authentification, années, membres et mandats), ni les actions et actualités hors envoi de photos.
@@ -773,3 +771,5 @@ Chaque étape démarre sur demande explicite.
 6. Socle du Back Office : MUI, connexion, session, client API, mise en page.
 7. Écrans du Back Office, ressource par ressource.
 8. Connexion du Front Office à l'API, en remplaçant le corps des fonctions de `src/data`.
+9. Refonte visuelle du Back Office selon la direction « La grille » (fonctionnalité 010).
+10. Stockage des images chez Cloudinary, saisie dans le Back Office, affichage dans le Front Office (fonctionnalité 011).
