@@ -8,6 +8,7 @@ Cette constitution fixe les principes de développement et les invariants du pro
 
 - `ARCHITECTURE.md` est la référence pour l'architecture backend, les modèles métier, leurs relations, les API et les décisions techniques.
 - `DESIGN.md` est la référence pour la direction artistique et le système visuel du Front Office.
+- `apps/admin/DESIGN.md` est la référence pour la direction visuelle du Back Office (direction « La grille », `ARCHITECTURE.md`, décision 18). `DESIGN.md` ne s'applique pas au Back Office, ni `apps/admin/DESIGN.md` au Front Office.
 - `PROJECT_CONTEXT.md` décrit le contexte global du projet.
 - Une spec, un plan ou une liste de tâches MUST s'appuyer sur ces documents et MUST NOT les contredire.
 - En cas de contradiction entre documents, ou entre un document et une demande, une résolution MUST NOT être inventée : la contradiction est signalée et une validation est demandée.
@@ -40,7 +41,7 @@ Cette constitution fixe les principes de développement et les invariants du pro
 - Authentification : JWT HS256, durée de 8 heures, sans jeton de rafraîchissement.
 - Les mots de passe `ADMIN` sont hachés avec Argon2id.
 - Un seul compte `ADMIN` en V1, créé par script ; aucun écran de gestion des comptes.
-- Le stockage de fichiers reste derrière `StorageService` ; aucun fournisseur concret n'est imposé à ce stade.
+- Le stockage de fichiers reste derrière `StorageService`, seule partie du code qui connaît le fournisseur. Le fournisseur retenu est Cloudinary, pour les CV comme pour les images ; un fichier passe toujours par l'API, jamais directement du navigateur vers le fournisseur (`ARCHITECTURE.md`, décision 10).
 
 Le détail (collections, endpoints, contrats, variables d'environnement) est dans `ARCHITECTURE.md`.
 
@@ -100,7 +101,7 @@ Le détail (collections, endpoints, contrats, variables d'environnement) est dan
 
 ## Décisions ouvertes
 
-Les points marqués `[ouvert]` dans `ARCHITECTURE.md` (section 14) ne sont pas tranchés par cette constitution : fournisseur de stockage des images et chemin d'envoi, stockage des CV et durée de conservation, registre d'impact agrégé de la page Actions, limites de taille des fichiers, cache du Front Office, anti-spam du formulaire, spécification visuelle du Back Office.
+Les décisions encore ouvertes sont celles qu'`ARCHITECTURE.md` liste dans sa section 14, « Encore ouvertes », et marque `[ouvert]` ; cette constitution ne les tranche pas. Au 2026-10-13 : le registre d'impact agrégé de la page Actions et l'anti-spam du formulaire de candidature. La liste d'`ARCHITECTURE.md` fait foi si elle a évolué depuis.
 
 Une spec ou un plan qui dépend de l'un de ces points MUST le signaler et attendre la décision du porteur du projet ; il MUST NOT choisir à sa place.
 
@@ -130,4 +131,4 @@ Règles associées :
 - Conformité : vérifiée à chaque plan et à chaque fin d'étape.
 - `CLAUDE.md` donne les consignes de travail quotidiennes et MUST rester cohérent avec cette constitution.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-01 | **Last Amended**: 2026-10-01
+**Version**: 1.1.0 | **Ratified**: 2026-10-01 | **Last Amended**: 2026-10-13
