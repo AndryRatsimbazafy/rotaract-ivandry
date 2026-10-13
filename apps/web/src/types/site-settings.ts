@@ -32,7 +32,11 @@ export interface ClubFacts {
 export interface SiteSettings {
   social: { facebook?: string; instagram?: string };
   club: ClubFacts;
-  /** Réponses enregistrées, en paragraphes. */
+  /** Informations textuelles du club affichées en français sur une page anglaise (014). */
+  clubFrench?: Partial<Record<"sponsorClub" | "meetingPlace" | "meetingRhythm", true>>;
+  /** Réponses enregistrées en français, en paragraphes. */
   faq: Partial<Record<FaqQuestionId, string[]>>;
+  /** Réponses enregistrées en anglais, en paragraphes (fonctionnalité 014). */
+  faqEn: Partial<Record<FaqQuestionId, string[]>>;
   photos: Partial<Record<SitePhotoSlot, Photo>>;
 }

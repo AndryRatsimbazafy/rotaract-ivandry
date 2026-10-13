@@ -30,5 +30,10 @@ export type SiteSettings = {
   };
   faq: Partial<Record<FaqQuestionId, string>>;
   photos: Partial<Record<SitePhotoSlot, AdminImage>>;
+  // Traductions anglaises (fonctionnalité 014).
+  en?: {
+    club?: { sponsorClub?: string; meetingPlace?: string; meetingRhythm?: string };
+    faq?: Partial<Record<FaqQuestionId, string>>;
+  };
   updatedAt: string | null;
 };

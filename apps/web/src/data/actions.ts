@@ -1,7 +1,10 @@
 import { apiGet, apiGetAll, apiGetOrNull } from "@/lib/api";
 import { toParagraphs } from "@/lib/paragraphs";
+import { currentLang } from "@/lib/current-lang";
+import type { Lang } from "@/lib/locale";
+import { picker } from "./localize";
 import { toPhoto, type ApiImage } from "./media";
-import type { Action, ActionImpact } from "@/types/action";
+import type { Action, ActionImpact, ActionTextField } from "@/types/action";
 import type { RotaryYear } from "@/types/rotary-year";
 
 // Forme publique d'une action dans l'API. Un champ facultatif vide est absent.
@@ -15,39 +18,59 @@ interface ApiAction {
   rotaryYear: string;
   focusAreas: string[];
   impact?: ActionImpact;
+  en?: {
+    title?: string;
+    summary?: string;
+    description?: string;
+    impact?: Omit<ActionImpact, "partners">;
+  };
   photos: ApiImage[];
 }
 
-function toAction(action: ApiAction): Action {
-  const description = toParagraphs(action.description);
+const IMPACT_KEYS = ["objective", "beneficiaries", "location", "period", "results"] as const;
+
+function toAction(action: ApiAction, lang: Lang): Action {
+  const { french, take } = picker<ActionTextField>(lang);
+  const en = action.en;
+  const description = toParagraphs(take("description", action.description, en?.description));
+  let impact: ActionImpact | undefined;
+  if (action.impact) {
+    impact = { ...action.impact };
+    for (const key of IMPACT_KEYS) {
+      impact[key] = take(key, action.impact[key], en?.impact?.[key]);
+    }
+  }
 
   return {
     id: action.id,
     slug: action.slug,
-    title: action.title,
-    summary: action.summary,
+    title: take("title", action.title, en?.title) ?? action.title,
+    summary: take("summary", action.summary, en?.summary),
     description: description.length > 0 ? description : undefined,
     date: action.date,
     rotaryYear: action.rotaryYear as RotaryYear,
     focusAreas: action.focusAreas,
-    impact: action.impact,
+    impact,
     // La première est la principale ; sans photographie, les cadres restent
     // des gabarits.
-    photos: (action.photos ?? []).map(toPhoto),
+    photos: (action.photos ?? []).map((photo) => toPhoto(photo, lang)),
+    ...(Object.keys(french).length ? { french } : {}),
   };
 }
 
 /** Une action publiée par son slug ; null si elle n'existe pas ou plus. */
 export async function getActionBySlug(slug: string): Promise<Action | null> {
   const action = await apiGetOrNull<ApiAction>(`/actions/${encodeURIComponent(slug)}`);
-  return action && toAction(action);
+  const lang = await currentLang();
+  return action && toAction(action, lang);
 }
 
 /** Les premières actions, dans l'ordre que le club a choisi. */
 export async function getLatestActions(limit: number): Promise<Action[]> {
   try {
     const { data } = await apiGet<{ data: ApiAction[] }>("/actions", { limit });
-    return data.map(toAction);
+    const lang = await currentLang();
+    return data.map((action) => toAction(action, lang));
   } catch {
     return [];
   }
@@ -71,7 +94,8 @@ export async function getActions(filters: ActionFilters): Promise<ActionList> {
       year: filters.rotaryYear,
       focusArea: filters.focusArea,
     });
-    return { actions: items.map(toAction), complete };
+    const lang = await currentLang();
+    return { actions: items.map((action) => toAction(action, lang)), complete };
   } catch {
     // API injoignable, ou filtre refusé : la page montre son état vide.
     return { actions: [], complete: true };

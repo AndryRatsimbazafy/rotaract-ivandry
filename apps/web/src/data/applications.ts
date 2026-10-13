@@ -1,6 +1,7 @@
 "use server";
 
-import { joinApplication } from "@/content/join";
+import { contentFor } from "@/content/dictionaries";
+import { isLang, type Lang } from "@/lib/locale";
 import { apiUrl } from "@/lib/api";
 import type { ApplicationField } from "@/types/application";
 
@@ -35,7 +36,11 @@ const UNAVAILABLE: SubmissionResult = { ok: false, reason: "unavailable" };
  */
 export async function submitApplication(
   formData: FormData,
+  lang: Lang = "fr",
 ): Promise<SubmissionResult> {
+  // Valeur venue du navigateur : une langue inconnue vaut le français.
+  const language: Lang = isLang(lang) ? lang : "fr";
+  const { joinApplication } = contentFor(language).join;
   const body = new FormData();
   for (const field of TEXT_FIELDS) {
     const value = formData.get(field);
@@ -66,7 +71,11 @@ export async function submitApplication(
   }
   if (response.status === 429) return { ok: false, reason: "too-many" };
   if (response.status === 400) {
-    const fieldErrors = await readFieldErrors(response);
+    // En anglais, le message du site remplace celui de l'API, en français.
+    const fieldErrors = await readFieldErrors(
+      response,
+      language === "en" ? joinApplication.errors : undefined,
+    );
     if (Object.keys(fieldErrors).length > 0) return { ok: false, fieldErrors };
   }
 
@@ -76,6 +85,7 @@ export async function submitApplication(
 /** Messages de validation de l'API, par champ du formulaire. */
 async function readFieldErrors(
   response: Response,
+  replacements?: Partial<Record<ApplicationField, string>>,
 ): Promise<Partial<Record<ApplicationField, string>>> {
   const fieldErrors: Partial<Record<ApplicationField, string>> = {};
   try {
@@ -88,7 +98,8 @@ async function readFieldErrors(
         typeof message === "string" &&
         FIELDS.includes(field)
       ) {
-        fieldErrors[field as ApplicationField] ??= message;
+        fieldErrors[field as ApplicationField] ??=
+          replacements?.[field as ApplicationField] ?? message;
       }
     }
   } catch {

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { photoPendingLabel } from "@/content/common";
+import { getContent } from "@/content";
 import type { Photo } from "@/types/media";
 import styles from "./PhotoFrame.module.css";
 
@@ -26,7 +26,7 @@ interface PhotoFrameProps {
  * Cadre d'une photographie. Sans photographie, il affiche un gabarit de mise
  * en page (repères de cadrage, format attendu) : jamais une image de remplacement.
  */
-export function PhotoFrame({
+export async function PhotoFrame({
   photo,
   brief,
   format,
@@ -37,6 +37,7 @@ export function PhotoFrame({
   veiled,
   className,
 }: PhotoFrameProps) {
+  const { photoPendingLabel, chrome } = (await getContent()).common;
   const frameClass = className ? `${styles.frame} ${className}` : styles.frame;
 
   if (!photo) {
@@ -71,6 +72,7 @@ export function PhotoFrame({
         <Image
           src={photo.src}
           alt={photo.alt}
+          lang={photo.french?.alt ? "fr" : undefined}
           fill
           sizes={sizes}
           priority={priority}
@@ -80,10 +82,10 @@ export function PhotoFrame({
       </div>
       {photo.caption || photo.credit ? (
         <figcaption className={styles.caption}>
-          {photo.caption}
-          {photo.credit
-            ? `${photo.caption ? " " : ""}Photo : ${photo.credit}.`
-            : null}
+          {photo.caption ? (
+            <span lang={photo.french?.caption ? "fr" : undefined}>{photo.caption}</span>
+          ) : null}
+          {photo.credit ? `${photo.caption ? " " : ""}${chrome.photoCredit(photo.credit)}` : null}
         </figcaption>
       ) : null}
     </figure>

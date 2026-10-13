@@ -25,6 +25,23 @@ const IMPACT_TEXTS = [
 
 // Seules les rubriques renseignées sont envoyées : aucune n'est estimée ni
 // remplacée par un texte d'attente.
+// Traduction anglaise (fonctionnalité 014) : champs remplis seulement ; null
+// s'il n'y en a aucun, ce qui retire la traduction.
+function enOf(formData: FormData): Record<string, unknown> | null {
+  const en: Record<string, unknown> = {};
+  for (const key of ["title", "summary", "description"]) {
+    const value = text(formData, `en.${key}`);
+    if (value) en[key] = value;
+  }
+  const impact: Record<string, string> = {};
+  for (const key of IMPACT_TEXTS) {
+    const value = text(formData, `en.impact.${key}`);
+    if (value) impact[key] = value;
+  }
+  if (Object.keys(impact).length) en.impact = impact;
+  return Object.keys(en).length ? en : null;
+}
+
 function impactOf(formData: FormData): Record<string, string | string[]> | null {
   const impact: Record<string, string | string[]> = {};
   for (const key of IMPACT_TEXTS) {
@@ -73,6 +90,10 @@ export async function createAction(
   if (impact) {
     body.impact = impact;
   }
+  const en = enOf(formData);
+  if (en) {
+    body.en = en;
+  }
   if (formData.get("isPublished") === "true") {
     body.isPublished = true;
   }
@@ -107,6 +128,7 @@ export async function updateAction(
     description: text(formData, "description") || null,
     focusAreas: values.focusAreas,
     impact: impactOf(formData),
+    en: enOf(formData),
     isPublished: formData.get("isPublished") === "true",
     order: order ? orderOf(order) : null,
   };

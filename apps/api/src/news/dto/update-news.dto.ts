@@ -1,28 +1,32 @@
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
   IsISO8601,
   IsMongoId,
+  IsObject,
   IsString,
   Length,
   Matches,
   MaxLength,
   ValidateIf,
+  ValidateNested,
 } from 'class-validator';
 import { NewsType } from '../../common/enums/news-type.enum';
 import { SLUG_MAX_LENGTH, SLUG_PATTERN } from '../../common/utils/slug';
 import {
   CONTENT_MESSAGE,
   DATE_MESSAGE,
+  EN_MESSAGE,
   LOCATION_MESSAGE,
+  NewsEnDto,
   PUBLISHED_MESSAGE,
   SLUG_MESSAGE,
   SUMMARY_MESSAGE,
   TITLE_MESSAGE,
-  trim,
   TYPE_MESSAGE,
   YEAR_ID_MESSAGE,
+  trim,
 } from './create-news.dto';
 
 const isSent = (_: object, value: unknown): boolean => value !== undefined;
@@ -73,6 +77,15 @@ export class UpdateNewsDto {
   @IsString({ message: CONTENT_MESSAGE })
   @Length(1, 20000, { message: CONTENT_MESSAGE })
   content?: string | null;
+
+  // null retire toute la traduction anglaise.
+  @ValidateIf(
+    (_: object, value: unknown) => value !== undefined && value !== null,
+  )
+  @IsObject({ message: EN_MESSAGE })
+  @ValidateNested({ message: EN_MESSAGE })
+  @Type(() => NewsEnDto)
+  en?: NewsEnDto | null;
 
   @ValidateIf(isSent)
   @IsBoolean({ message: PUBLISHED_MESSAGE })

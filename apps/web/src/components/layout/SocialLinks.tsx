@@ -1,4 +1,5 @@
 import { site, type SocialLink } from "@/config/site";
+import { getContent } from "@/content";
 import { getSiteSettings } from "@/data/site-settings";
 import styles from "./SocialLinks.module.css";
 
@@ -22,9 +23,10 @@ const icons: Record<SocialLink["id"], React.ReactNode> = {
  */
 export async function SocialLinks() {
   const { social } = await getSiteSettings();
+  const labels = (await getContent()).common.chrome.social;
 
   return (
-    <ul className={styles.list} aria-label="Réseaux sociaux du club">
+    <ul className={styles.list} aria-label={labels.listLabel}>
       {site.social.map((network) => {
         const icon = (
           <svg
@@ -48,17 +50,17 @@ export async function SocialLinks() {
               <a
                 href={href}
                 className={styles.link}
-                aria-label={`${network.label} du club`}
+                aria-label={labels.linkLabel(network.label)}
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 {icon}
               </a>
             ) : (
-              <span className={styles.link} title={`${network.label} : lien à venir`}>
+              <span className={styles.link} title={labels.pending(network.label)}>
                 {icon}
                 <span className={styles.hidden}>
-                  {network.label} : lien à venir
+                  {labels.pending(network.label)}
                 </span>
               </span>
             )}

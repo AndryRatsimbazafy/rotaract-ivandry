@@ -68,6 +68,8 @@ export async function storeImage(
     alt: fields.alt,
     ...(fields.caption ? { caption: fields.caption } : {}),
     ...(fields.credit ? { credit: fields.credit } : {}),
+    ...(fields.altEn ? { altEn: fields.altEn } : {}),
+    ...(fields.captionEn ? { captionEn: fields.captionEn } : {}),
     focus: fields.focus ?? DEFAULT_FOCUS,
   };
 }
@@ -126,6 +128,8 @@ export function imageFieldsUpdate(
     caption?: string | null;
     credit?: string | null;
     focus?: string;
+    altEn?: string | null;
+    captionEn?: string | null;
   },
 ): { $set?: Record<string, string>; $unset?: Record<string, ''> } {
   const set: Record<string, string> = {};
@@ -136,7 +140,7 @@ export function imageFieldsUpdate(
   if (fields.focus !== undefined) {
     set[`${path}.focus`] = fields.focus;
   }
-  for (const key of ['caption', 'credit'] as const) {
+  for (const key of ['caption', 'credit', 'altEn', 'captionEn'] as const) {
     const value = fields[key];
     if (value === null) {
       unset[`${path}.${key}`] = '';

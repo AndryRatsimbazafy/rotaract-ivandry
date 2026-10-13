@@ -19,6 +19,14 @@ export type ActionImpact = {
   results?: string;
 };
 
+// Traduction anglaise facultative (fonctionnalité 014).
+export type ActionEn = {
+  title?: string;
+  summary?: string;
+  description?: string;
+  impact?: Omit<ActionImpact, "partners">;
+};
+
 export type Action = {
   id: string;
   title: string;
@@ -29,6 +37,7 @@ export type Action = {
   rotaryYear: YearRef;
   focusAreas: FocusArea[];
   impact?: ActionImpact;
+  en?: ActionEn;
   isPublished: boolean;
   publishedAt: string | null;
   order: number | null;

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/LocalLink";
 import type { ReactNode } from "react";
 import styles from "./ArrowLink.module.css";
 

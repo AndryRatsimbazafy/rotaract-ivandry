@@ -22,11 +22,13 @@ import {
 } from '../media/content-images';
 import type { UploadedImage } from '../media/image-upload.interceptor';
 import { StorageService } from '../media/storage.service';
+import { cleanTranslation } from '../common/dto/translation.dto';
 import { UpdateSiteSettingsDto } from './dto/update-site-settings.dto';
 import {
   ClubFacts,
   SITE_SETTINGS_ID,
   SiteSettings,
+  SiteSettingsEn,
   SocialLinks,
 } from './schemas/site-settings.schema';
 
@@ -37,6 +39,7 @@ export type AdminSiteSettingsView = {
   club: ClubFacts;
   faq: Faq;
   photos: Partial<Record<SitePhotoSlot, AdminImage>>;
+  en?: SiteSettingsEn;
   updatedAt: string | null;
 };
 
@@ -45,6 +48,7 @@ export type PublicSiteSettingsView = {
   club: ClubFacts;
   faq: Faq;
   photos: Partial<Record<SitePhotoSlot, PublicImage>>;
+  en?: SiteSettingsEn;
 };
 
 // Ne garde que les champs renseignés d'un sous-document lu en base.
@@ -54,6 +58,12 @@ function present<T extends object>(value: T | undefined): T {
       ([, field]) => field !== undefined && field !== null && field !== '',
     ),
   ) as T;
+}
+
+// Traductions anglaises, champs présents seulement (fonctionnalité 014).
+function enOf(en: SiteSettingsEn | undefined): { en?: SiteSettingsEn } {
+  const clean = cleanTranslation(en);
+  return clean ? { en: clean } : {};
 }
 
 function mapPhotos<T>(
@@ -91,6 +101,7 @@ export class SiteSettingsService {
       social: present(settings?.social),
       club: present(settings?.club),
       faq: present(settings?.faq),
+      ...enOf(settings?.en),
       photos: mapPhotos(settings?.photos, toAdminImage),
       updatedAt: settings?.updatedAt?.toISOString() ?? null,
     };
@@ -102,6 +113,7 @@ export class SiteSettingsService {
       social: present(settings?.social),
       club: present(settings?.club),
       faq: present(settings?.faq),
+      ...enOf(settings?.en),
       photos: mapPhotos(settings?.photos, toPublicImage),
     };
   }
@@ -111,8 +123,15 @@ export class SiteSettingsService {
   async update(dto: UpdateSiteSettingsDto): Promise<AdminSiteSettingsView> {
     const set: Record<string, string | number> = {};
     const unset: Record<string, ''> = {};
-    for (const group of ['social', 'club', 'faq'] as const) {
-      for (const [field, value] of Object.entries(dto[group] ?? {})) {
+    const groups: [string, object | undefined][] = [
+      ['social', dto.social],
+      ['club', dto.club],
+      ['faq', dto.faq],
+      ['en.club', dto.en?.club],
+      ['en.faq', dto.en?.faq],
+    ];
+    for (const [group, values] of groups) {
+      for (const [field, value] of Object.entries(values ?? {})) {
         if (value === null) {
           unset[`${group}.${field}`] = '';
         } else if (value !== undefined) {

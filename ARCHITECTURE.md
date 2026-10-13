@@ -1,7 +1,7 @@
 # ARCHITECTURE : Backend et Back Office
 
 > Référence technique avant implémentation de `apps/api` et `apps/admin`, et de la connexion de `apps/web` à l'API.
-> État au 2026-10-13. **Implémenté** : l'API (étapes 1 à 5 de la section 15), le Back Office (étapes 6 et 7), la connexion du Front Office à l'API (étape 8, fonctionnalité 009), la refonte visuelle du Back Office (étape 9, fonctionnalité 010), le stockage des images (étape 10, fonctionnalité 011), les réglages du site (étape 11, fonctionnalité 012) et les pages de détail (étape 12, fonctionnalité 013). **Reste à faire** : rien de planifié ; les décisions encore ouvertes sont en section 14.
+> État au 2026-10-13. **Implémenté** : l'API (étapes 1 à 5 de la section 15), le Back Office (étapes 6 et 7), la connexion du Front Office à l'API (étape 8, fonctionnalité 009), la refonte visuelle du Back Office (étape 9, fonctionnalité 010), le stockage des images (étape 10, fonctionnalité 011), les réglages du site (étape 11, fonctionnalité 012), les pages de détail (étape 12, fonctionnalité 013) et la version anglaise (étape 13, fonctionnalité 014). **Reste à faire** : rien de planifié ; les décisions encore ouvertes sont en section 14.
 > Les décisions verrouillées et les décisions encore ouvertes sont listées en section 14 ; les points marqués **[ouvert]** y renvoient. Une décision qui change se corrige ici avant de se corriger dans le code.
 > La direction visuelle du Front Office reste dans `DESIGN.md` ; le contexte général dans `PROJECT_CONTEXT.md`.
 
@@ -189,6 +189,19 @@ Le compte d'administration. Hors des entités métier, nécessaire à l'authenti
 | `passwordHash` | string | oui | Jamais renvoyé par l'API. |
 | `role` | `ADMIN` | oui | Seule valeur possible. |
 
+### 1.7 bis Traductions anglaises (fonctionnalité 014)
+
+Le français reste la référence ; chaque champ anglais est facultatif, avec les mêmes limites que son équivalent français ; un champ vide n'est pas stocké, un objet `en` vide non plus.
+
+| Entité | Champs anglais |
+|---|---|
+| Action | `en.title` (≤ 120), `en.summary` (≤ 500), `en.description` (≤ 20 000), `en.impact.objective`, `beneficiaries`, `location`, `period`, `results` (≤ 500 chacun). Les partenaires ne se traduisent pas. |
+| News | `en.title` (≤ 120), `en.summary` (≤ 500), `en.content` (≤ 20 000), `en.location` (≤ 120) |
+| SiteSettings | `en.club.sponsorClub` (≤ 120), `en.club.meetingPlace`, `en.club.meetingRhythm` (≤ 160), `en.faq.<question>` (≤ 1000, aucune obligatoire) |
+| MediaRef | `altEn` (1 à 300), `captionEn` (≤ 300) |
+
+Les lectures publiques et d'administration renvoient `en` (champs présents seulement) et, pour une image, `altEn` et `captionEn` : les deux langues voyagent dans la même réponse.
+
 ### 1.8 SiteSettings
 
 Les réglages du site public (fonctionnalité 012) : ce qui était écrit dans le code du Front Office et que le club fournit. Hors des entités métier : ils ne référencent rien et ne sont référencés par rien. Collection `site_settings`, **un seul document**, d'identifiant fixe `"site"` ; il n'existe pas tant que rien n'a été enregistré, et sa lecture renvoie alors l'état vide. Un champ vide n'est pas stocké.
@@ -227,7 +240,7 @@ Sans réglage, le Front Office garde son état d'avant 012 : pictogrammes sans l
 | `credit` | string | non | |
 | `focus` | string | oui | Point d'intérêt en syntaxe CSS (`"50% 30%"`), pourcentages entiers de 0 à 100 ; `"50% 50%"` par défaut. |
 
-Longueurs (fonctionnalité 011) : `alt` de 1 à 300 caractères, `caption` 300 au plus, `credit` 120 au plus. Lecture publique : `url`, `width`, `height`, `alt`, `caption`, `credit`, `focus` seulement. Lecture d'administration : en plus `id`, `name`, `mimeType`, `size`. Les images sont publiques chez le fournisseur ; l'orientation EXIF est appliquée à la réception.
+Longueurs (fonctionnalité 011) : `alt` de 1 à 300 caractères, `caption` 300 au plus, `credit` 120 au plus. Fonctionnalité 014 : `altEn` (1 à 300) et `captionEn` (300 au plus), facultatifs. Lecture publique : `url`, `width`, `height`, `alt`, `caption`, `credit`, `focus` seulement. Lecture d'administration : en plus `id`, `name`, `mimeType`, `size`. Les images sont publiques chez le fournisseur ; l'orientation EXIF est appliquée à la réception.
 
 `FileRef` (document, pour le CV) : `publicId` (oui), `name` (oui), `mimeType` (oui), `size` (oui). Aucune `url` n'est enregistrée : le CV est déposé chez Cloudinary comme fichier brut (`raw`) en accès authentifié, sous un identifiant aléatoire, et n'a aucune adresse publique. `mimeType` est le type constaté par l'API sur le contenu. Le CV n'est jamais exposé par l'API publique ; ni son identifiant ni aucune adresse de stockage n'apparaît dans une réponse de l'API.
 
@@ -365,6 +378,8 @@ Un contenu non publié répond `404` sur la surface publique, comme s'il n'exist
 | Images | Rattachées à leur contenu (fonctionnalité 011, `specs/011-image-storage/contracts/api-images.md`) : `PUT` · `PATCH` · `DELETE /admin/members/:id/portrait` ; `POST /admin/actions/:id/photos` · `PATCH` · `DELETE /admin/actions/:id/photos/:photoId` · `PUT /admin/actions/:id/photos/order`, et de même sous `/admin/news/:id/photos`. Envoi en `multipart/form-data` (champ `image`, plus `alt`, `caption`, `credit`, `focus`) ; `413`, `415`, `409` (20 photographies), `503`. Aucune route `/admin/media` générique : une image n'existe jamais sans son contenu. |
 | Réglages du site | Fonctionnalité 012, `specs/012-site-settings/contracts/api-site-settings.md` : `GET /admin/site-settings` · `PATCH /admin/site-settings` (corps partiel `social`, `club`, `faq` ; `null` vide un champ ; `400` si une des quatre réponses obligatoires est vidée) · `PUT` · `PATCH` · `DELETE /admin/site-settings/photos/:slot` (comme le portrait d'un membre ; emplacement inconnu : `404`). Le document se crée au premier enregistrement. |
 
+Les corps de création et de modification des actions, des actualités, des réglages du site et des images acceptent les champs anglais de la section 1.7 bis (fonctionnalité 014). L'objet `en` d'une action ou d'une actualité est remplacé en entier, comme l'impact (`null` ou vide : plus de traduction) ; ceux des réglages du site et des images s'écrivent champ par champ (`null` retire un champ).
+
 La publication passe par `PATCH` (`isPublished`), sans endpoint dédié. Les corps de création et de modification d'une action ou d'une actualité portent `rotaryYear` (identifiant), obligatoire à la création.
 
 **Tout `/admin/*` exige JWT + `ADMIN`. Le Front Office n'y a aucun accès** : il ne possède pas de jeton, et n'en demande jamais.
@@ -491,6 +506,10 @@ Format unique, pour les deux surfaces :
 
 `apps/web/src/data/site-settings.ts` lit `GET /site-settings` (`getSiteSettings`) et renvoie l'état vide si la lecture échoue. Correspondances : `social.*` → liens de `SocialLinks` (en-tête, pied de page, menu du téléphone) ; `club.*` → fiche du club de la section « Qui sommes-nous ? » de l'accueil ; `faq.<id>` → réponse de la question de même `id` dans `content/join.ts`, découpée en paragraphes, à défaut la réponse du code ; `photos.<emplacement>` → `Photo` par `toPhoto`, pour les sept emplacements fixes (ouverture de l'accueil : à défaut, la photographie livrée avec le site ; ouverture de « Nous rejoindre » : à défaut, l'ouverture de l'accueil). `/rejoindre` est rendue à la demande, comme l'accueil (décision 20).
 
+### Deux langues (fonctionnalité 014)
+
+Le site public existe en français à ses adresses et en anglais sous `/en` : l'adresse anglaise est l'adresse française précédée de `/en`, les mots des rubriques restant français. Toutes les routes vivent sous `app/[lang]/` (`lang` ∈ `fr`, `en`) ; `src/proxy.ts` réécrit une adresse sans préfixe vers `/fr`, redirige `/fr/…` (`308`) vers l'adresse sans préfixe et laisse passer `/en/…`. Les textes fixes vivent dans `src/content/fr` et `src/content/en`, de même forme, lus par `getContent()` (`next/root-params`) ; les liens passent par `localize()` (`src/lib/locale.ts`). `src/data/*` résout chaque champ traduisible selon la langue de la page : le texte anglais s'il existe, sinon le français, rendu avec `lang="fr"` et signalé « In French » (`DESIGN.md`, section 8). Métadonnées : `alternates.languages` et `openGraph.locale` par page.
+
 ### Pages de détail (fonctionnalité 013)
 
 `data/actions.ts` (`getActionBySlug`) et `data/news.ts` (`getNewsBySlug`) lisent `GET /actions/:slug` et `GET /news/:slug` par `apiGetOrNull` (`lib/api.ts`) : un `404` de l'API devient `null`, et la page appelle `notFound()` (page introuvable, statut `404`) ; toute autre erreur remonte à la page d'erreur du site (`app/error.tsx`), une version déjà lue restant servie par le cache. Les pages sont rendues à la demande, comme l'accueil (décision 20). Les pages de liste vivent dans un groupe de routes `(liste)` : leur `loading.tsx` n'englobe pas les pages de détail, dont la réponse n'est pas envoyée en flux et peut donc porter le statut `404`. Métadonnées : titre, description tirée du résumé, image de partage (photographie principale, à défaut l'ouverture de l'accueil des réglages du site).
@@ -532,6 +551,7 @@ apps/admin/src/
 │       ├── page.tsx        accueil du Back Office : barre de chiffres, accès aux domaines
 │       ├── annees/  membres/  actions/  actualites/  candidatures/   listes, aperçus (*Inspector), fiches
 │       ├── site/           réglages du site (fonctionnalité 012) : photographies fixes, réseaux sociaux, textes
+│       │                   (fonctionnalité 014 : chaque formulaire de contenu a sa section « English (facultatif) »)
 │       └── candidatures/[id]/cv/   relais du fichier renvoyé par l'API
 ├── components/ cadre (AppShell, CommandSearch, ColorModeButton, AccountMenu), en-tête de page, grilles
 │               (SelectableGrid, InspectorLayout, Inspector, RowMenu), SideSheet, marques d'état, avis, états
@@ -784,6 +804,7 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 | 19 | **Dates du Back Office** | La date d'une actualité est saisie en date et heure, en heure de Madagascar, et convertie en temps universel avant l'enregistrement. Le Back Office affiche en heure de Madagascar la date des actualités et les dates de création, de première publication et de candidature, quel que soit le fuseau de l'ordinateur. L'API n'enregistre et ne renvoie que du temps universel. Le Front Office affiche le jour et le mois d'une actualité en heure de Madagascar, sans l'heure. |
 | 20 | **Cache du Front Office** | Revalidation par durée, configurée à environ 60 secondes, sans garantie à la seconde près. Une visite ne déclenche pas systématiquement une lecture de l'API. Une revalidation qui échoue ne remplace pas volontairement par un état vide un contenu déjà correctement mis en cache. Les listes d'actions et d'actualités sont lues en entier, par pages de 100 ; aucune pagination n'est visible. |
 | 21 | **Réglages du site** | Fonctionnalité 012 : un document unique (`site_settings`, `_id: "site"`) de champs nommés : réseaux sociaux, présentation du club en cinq champs, réponses des six questions de la FAQ, sept photographies fixes. Aucun éditeur générique des textes ; les intitulés de la FAQ et tous les autres textes restent dans le code. Les quatre réponses de FAQ déjà écrites dans le code sont recopiées dans le Back Office pour pré-remplir ses champs. |
+| 22 | **Deux langues** | Fonctionnalité 014 : le français est la référence, à ses adresses ; l'anglais vit sous `/en` (adresse française précédée de `/en`). Champs anglais facultatifs saisis dans le Back Office ; aucune traduction automatique ; repli visible sur le français. Le Back Office et les réponses de l'API restent en français. |
 
 ### Encore ouvertes
 
@@ -810,3 +831,4 @@ Chaque étape démarre sur demande explicite.
 10. Stockage des images chez Cloudinary, saisie dans le Back Office, affichage dans le Front Office (fonctionnalité 011).
 11. Réglages du site : photographies fixes, réseaux sociaux, présentation du club et réponses de la FAQ, saisis dans l'écran « Site » du Back Office (fonctionnalité 012).
 12. Pages de détail des actions et des actualités, page introuvable et page d'erreur du Front Office (fonctionnalité 013).
+13. Version anglaise du site public et champs anglais des contenus (fonctionnalité 014).

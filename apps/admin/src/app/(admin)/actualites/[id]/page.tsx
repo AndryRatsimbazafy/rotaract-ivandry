@@ -50,6 +50,10 @@ export default async function ActualitePage({
             location: news.location ?? "",
             summary: news.summary ?? "",
             content: news.content ?? "",
+            "en.title": news.en?.title ?? "",
+            "en.location": news.en?.location ?? "",
+            "en.summary": news.en?.summary ?? "",
+            "en.content": news.en?.content ?? "",
           },
           isPublished: news.isPublished,
           publishedAt: news.publishedAt

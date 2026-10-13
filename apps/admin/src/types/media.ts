@@ -8,6 +8,9 @@ export type AdminImage = {
   alt: string;
   caption: string | null;
   credit: string | null;
+  // Traductions anglaises (fonctionnalité 014).
+  altEn: string | null;
+  captionEn: string | null;
   focus: string;
   name: string;
   mimeType: string;

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/LocalLink";
 import styles from "./Onward.module.css";
 
 interface OnwardProps {

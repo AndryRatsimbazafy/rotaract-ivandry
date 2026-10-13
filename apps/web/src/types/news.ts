@@ -1,3 +1,4 @@
+import type { FrenchFields } from "./locale";
 import type { Photo } from "./media";
 import type { RotaryYear } from "./rotary-year";
 
@@ -24,4 +25,6 @@ export interface NewsItem {
   body?: string[];
   /** Toujours vide tant que l'API ne fournit pas de photographie. */
   photos: Photo[];
+  /** Champs affichés en français sur une page anglaise (fonctionnalité 014). */
+  french?: FrenchFields<"title" | "summary" | "body" | "location">;
 }

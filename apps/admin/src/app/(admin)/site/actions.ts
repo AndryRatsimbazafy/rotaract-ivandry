@@ -19,12 +19,13 @@ const FAQ = ["qui", "rencontre", "sympathisant", "avant", "membre", "frequence"]
 
 // L'API nomme le champ par son chemin (« social.facebook ») ; le formulaire,
 // par son nom seul.
+// Traduction : « en.club.sponsorClub » devient « en.sponsorClub ».
 function groupFailure(error: unknown, formData: FormData, group: string): FormState {
   const state = failure(error, formValues(formData));
   if (state.fieldErrors) {
     state.fieldErrors = Object.fromEntries(
       Object.entries(state.fieldErrors).map(([field, message]) => [
-        field.replace(`${group}.`, ""),
+        field.replace(`en.${group}.`, "en.").replace(`${group}.`, ""),
         message,
       ]),
     );
@@ -32,9 +33,18 @@ function groupFailure(error: unknown, formData: FormData, group: string): FormSt
   return state;
 }
 
-async function save(group: string, body: Record<string, unknown>, formData: FormData) {
+// Écrit un groupe et, s'il y en a une, sa traduction anglaise (fonctionnalité 014).
+async function save(
+  group: string,
+  body: Record<string, unknown>,
+  formData: FormData,
+  en?: Record<string, unknown>,
+) {
   try {
-    await apiWrite("/admin/site-settings", "PATCH", { [group]: body });
+    await apiWrite("/admin/site-settings", "PATCH", {
+      [group]: body,
+      ...(en ? { en: { [group]: en } } : {}),
+    });
   } catch (error) {
     return groupFailure(error, formData, group);
   }
@@ -60,7 +70,11 @@ export async function saveClub(_previous: FormState, formData: FormData): Promis
     const value = text(formData, key);
     body[key] = value === "" ? null : Number.isNaN(Number(value)) ? value : Number(value);
   }
-  return save("club", body, formData);
+  const en: Record<string, string | null> = {};
+  for (const key of CLUB_TEXT) {
+    en[key] = text(formData, `en.${key}`) || null;
+  }
+  return save("club", body, formData, en);
 }
 
 export async function saveFaq(_previous: FormState, formData: FormData): Promise<FormState> {
@@ -68,5 +82,9 @@ export async function saveFaq(_previous: FormState, formData: FormData): Promise
   for (const key of FAQ) {
     body[key] = text(formData, key) || null;
   }
-  return save("faq", body, formData);
+  const en: Record<string, string | null> = {};
+  for (const key of FAQ) {
+    en[key] = text(formData, `en.${key}`) || null;
+  }
+  return save("faq", body, formData, en);
 }

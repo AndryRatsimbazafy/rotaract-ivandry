@@ -20,6 +20,17 @@ const API = "/admin/news";
 const DATE_MESSAGE = "La date doit être au format ISO 8601.";
 const OPTIONAL = ["location", "summary", "content"] as const;
 
+// Traduction anglaise (fonctionnalité 014) : champs remplis seulement ; null
+// s'il n'y en a aucun, ce qui retire la traduction.
+function enOf(formData: FormData): Record<string, string> | null {
+  const en: Record<string, string> = {};
+  for (const key of ["title", "summary", "content", "location"]) {
+    const value = text(formData, `en.${key}`);
+    if (value) en[key] = value;
+  }
+  return Object.keys(en).length ? en : null;
+}
+
 export async function createNews(
   _previous: FormState,
   formData: FormData,
@@ -42,6 +53,10 @@ export async function createNews(
     if (value) {
       body[key] = value;
     }
+  }
+  const en = enOf(formData);
+  if (en) {
+    body.en = en;
   }
   if (formData.get("isPublished") === "true") {
     body.isPublished = true;
@@ -73,6 +88,7 @@ export async function updateNews(
     date,
     rotaryYear: text(formData, "rotaryYear"),
     isPublished: formData.get("isPublished") === "true",
+    en: enOf(formData),
   };
   // Un champ vidé est effacé : null, jamais une chaîne vide.
   for (const key of OPTIONAL) {

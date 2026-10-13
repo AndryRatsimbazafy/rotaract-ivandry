@@ -37,6 +37,19 @@ export class ClubFacts {
   meetingRhythm?: string;
 }
 
+// Traduction anglaise des informations textuelles du club (fonctionnalité 014).
+@Schema({ _id: false })
+export class ClubFactsEn {
+  @Prop({ type: String })
+  sponsorClub?: string;
+
+  @Prop({ type: String })
+  meetingPlace?: string;
+
+  @Prop({ type: String })
+  meetingRhythm?: string;
+}
+
 export type FaqAnswers = Partial<Record<FaqQuestion, string>>;
 export type SitePhotos = Partial<Record<SitePhotoSlot, MediaRef>>;
 
@@ -58,6 +71,16 @@ const SitePhotosSchema = new MongooseSchema(
   { _id: false },
 );
 
+// Traductions anglaises facultatives : club et réponses de la FAQ.
+@Schema({ _id: false })
+export class SiteSettingsEn {
+  @Prop({ type: SchemaFactory.createForClass(ClubFactsEn) })
+  club?: ClubFactsEn;
+
+  @Prop({ type: FaqAnswersSchema })
+  faq?: FaqAnswers;
+}
+
 // Réglages du site public (ARCHITECTURE.md, section 1.8) : un seul document,
 // créé au premier enregistrement. Un champ vide n'est pas stocké.
 @Schema({ collection: 'site_settings', timestamps: true })
@@ -76,6 +99,9 @@ export class SiteSettings {
 
   @Prop({ type: SitePhotosSchema })
   photos?: SitePhotos;
+
+  @Prop({ type: SchemaFactory.createForClass(SiteSettingsEn) })
+  en?: SiteSettingsEn;
 
   updatedAt?: Date;
 }

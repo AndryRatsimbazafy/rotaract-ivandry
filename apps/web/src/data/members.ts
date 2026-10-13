@@ -1,6 +1,8 @@
 import { apiGet } from "@/lib/api";
 import type { Member, MemberRole } from "@/types/member";
 import type { RotaryYear } from "@/types/rotary-year";
+import { currentLang } from "@/lib/current-lang";
+import type { Lang } from "@/lib/locale";
 import { toPhoto, type ApiImage } from "./media";
 
 // Forme publique d'un membre dans l'API : ni email, ni téléphone.
@@ -15,13 +17,13 @@ interface ApiMember {
   order: number;
 }
 
-function toMember(member: ApiMember): Member {
+function toMember(member: ApiMember, lang: Lang): Member {
   return {
     id: member.id,
     firstName: member.firstName,
     lastName: member.lastName,
     occupation: member.occupation,
-    portrait: member.portrait ? toPhoto(member.portrait) : undefined,
+    portrait: member.portrait ? toPhoto(member.portrait, lang) : undefined,
     rotaryYear: member.rotaryYear as RotaryYear,
     roles: member.roles,
     order: member.order,
@@ -35,7 +37,8 @@ function toMember(member: ApiMember): Member {
 export async function getMembers(year: string): Promise<Member[]> {
   try {
     const { data } = await apiGet<{ data: ApiMember[] }>("/members", { year });
-    return data.map(toMember);
+    const lang = await currentLang();
+    return data.map((member) => toMember(member, lang));
   } catch {
     return [];
   }
@@ -57,7 +60,8 @@ export async function getMemberYears(): Promise<RotaryYear[]> {
 export async function getFeaturedMembers(limit: number): Promise<Member[]> {
   try {
     const { data } = await apiGet<{ data: ApiMember[] }>("/members", { limit });
-    return data.map(toMember);
+    const lang = await currentLang();
+    return data.map((member) => toMember(member, lang));
   } catch {
     return [];
   }

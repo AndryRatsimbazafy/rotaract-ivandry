@@ -16,6 +16,7 @@ import {
   FaqQuestion,
   REQUIRED_FAQ_QUESTIONS,
 } from '../../common/enums/faq-question.enum';
+import { englishLengthMessage } from '../../common/dto/translation.dto';
 
 export const FACEBOOK_MESSAGE =
   "Indiquez l'adresse complète de la page Facebook du club, commençant par https://.";
@@ -186,6 +187,84 @@ export class FaqDto {
   frequence?: string | null;
 }
 
+// Traductions anglaises (fonctionnalité 014) : facultatives, aucune réponse
+// obligatoire.
+export class ClubEnDto {
+  @ValidateIf(isSentAndNotNull)
+  @Transform(trimOrNull)
+  @IsString({ message: englishLengthMessage('Le club parrain', 120) })
+  @Length(1, 120, { message: englishLengthMessage('Le club parrain', 120) })
+  sponsorClub?: string | null;
+
+  @ValidateIf(isSentAndNotNull)
+  @Transform(trimOrNull)
+  @IsString({ message: englishLengthMessage('Le lieu des réunions', 160) })
+  @Length(1, 160, {
+    message: englishLengthMessage('Le lieu des réunions', 160),
+  })
+  meetingPlace?: string | null;
+
+  @ValidateIf(isSentAndNotNull)
+  @Transform(trimOrNull)
+  @IsString({ message: englishLengthMessage('Le rythme des réunions', 160) })
+  @Length(1, 160, {
+    message: englishLengthMessage('Le rythme des réunions', 160),
+  })
+  meetingRhythm?: string | null;
+}
+
+const FAQ_EN_MESSAGE = englishLengthMessage('La réponse', 1000);
+
+export class FaqEnDto {
+  @ValidateIf(isSentAndNotNull)
+  @Transform(trimOrNull)
+  @IsString({ message: FAQ_EN_MESSAGE })
+  @Length(1, 1000, { message: FAQ_EN_MESSAGE })
+  qui?: string | null;
+
+  @ValidateIf(isSentAndNotNull)
+  @Transform(trimOrNull)
+  @IsString({ message: FAQ_EN_MESSAGE })
+  @Length(1, 1000, { message: FAQ_EN_MESSAGE })
+  rencontre?: string | null;
+
+  @ValidateIf(isSentAndNotNull)
+  @Transform(trimOrNull)
+  @IsString({ message: FAQ_EN_MESSAGE })
+  @Length(1, 1000, { message: FAQ_EN_MESSAGE })
+  sympathisant?: string | null;
+
+  @ValidateIf(isSentAndNotNull)
+  @Transform(trimOrNull)
+  @IsString({ message: FAQ_EN_MESSAGE })
+  @Length(1, 1000, { message: FAQ_EN_MESSAGE })
+  avant?: string | null;
+
+  @ValidateIf(isSentAndNotNull)
+  @Transform(trimOrNull)
+  @IsString({ message: FAQ_EN_MESSAGE })
+  @Length(1, 1000, { message: FAQ_EN_MESSAGE })
+  membre?: string | null;
+
+  @ValidateIf(isSentAndNotNull)
+  @Transform(trimOrNull)
+  @IsString({ message: FAQ_EN_MESSAGE })
+  @Length(1, 1000, { message: FAQ_EN_MESSAGE })
+  frequence?: string | null;
+}
+
+export class SiteSettingsEnDto {
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ClubEnDto)
+  club?: ClubEnDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => FaqEnDto)
+  faq?: FaqEnDto;
+}
+
 // Corps de PATCH /admin/site-settings : partiel ; null vide un champ.
 export class UpdateSiteSettingsDto {
   @IsOptional()
@@ -202,4 +281,9 @@ export class UpdateSiteSettingsDto {
   @ValidateNested()
   @Type(() => FaqDto)
   faq?: FaqDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => SiteSettingsEnDto)
+  en?: SiteSettingsEnDto;
 }

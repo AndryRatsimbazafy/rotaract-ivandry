@@ -1,4 +1,5 @@
 import { Transform, Type } from 'class-transformer';
+import { IsEnglishText, trimOrNull } from '../../common/dto/translation.dto';
 import {
   ArrayMaxSize,
   ArrayUnique,
@@ -96,6 +97,52 @@ export class ActionImpactDto {
 }
 
 // Ni photographie ni date de publication : elles ne sont pas acceptées en entrée.
+export const EN_MESSAGE = 'La traduction anglaise doit être un objet.';
+
+// Traduction anglaise de l'impact (fonctionnalité 014).
+export class ActionImpactEnDto {
+  @Transform(trimOrNull)
+  @IsEnglishText("L'objectif", 500)
+  objective?: string | null;
+
+  @Transform(trimOrNull)
+  @IsEnglishText('Les bénéficiaires', 500)
+  beneficiaries?: string | null;
+
+  @Transform(trimOrNull)
+  @IsEnglishText('Le lieu', 500)
+  location?: string | null;
+
+  @Transform(trimOrNull)
+  @IsEnglishText('La période', 500)
+  period?: string | null;
+
+  @Transform(trimOrNull)
+  @IsEnglishText('Les résultats', 500)
+  results?: string | null;
+}
+
+// Traduction anglaise facultative ; remplacée en entier à chaque écriture.
+export class ActionEnDto {
+  @Transform(trimOrNull)
+  @IsEnglishText('Le titre', 120)
+  title?: string | null;
+
+  @Transform(trimOrNull)
+  @IsEnglishText('Le résumé', 500)
+  summary?: string | null;
+
+  @Transform(trimOrNull)
+  @IsEnglishText('La description', 20000)
+  description?: string | null;
+
+  @IsOptional()
+  @IsObject({ message: IMPACT_MESSAGE })
+  @ValidateNested({ message: IMPACT_MESSAGE })
+  @Type(() => ActionImpactEnDto)
+  impact?: ActionImpactEnDto | null;
+}
+
 export class CreateActionDto {
   @Transform(trim)
   @IsString({ message: TITLE_MESSAGE })
@@ -138,6 +185,12 @@ export class CreateActionDto {
   @ValidateNested({ message: IMPACT_MESSAGE })
   @Type(() => ActionImpactDto)
   impact?: ActionImpactDto;
+
+  @IsOptional()
+  @IsObject({ message: EN_MESSAGE })
+  @ValidateNested({ message: EN_MESSAGE })
+  @Type(() => ActionEnDto)
+  en?: ActionEnDto;
 
   @IsOptional()
   @IsBoolean({ message: PUBLISHED_MESSAGE })

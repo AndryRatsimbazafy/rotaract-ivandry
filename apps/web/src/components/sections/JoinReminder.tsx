@@ -1,18 +1,18 @@
-import Link from "next/link";
+import Link from "@/components/ui/LocalLink";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { mainNavigation, routes } from "@/config/routes";
-import { joinField } from "@/content/home";
+import { routes } from "@/config/routes";
 import styles from "./JoinReminder.module.css";
-
-// Un libellé par intention : le même que dans la navigation.
-const joinLabel =
-  mainNavigation.find((item) => item.href === routes.join)?.label ?? "";
+import { getContent } from "@/content";
 
 /**
  * Rappel cranberry : la conclusion des pages autres que l'accueil.
  * Une bande basse, la question et l'appel. Le champ entier reste sur l'accueil.
  */
-export function JoinReminder() {
+export async function JoinReminder() {
+  const content = await getContent();
+  // Un libellé par intention : le même que dans la navigation.
+  const joinLabel = content.common.chrome.navigation.join;
+  const { joinField } = content.home;
   return (
     <section className={styles.band} aria-labelledby="rappel-titre">
       <div className={`container grid ${styles.layout}`}>

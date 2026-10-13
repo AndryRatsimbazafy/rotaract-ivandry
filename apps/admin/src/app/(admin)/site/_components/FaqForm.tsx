@@ -55,20 +55,32 @@ export default function FaqForm({ action, initial }: Props) {
             </Alert>
           )}
           {FAQ_QUESTIONS.map(({ id, question, required }) => (
-            <TextField
-              key={id}
-              name={id}
-              label={question}
-              multiline
-              minRows={2}
-              required={required}
-              defaultValue={fieldValue(state, initial, id)}
-              error={Boolean(errors[id])}
-              helperText={
-                errors[id] ?? (required ? undefined : "Vide : la question n'apparaît pas sur le site.")
-              }
-              slotProps={{ htmlInput: { maxLength: 1000 } }}
-            />
+            <Stack key={id} spacing={1}>
+              <TextField
+                key={id}
+                name={id}
+                label={question}
+                multiline
+                minRows={2}
+                required={required}
+                defaultValue={fieldValue(state, initial, id)}
+                error={Boolean(errors[id])}
+                helperText={
+                  errors[id] ?? (required ? undefined : "Vide : la question n'apparaît pas sur le site.")
+                }
+                slotProps={{ htmlInput: { maxLength: 1000 } }}
+              />
+              <TextField
+                name={`en.${id}`}
+                label="Réponse (anglais)"
+                multiline
+                minRows={2}
+                defaultValue={fieldValue(state, initial, `en.${id}`)}
+                error={Boolean(errors[`en.${id}`])}
+                helperText={errors[`en.${id}`] ?? "Facultatif. Vide : le site anglais reprend la réponse française."}
+                slotProps={{ htmlInput: { maxLength: 1000, lang: "en" } }}
+              />
+            </Stack>
           ))}
           <Box sx={{ pt: 2, borderTop: 1, borderColor: "divider" }}>
             <Button type="submit" variant="contained" disabled={pending}>

@@ -109,7 +109,7 @@ export default function ImageSheet({
   const width = prepared?.width ?? initial?.width ?? 0;
   const height = prepared?.height ?? initial?.height ?? 0;
   const imageSrc = preview ?? (mode === "edit" ? initial?.url : undefined);
-  const value = (name: "alt" | "caption" | "credit") => {
+  const value = (name: "alt" | "caption" | "credit" | "altEn" | "captionEn") => {
     const saved = state.values[name];
     return typeof saved === "string" ? saved : (initial?.[name] ?? "");
   };
@@ -210,6 +210,22 @@ export default function ImageSheet({
             error={Boolean(errors.credit)}
             helperText={errors.credit}
             slotProps={{ htmlInput: { maxLength: 120 } }}
+          />
+          <TextField
+            name="altEn"
+            label="Texte alternatif (anglais)"
+            defaultValue={value("altEn")}
+            error={Boolean(errors.altEn)}
+            helperText={errors.altEn ?? "Facultatif. Vide : le site anglais reprend le texte français."}
+            slotProps={{ htmlInput: { maxLength: 300, lang: "en" } }}
+          />
+          <TextField
+            name="captionEn"
+            label="Légende (anglais)"
+            defaultValue={value("captionEn")}
+            error={Boolean(errors.captionEn)}
+            helperText={errors.captionEn}
+            slotProps={{ htmlInput: { maxLength: 300, lang: "en" } }}
           />
           {errors.focus && <FormHelperText error>{errors.focus}</FormHelperText>}
 

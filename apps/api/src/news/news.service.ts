@@ -41,7 +41,8 @@ import { CreateNewsDto } from './dto/create-news.dto';
 import { QueryAdminNewsDto } from './dto/query-admin-news.dto';
 import { QueryPublicNewsDto } from './dto/query-public-news.dto';
 import { UpdateNewsDto } from './dto/update-news.dto';
-import { News } from './schemas/news.schema';
+import { cleanTranslation } from '../common/dto/translation.dto';
+import { News, NewsEn } from './schemas/news.schema';
 
 export type AdminNewsView = {
   id: string;
@@ -53,6 +54,7 @@ export type AdminNewsView = {
   location: string | null;
   summary: string | null;
   content: string | null;
+  en?: NewsEn;
   isPublished: boolean;
   publishedAt: Date | null;
   photos: AdminImage[];
@@ -71,6 +73,7 @@ export type PublicNewsView = {
   location?: string;
   summary?: string;
   content?: string;
+  en?: NewsEn;
   photos: PublicImage[];
 };
 
@@ -117,6 +120,12 @@ function isDuplicateKey(error: unknown): boolean {
   return (error as { code?: unknown }).code === 11000;
 }
 
+// Traduction anglaise, champs présents seulement (fonctionnalité 014).
+function enOf(en: NewsEn | null | undefined): { en?: NewsEn } {
+  const clean = cleanTranslation(en);
+  return clean ? { en: clean } : {};
+}
+
 function toAdminView(news: NewsDocument, startYear: number): AdminNewsView {
   return {
     id: news._id.toString(),
@@ -131,6 +140,7 @@ function toAdminView(news: NewsDocument, startYear: number): AdminNewsView {
     location: news.location ?? null,
     summary: news.summary ?? null,
     content: news.content ?? null,
+    ...enOf(news.en),
     isPublished: news.isPublished,
     publishedAt: news.publishedAt ?? null,
     photos: (news.photos ?? []).map(toAdminImage),
@@ -150,6 +160,7 @@ function toPublicView(news: NewsDocument, startYear: number): PublicNewsView {
     ...(news.location ? { location: news.location } : {}),
     ...(news.summary ? { summary: news.summary } : {}),
     ...(news.content ? { content: news.content } : {}),
+    ...enOf(news.en),
     photos: (news.photos ?? []).map(toPublicImage),
   };
 }
@@ -224,6 +235,7 @@ export class NewsService {
       location: dto.location ?? undefined,
       summary: dto.summary ?? undefined,
       content: dto.content ?? undefined,
+      ...enOf(dto.en as NewsEn | undefined),
       isPublished,
     };
     // Une actualité créée publiée prend sa date de création comme date de
@@ -313,6 +325,16 @@ export class NewsService {
         unset[field] = '';
       } else if (value !== undefined) {
         set[field] = value;
+      }
+    }
+    // La traduction anglaise est remplacée en entier ; vide ou null, elle
+    // n'existe plus.
+    if (dto.en !== undefined) {
+      const en = cleanTranslation(dto.en);
+      if (en) {
+        set.en = en;
+      } else {
+        unset.en = '';
       }
     }
     if (dto.isPublished !== undefined) {

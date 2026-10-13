@@ -19,7 +19,9 @@ import {
 import { FocusArea } from '../../common/enums/focus-area.enum';
 import { SLUG_MAX_LENGTH, SLUG_PATTERN } from '../../common/utils/slug';
 import {
+  ActionEnDto,
   ActionImpactDto,
+  EN_MESSAGE,
   DATE_MESSAGE,
   DESCRIPTION_MESSAGE,
   FOCUS_AREAS_MESSAGE,
@@ -79,6 +81,13 @@ export class UpdateActionDto {
   focusAreas?: FocusArea[];
 
   // Un impact envoyé remplace l'impact entier ; null l'efface.
+  // null retire toute la traduction anglaise.
+  @ValidateIf(isSentAndNotNull)
+  @IsObject({ message: EN_MESSAGE })
+  @ValidateNested({ message: EN_MESSAGE })
+  @Type(() => ActionEnDto)
+  en?: ActionEnDto | null;
+
   @ValidateIf(isSentAndNotNull)
   @IsObject({ message: IMPACT_MESSAGE })
   @ValidateNested({ message: IMPACT_MESSAGE })

@@ -1,5 +1,8 @@
 import { apiGet, apiGetAll, apiGetOrNull } from "@/lib/api";
 import { toParagraphs } from "@/lib/paragraphs";
+import { currentLang } from "@/lib/current-lang";
+import type { Lang } from "@/lib/locale";
+import { picker } from "./localize";
 import { toPhoto, type ApiImage } from "./media";
 import type { NewsItem, NewsType } from "@/types/news";
 import type { RotaryYear } from "@/types/rotary-year";
@@ -15,38 +18,44 @@ interface ApiNews {
   location?: string;
   summary?: string;
   content?: string;
+  en?: { title?: string; summary?: string; content?: string; location?: string };
   photos: ApiImage[];
 }
 
-function toNewsItem(news: ApiNews): NewsItem {
-  const body = toParagraphs(news.content);
+function toNewsItem(news: ApiNews, lang: Lang): NewsItem {
+  const { french, take } = picker<"title" | "summary" | "body" | "location">(lang);
+  const en = news.en;
+  const body = toParagraphs(take("body", news.content, en?.content));
 
   return {
     id: news.id,
     slug: news.slug,
-    title: news.title,
+    title: take("title", news.title, en?.title) ?? news.title,
     type: news.type,
     date: news.date,
     rotaryYear: news.rotaryYear as RotaryYear,
-    location: news.location,
-    summary: news.summary,
+    location: take("location", news.location, en?.location),
+    summary: take("summary", news.summary, en?.summary),
     body: body.length > 0 ? body : undefined,
     // La première est la principale.
-    photos: (news.photos ?? []).map(toPhoto),
+    photos: (news.photos ?? []).map((photo) => toPhoto(photo, lang)),
+    ...(Object.keys(french).length ? { french } : {}),
   };
 }
 
 /** Une actualité publiée par son slug ; null si elle n'existe pas ou plus. */
 export async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
   const news = await apiGetOrNull<ApiNews>(`/news/${encodeURIComponent(slug)}`);
-  return news && toNewsItem(news);
+  const lang = await currentLang();
+  return news && toNewsItem(news, lang);
 }
 
 /** Les actualités les plus récentes. */
 export async function getLatestNews(limit: number): Promise<NewsItem[]> {
   try {
     const { data } = await apiGet<{ data: ApiNews[] }>("/news", { limit });
-    return data.map(toNewsItem);
+    const lang = await currentLang();
+    return data.map((item) => toNewsItem(item, lang));
   } catch {
     return [];
   }
@@ -70,7 +79,8 @@ export async function getNews(filters: NewsFilters): Promise<NewsList> {
       type: filters.type,
       year: filters.rotaryYear,
     });
-    return { news: items.map(toNewsItem), complete };
+    const lang = await currentLang();
+    return { news: items.map((item) => toNewsItem(item, lang)), complete };
   } catch {
     // API injoignable, ou filtre refusé : la page montre son état vide.
     return { news: [], complete: true };

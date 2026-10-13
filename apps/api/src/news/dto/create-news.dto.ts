@@ -1,14 +1,17 @@
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import { IsEnglishText, trimOrNull } from '../../common/dto/translation.dto';
 import {
   IsBoolean,
   IsEnum,
   IsISO8601,
   IsMongoId,
+  IsObject,
   IsOptional,
   IsString,
   Length,
   Matches,
   MaxLength,
+  ValidateNested,
 } from 'class-validator';
 import { NewsType } from '../../common/enums/news-type.enum';
 import { SLUG_MAX_LENGTH, SLUG_PATTERN } from '../../common/utils/slug';
@@ -32,6 +35,27 @@ export const trim = ({ value }: { value: unknown }): unknown =>
 
 // Ni photographie, ni date de publication, ni ordre : ils ne sont pas acceptés
 // en entrée.
+export const EN_MESSAGE = 'La traduction anglaise doit être un objet.';
+
+// Traduction anglaise facultative ; remplacée en entier à chaque écriture.
+export class NewsEnDto {
+  @Transform(trimOrNull)
+  @IsEnglishText('Le titre', 120)
+  title?: string | null;
+
+  @Transform(trimOrNull)
+  @IsEnglishText('Le résumé', 500)
+  summary?: string | null;
+
+  @Transform(trimOrNull)
+  @IsEnglishText('Le contenu', 20000)
+  content?: string | null;
+
+  @Transform(trimOrNull)
+  @IsEnglishText('Le lieu', 120)
+  location?: string | null;
+}
+
 export class CreateNewsDto {
   @Transform(trim)
   @IsString({ message: TITLE_MESSAGE })
@@ -71,6 +95,12 @@ export class CreateNewsDto {
   @IsString({ message: CONTENT_MESSAGE })
   @Length(1, 20000, { message: CONTENT_MESSAGE })
   content?: string;
+
+  @IsOptional()
+  @IsObject({ message: EN_MESSAGE })
+  @ValidateNested({ message: EN_MESSAGE })
+  @Type(() => NewsEnDto)
+  en?: NewsEnDto;
 
   @IsOptional()
   @IsBoolean({ message: PUBLISHED_MESSAGE })

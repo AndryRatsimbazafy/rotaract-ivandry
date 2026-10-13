@@ -41,7 +41,8 @@ import { ActionImpactDto, CreateActionDto } from './dto/create-action.dto';
 import { QueryAdminActionsDto } from './dto/query-admin-actions.dto';
 import { QueryPublicActionsDto } from './dto/query-public-actions.dto';
 import { UpdateActionDto } from './dto/update-action.dto';
-import { Action, ActionImpact } from './schemas/action.schema';
+import { cleanTranslation } from '../common/dto/translation.dto';
+import { Action, ActionEn, ActionImpact } from './schemas/action.schema';
 
 type ImpactView = {
   objective?: string;
@@ -62,6 +63,7 @@ export type AdminActionView = {
   rotaryYear: { id: string; label: string };
   focusAreas: FocusArea[];
   impact?: ImpactView;
+  en?: ActionEn;
   isPublished: boolean;
   publishedAt: Date | null;
   order: number | null;
@@ -81,6 +83,7 @@ export type PublicActionView = {
   rotaryYear: string;
   focusAreas: FocusArea[];
   impact?: ImpactView;
+  en?: ActionEn;
   photos: PublicImage[];
 };
 
@@ -149,6 +152,12 @@ function impactOf(
   return Object.keys(view).length > 0 ? view : undefined;
 }
 
+// Traduction anglaise, champs présents seulement (fonctionnalité 014).
+function enOf(en: ActionEn | null | undefined): { en?: ActionEn } {
+  const clean = cleanTranslation(en);
+  return clean ? { en: clean } : {};
+}
+
 function toAdminView(
   action: ActionDocument,
   startYear: number,
@@ -167,6 +176,7 @@ function toAdminView(
     },
     focusAreas: action.focusAreas,
     ...(impact ? { impact } : {}),
+    ...enOf(action.en),
     isPublished: action.isPublished,
     publishedAt: action.publishedAt ?? null,
     order: action.order ?? null,
@@ -191,6 +201,7 @@ function toPublicView(
     rotaryYear: rotaryYearLabel(startYear),
     focusAreas: action.focusAreas,
     ...(impact ? { impact } : {}),
+    ...enOf(action.en),
     photos: (action.photos ?? []).map(toPublicImage),
   };
 }
@@ -266,6 +277,7 @@ export class ActionsService {
       rotaryYear: year._id,
       focusAreas: dto.focusAreas ?? [],
       ...(impact ? { impact } : {}),
+      ...enOf(dto.en as ActionEn | undefined),
       isPublished,
       order: dto.order,
     };
@@ -366,6 +378,16 @@ export class ActionsService {
         set.impact = impact;
       } else {
         unset.impact = '';
+      }
+    }
+    // La traduction anglaise est remplacée en entier ; vide ou null, elle
+    // n'existe plus.
+    if (dto.en !== undefined) {
+      const en = cleanTranslation(dto.en);
+      if (en) {
+        set.en = en;
+      } else {
+        unset.en = '';
       }
     }
     if (dto.isPublished !== undefined) {

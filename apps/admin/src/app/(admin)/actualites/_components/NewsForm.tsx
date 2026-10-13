@@ -26,6 +26,14 @@ import {
 import { NEWS_TYPE_OPTIONS } from "@/lib/labels";
 import { tabularText } from "@/theme/theme";
 
+// Traduction anglaise (fonctionnalité 014) : mêmes limites que le français.
+const EN_FIELDS: { name: string; label: string; maxLength: number; minRows?: number }[] = [
+  { name: "en.title", label: "Titre", maxLength: 120 },
+  { name: "en.location", label: "Lieu", maxLength: 120 },
+  { name: "en.summary", label: "Résumé", maxLength: 500, minRows: 2 },
+  { name: "en.content", label: "Contenu", maxLength: 20000, minRows: 6 },
+];
+
 export type NewsFormInitial = {
   // date : valeur du champ, déjà exprimée en heure de Madagascar par le serveur.
   values: Record<string, string>;
@@ -155,6 +163,24 @@ export default function NewsForm({
             initialYearId={value("rotaryYear") || undefined}
             error={errors.rotaryYear}
           />
+
+          <SectionHeading title="English (facultatif)" />
+          <Typography color="text.secondary">
+            Laissés vides, ces champs affichent le texte français sur le site anglais.
+          </Typography>
+          {EN_FIELDS.map(({ name, label, maxLength, minRows }) => (
+            <TextField
+              key={name}
+              name={name}
+              label={label}
+              multiline={minRows !== undefined}
+              minRows={minRows}
+              defaultValue={value(name)}
+              error={Boolean(errors[name])}
+              helperText={errors[name]}
+              slotProps={{ htmlInput: { maxLength, lang: "en" } }}
+            />
+          ))}
 
           <SectionHeading title="Publication" />
           <FormControlLabel

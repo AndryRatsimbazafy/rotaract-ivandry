@@ -24,7 +24,7 @@ description: Direction artistique du Front Office du Rotaract Club Ivandry. Édi
 
 ## Portée : tout le Front Office
 
-Cette direction est la référence obligatoire de toutes les pages de `apps/web` : `/`, `/actions`, `/actualites`, `/membres`, `/rejoindre`, et celles qui suivront. Le site doit donner l'impression qu'une seule direction artistique l'a conçu en entier.
+Cette direction est la référence obligatoire de toutes les pages de `apps/web` : `/`, `/actions`, `/actualites`, `/membres`, `/rejoindre`, et celles qui suivront, en français comme en anglais (sous `/en`, fonctionnalité 014). Le site doit donner l'impression qu'une seule direction artistique l'a conçu en entier.
 
 **Ce que chaque page doit être.** Éditoriale et premium, contemporaine, photographique, asymétrique mais maîtrisée, avec une typographie expressive, des blancs intentionnels, des détails éditoriaux, de la profondeur, des interactions discrètes, et une identité Rotaract Club Ivandry forte.
 
@@ -273,6 +273,10 @@ L'échelle a deux étages : un étage **graphique**, où le texte est une image,
 
 Guillemets « » avec espaces insécables, espace insécable avant `;` `:` `!` `?`, dates en toutes lettres dans le récit. Pas de tiret long ni de point médian décoratif. Les titres ne sont jamais coupés par une césure.
 
+### Typographie anglaise
+
+Version anglaise (fonctionnalité 014) : guillemets “ ” et ‘ ’ ; aucune espace avant `;` `:` `!` `?` ; apostrophe typographique ; dates « 14 March 2026 » ; majuscule au premier mot seulement dans les titres et les étiquettes, comme en français.
+
 ---
 
 ## 5. Grille et mise en page
@@ -397,6 +401,7 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 - **Gabarits qui se touchent.** Deux gabarits qui se chevauchent ne se recouvrent pas leur texte ; dans un cadre de moins de 240 px, le format en très grand se retire.
 - **Un emplacement n'est jamais cliquable.**
 - **Rien n'est inventé.** Ni action, ni date, ni membre, ni chiffre, ni citation.
+- **Mention de langue.** Sur une page anglaise, un bloc qui contient un passage français (action, actualité, fiche du club, question de la FAQ) porte une fois l'étiquette « In French », en Charcoal, en bord de bloc. Pas d'icône, pas de couleur, pas de drapeau. Le passage reste lisible tel quel.
 - **Petit cadre.** Sous 120 px de large, le gabarit photographique ne garde que son aplat et ses repères.
 
 ---
@@ -423,6 +428,7 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 | **Notification** | Bandeau à fond teinté d'état avec bordure de 1 px, icône et texte. |
 | **Chargement** | Squelettes aux dimensions du contenu. |
 | **Erreur** | Une phrase calme, la cause et la correction. Une page qui ne peut pas se charger affiche la page d'erreur : même composition que la page introuvable, sans chiffre, avec un bouton « Réessayer ». |
+| **Sélecteur de langue** | Dans la une, à droite, avant les réseaux sociaux, et au bas du sommaire du téléphone : « FR · EN » en étiquettes. La langue courante est en encre, soulignée d'un filet bleu de 2 px ; l'autre est un lien en Charcoal. Il mène à la même page dans l'autre langue. |
 | **Page introuvable** | Sur le fond de page, « 404 » en chiffre monumental au trait dans la marge, le titre « Cette page n'existe pas, ou plus. », une phrase calme, trois liens fléchés (Accueil, Actions, Actualités). |
 | **Pied de page** | Sur encre : signature du club, navigation en colonne, lieu, année et réseaux sociaux, puis le nom du club en très grand, tracé au trait et coupé par le bas. |
 

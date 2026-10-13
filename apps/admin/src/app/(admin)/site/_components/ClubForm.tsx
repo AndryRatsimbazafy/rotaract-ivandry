@@ -15,9 +15,19 @@ type Props = {
   initial: Record<string, string>;
 };
 
-const FIELDS = [
+// Chaque information textuelle a son équivalent anglais facultatif, juste
+// dessous (fonctionnalité 014).
+const FIELDS: {
+  name: string;
+  label: string;
+  maxLength: number;
+  numeric?: boolean;
+  help?: string;
+  english?: boolean;
+}[] = [
   { name: "foundedYear", label: "Année de création", numeric: true, maxLength: 4 },
   { name: "sponsorClub", label: "Club parrain", maxLength: 120 },
+  { name: "en.sponsorClub", label: "Club parrain (anglais)", maxLength: 120, english: true },
   {
     name: "memberCount",
     label: "Nombre de membres",
@@ -26,12 +36,14 @@ const FIELDS = [
     help: "À mettre à jour à chaque année Rotary.",
   },
   { name: "meetingPlace", label: "Lieu des réunions", maxLength: 160 },
+  { name: "en.meetingPlace", label: "Lieu des réunions (anglais)", maxLength: 160, english: true },
   {
     name: "meetingRhythm",
     label: "Rythme des réunions",
     maxLength: 160,
     help: "Par exemple : Deux fois par mois, le jeudi soir.",
   },
+  { name: "en.meetingRhythm", label: "Rythme des réunions (anglais)", maxLength: 160, english: true },
 ];
 
 // Présentation du club : la fiche de la section « Qui sommes-nous ? » de
@@ -53,7 +65,7 @@ export default function ClubForm({ action, initial }: Props) {
               {state.message}
             </Alert>
           )}
-          {FIELDS.map(({ name, label, numeric, maxLength, help }) => (
+          {FIELDS.map(({ name, label, numeric, maxLength, help, english }) => (
             <TextField
               key={name}
               name={name}
@@ -64,6 +76,7 @@ export default function ClubForm({ action, initial }: Props) {
               slotProps={{
                 htmlInput: {
                   maxLength,
+                  ...(english ? { lang: "en" } : {}),
                   ...(numeric ? { inputMode: "numeric", pattern: "[0-9]*" } : {}),
                 },
               }}

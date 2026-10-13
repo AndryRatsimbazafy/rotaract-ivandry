@@ -18,7 +18,4 @@ export const site = {
   logo: { src: "/images/logo-club-transparent.png", width: 960, height: 299 },
   /** Réseaux sociaux ; sans adresse, l'icône s'affiche sans lien. */
   social,
-  description: "Site du Rotaract Club Ivandry",
-  lang: "fr",
-  locale: "fr_FR",
 } as const;

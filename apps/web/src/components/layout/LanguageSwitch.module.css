@@ -1,0 +1,54 @@
+/* « FR · EN » : la langue courante en encre, soulignée de bleu ; l'autre en lien. */
+
+.list {
+  display: flex;
+  align-items: center;
+  list-style: none;
+}
+
+.list li + li::before {
+  content: "·";
+  padding-inline: var(--space-8);
+  color: var(--text-secondary);
+}
+
+.current,
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+}
+
+.current {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--link);
+  text-decoration-thickness: var(--border-width-strong);
+  text-underline-offset: 0.4em;
+}
+
+.link {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.link:hover {
+  color: var(--text-primary);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .link {
+    transition: color var(--duration-instant) var(--ease-out);
+  }
+}
+
+/* Sur le champ encre du sommaire du téléphone. */
+.onField .current,
+.onField .link:hover {
+  color: var(--on-field-text);
+}
+
+.onField .link,
+.onField li + li::before {
+  color: var(--on-field-text-secondary);
+}

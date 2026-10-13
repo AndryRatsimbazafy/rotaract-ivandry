@@ -54,6 +54,18 @@ const IMPACT_FIELDS = [
   { name: "impact.results", label: "Résultats" },
 ];
 
+// Traduction anglaise (fonctionnalité 014) : mêmes limites que le français.
+const EN_FIELDS = [
+  { name: "en.title", label: "Titre", maxLength: 120, multiline: false },
+  { name: "en.summary", label: "Résumé", maxLength: 500, multiline: true },
+  { name: "en.description", label: "Description", maxLength: 20000, multiline: true },
+  { name: "en.impact.objective", label: "Objectif", maxLength: 500, multiline: true },
+  { name: "en.impact.beneficiaries", label: "Bénéficiaires", maxLength: 500, multiline: true },
+  { name: "en.impact.location", label: "Lieu", maxLength: 500, multiline: true },
+  { name: "en.impact.period", label: "Période", maxLength: 500, multiline: true },
+  { name: "en.impact.results", label: "Résultats", maxLength: 500, multiline: true },
+];
+
 const NO_INITIAL: ActionFormInitial = {
   values: {},
   focusAreas: [],
@@ -208,6 +220,24 @@ export default function ActionForm({
               "Un partenaire par ligne, 20 au plus, 120 caractères chacun."
             }
           />
+
+          <SectionHeading title="English (facultatif)" />
+          <Typography color="text.secondary">
+            Laissés vides, ces champs affichent le texte français sur le site anglais.
+          </Typography>
+          {EN_FIELDS.map(({ name, label, maxLength, multiline }) => (
+            <TextField
+              key={name}
+              name={name}
+              label={label}
+              multiline={multiline}
+              minRows={name === "en.description" ? 4 : undefined}
+              defaultValue={value(name)}
+              error={Boolean(errors[name])}
+              helperText={errors[name]}
+              slotProps={{ htmlInput: { maxLength, lang: "en" } }}
+            />
+          ))}
 
           <SectionHeading title="Publication" />
           <FormControlLabel

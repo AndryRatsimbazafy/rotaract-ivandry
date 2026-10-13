@@ -9,4 +9,6 @@ export interface Photo {
   credit?: string;
   /** Point d'intérêt gardé au recadrage, en syntaxe CSS (« 50% 30% »). */
   focus?: string;
+  /** Texte alternatif et légende affichés en français sur une page anglaise (014). */
+  french?: { alt?: true; caption?: true };
 }

@@ -1,0 +1,74 @@
+import Link from "@/components/ui/LocalLink";
+import { PhotoFrame } from "@/components/media/PhotoFrame";
+import { routes } from "@/config/routes";
+import type { Photo } from "@/types/media";
+import type { RotaryYear } from "@/types/rotary-year";
+import styles from "./MembersOpening.module.css";
+import { getContent } from "@/content";
+
+interface MembersOpeningProps {
+  /** Années Rotary consultables, de la plus récente à la plus ancienne. */
+  years: RotaryYear[];
+  selectedYear: string;
+  /** Photographie de groupe saisie dans le Back Office ; à défaut, le gabarit. */
+  photo?: Photo;
+}
+
+export async function MembersOpening({ years, selectedYear, photo }: MembersOpeningProps) {
+  const content = await getContent();
+  const { membersOpening } = content.members;
+  return (
+    <section className={styles.opening} aria-labelledby="membres-titre">
+      <div className="container">
+        <p className="label">{membersOpening.label}</p>
+        <h1 id="membres-titre" className={styles.title}>
+          {membersOpening.title}
+        </h1>
+        <p className={styles.lede}>{membersOpening.lede}</p>
+      </div>
+
+      <div className={`container grid ${styles.stage}`}>
+        <div className={styles.photo}>
+          <PhotoFrame
+            photo={photo}
+            brief={membersOpening.groupPhotoBrief}
+            format="2:1"
+            sizes="(min-width: 1024px) 75vw, 100vw"
+            priority
+            tone="dark"
+            className={styles.frame}
+          />
+        </div>
+
+        {/* Les années : chaque mandat se consulte, le plus récent en tête. */}
+        <nav aria-label={membersOpening.yearsLabel} className={styles.years}>
+          <p className={`label ${styles.yearsLabel}`}>
+            {membersOpening.yearsLabel}
+          </p>
+          <ul className={styles.yearList}>
+            {years.map((year) => {
+              const isCurrent = year === selectedYear;
+
+              return (
+                <li key={year}>
+                  <Link
+                    href={`${routes.members}?annee=${year}#annuaire`}
+                    className={styles.year}
+                    aria-current={isCurrent ? "true" : undefined}
+                  >
+                    <span className={styles.yearName}>{year}</span>
+                    {isCurrent ? (
+                      <span className="label">
+                        {membersOpening.currentYear}
+                      </span>
+                    ) : null}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </div>
+    </section>
+  );
+}

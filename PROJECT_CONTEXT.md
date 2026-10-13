@@ -44,7 +44,7 @@ Flux cible (voir `ARCHITECTURE.md`) : les deux fronts appellent l'API depuis leu
 
 ### apps/web — Front Office (terminé en V1)
 
-Cinq pages publiques et deux pages de détail, conçues selon `DESIGN.md` :
+Cinq pages publiques et deux pages de détail, conçues selon `DESIGN.md`, en français à leurs adresses et en anglais sous `/en` (fonctionnalité 014 ; l'adresse anglaise est l'adresse française précédée de `/en`) :
 
 | Route | Page | Rendu |
 |---|---|---|
@@ -62,12 +62,13 @@ Organisation de `apps/web/src` :
 
 | Dossier | Contenu |
 |---|---|
-| `app/` | Routes, `layout.tsx`, `tokens.css`, `globals.css`, `not-found.tsx`, `error.tsx` ; les sections de chaque page dans `_sections/` ; `actions/` et `actualites/` : `(liste)/` pour la liste, `[slug]/` pour le détail. |
+| `proxy.ts` | Deux langues : réécrit une adresse sans préfixe vers `/fr`, redirige `/fr/…` vers l'adresse sans préfixe, laisse passer `/en/…`. |
+| `app/` | `tokens.css`, `globals.css`, et sous `[lang]/` : routes, `layout.tsx` (`<html lang>`), `not-found.tsx`, `error.tsx`, `[...missing]` ; les sections de chaque page dans `_sections/` ; `actions/` et `actualites/` : `(liste)/` pour la liste, `[slug]/` pour le détail. |
 | `components/` | `layout/` (en-tête, pied de page, navigation, menu du téléphone), `media/` (`PhotoFrame`), `sections/` (rappel cranberry, liens de sortie), `ui/` (lien fléché, étiquette de section, bouton). |
 | `config/` | `routes.ts` (routes et navigation), `site.ts` (nom, lieu, logo, réseaux sociaux). |
-| `content/` | Textes de chaque page, en français ; `common.ts` pour les libellés partagés. |
+| `content/` | Textes de chaque page : `fr/` et `en/`, de même forme (le typage refuse un texte anglais manquant) ; `index.ts` (`getContent()`, langue lue par `next/root-params`) et `dictionaries.ts` (`contentFor(lang)`, utilisable côté client). |
 | `data/` | **Seule porte d'accès aux données.** Fonctions asynchrones (`getActions`, `getNews`, `getMembers`, `submitApplication`, …) qui lisent l'API depuis le serveur du site (`lib/api.ts`, revalidation d'environ 60 secondes) ; `submitApplication` est une Server Action. |
-| `lib/` | Client de l'API, dates (heure de Madagascar), paragraphes, année Rotary, paramètres d'adresse. |
+| `lib/` | Client de l'API, dates (heure de Madagascar, en français et en anglais), paragraphes, année Rotary, paramètres d'adresse, langue (`locale.ts` : `localize`, `switchLanguage`, `langOf` ; `current-lang.ts` côté serveur), métadonnées de page (`page-metadata.ts`). |
 | `types/` | Modèles du Front Office : `Action`, `NewsItem`, `Member`, `MembershipApplication`, `Photo`, `RotaryYear`. |
 
 État des données : les actions, les actualités, les membres et l'année Rotary en cours viennent de l'API (contenus publiés dans le Back Office) ; aucun profil de démonstration, aucun registre d'impact ; le formulaire de candidature dépose réellement la candidature et son CV. Les réglages du site (photographies fixes, adresses des réseaux sociaux, fiche du club, réponses de la FAQ) viennent aussi de l'API, saisis dans l'écran « Site » du Back Office (fonctionnalité 012). Tant qu'un contenu manque, la page affiche un emplacement (voir `DESIGN.md`, section 8). Une seule photographie livrée avec le site : celle de l'ouverture, repli de l'accueil et de « Nous rejoindre ».
@@ -224,17 +225,17 @@ Restent ouvertes :
 - sort du registre d'impact agrégé de la page Actions (retiré de `DESIGN.md` et du Front Office par la fonctionnalité 009 ; reste à décider s'il existera un jour, saisi dans le Back Office) ;
 - anti-spam du formulaire (au-delà de la limite de fréquence).
 
-Autres points repoussés : contenu de `packages/` ; solution d'internationalisation ; famille d'icônes du Front Office ; déploiement et CI/CD.
+Autres points repoussés : contenu de `packages/` ; famille d'icônes du Front Office ; déploiement et CI/CD.
 
 ## 10. Périmètre et prochaines étapes
 
-**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary (modèle, calculs, liste publique, administration) ; authentification de l'administrateur (compte par commande manuelle, connexion, jeton, gardes, limitation des tentatives) ; membres et mandats (administration, ordre par année, annuaire public) ; actions (administration, slug, publication, impact, lectures publiques) ; actualités (administration, slug, publication, lectures publiques, archives par année) ; candidatures (dépôt public avec CV, consultation, téléchargement du CV, suppression, stockage du CV chez Cloudinary) ; Back Office (connexion et session, navigation, années Rotary, membres et mandats avec l'ordre d'une année, actions, actualités en heure de Madagascar, candidatures) ; connexion du Front Office à l'API (lectures avec revalidation d'environ 60 secondes, listes lues en entier, dates des actualités en heure de Madagascar, dépôt réel des candidatures) ; refonte visuelle du Back Office (direction « La grille », thèmes clair et sombre, aperçu des listes, recherche rapide, chiffres de l'accueil) ; stockage des images (portraits, photographies des actions et des actualités, chez Cloudinary par l'API, affichées par le Front Office à la place des gabarits) ; réglages du site (écran « Site » du Back Office : photographies fixes, réseaux sociaux, fiche du club, réponses de la FAQ) ; pages de détail des actions et des actualités, page introuvable et page d'erreur du Front Office.
+**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary (modèle, calculs, liste publique, administration) ; authentification de l'administrateur (compte par commande manuelle, connexion, jeton, gardes, limitation des tentatives) ; membres et mandats (administration, ordre par année, annuaire public) ; actions (administration, slug, publication, impact, lectures publiques) ; actualités (administration, slug, publication, lectures publiques, archives par année) ; candidatures (dépôt public avec CV, consultation, téléchargement du CV, suppression, stockage du CV chez Cloudinary) ; Back Office (connexion et session, navigation, années Rotary, membres et mandats avec l'ordre d'une année, actions, actualités en heure de Madagascar, candidatures) ; connexion du Front Office à l'API (lectures avec revalidation d'environ 60 secondes, listes lues en entier, dates des actualités en heure de Madagascar, dépôt réel des candidatures) ; refonte visuelle du Back Office (direction « La grille », thèmes clair et sombre, aperçu des listes, recherche rapide, chiffres de l'accueil) ; stockage des images (portraits, photographies des actions et des actualités, chez Cloudinary par l'API, affichées par le Front Office à la place des gabarits) ; réglages du site (écran « Site » du Back Office : photographies fixes, réseaux sociaux, fiche du club, réponses de la FAQ) ; version anglaise du site (textes fixes traduits, contenus traduisibles dans le Back Office, repli signalé « In French », sélecteur FR · EN) ; pages de détail des actions et des actualités, page introuvable et page d'erreur du Front Office.
 
 **Prochaines étapes**, chacune sur demande explicite, selon `ARCHITECTURE.md` :
 
 Aucune étape n'est planifiée. Restent ouvertes les décisions de `ARCHITECTURE.md`, section 14 (registre d'impact, anti-spam), et le déploiement, hors périmètre pour l'instant.
 
-**Hors périmètre pour l'instant** : tests, CI/CD, Docker, déploiement, version anglaise, rôles autres que `ADMIN`, workflow de candidature.
+**Hors périmètre pour l'instant** : tests, CI/CD, Docker, déploiement, rôles autres que `ADMIN`, workflow de candidature.
 
 ## 11. Points d'attention
 
@@ -270,6 +271,7 @@ Aucune étape n'est planifiée. Restent ouvertes les décisions de `ARCHITECTURE
 - **Candidature dans le Front Office** : le formulaire envoie les six champs du contrat (`applicantStatus` compris) et reprend le motif de téléphone de l'API ; l'API reste l'autorité, ses refus sont affichés.
 - **Corps d'une Server Action** : `apps/web/next.config.ts` admet 6 Mo (CV de 5 242 880 octets, champs et habillage `multipart`). Un futur hébergeur peut imposer une limite plus basse au corps d'une requête : à vérifier au déploiement.
 - **Cache du Front Office** : cache de données de Next.js, propre au serveur du site, non partagé entre instances ; un redéploiement peut le vider. En local, `next build` conserve `apps/web/.next/cache` : pour repartir d'un cache vide, supprimer `apps/web/.next/cache/fetch-cache`. Après un vidage, une API indisponible donne des pages à l'état vide jusqu'à son retour.
+- **Page introuvable depuis 014** : avec la mise en page racine sous `app/[lang]`, une réponse `404` part avec le bon statut, mais son HTML initial est le gabarit d'erreur de Next.js ; la page introuvable du site (dans la bonne langue) s'affiche ensuite dans le navigateur. Constaté sur le build de production le 2026-10-13 ; à revoir si Next.js le permet (par exemple `global-not-found`).
 - **Accueil rendu à la demande** : régénérée statiquement, une page relit au premier plan une entrée de cache périmée ; API indisponible, elle enregistrerait l'état vide à la place d'un contenu déjà lu. L'accueil est donc rendu à la demande, comme les trois pages de liste. Depuis la fonctionnalité 012, `/rejoindre` l'est aussi : elle lit les réglages du site (FAQ, photographie d'ouverture).
 - **Attente** : `loading.tsx` montre un squelette à l'arrivée sur une page de liste ; lors d'un changement de filtre, une frontière `Suspense` indexée sur le filtre montre un squelette dans la seule zone de liste, titre et filtres restant en place.
 - **Réglages Cloudinary** : sur un compte gratuit, la livraison des fichiers PDF peut être bloquée par un réglage de sécurité du compte ; à activer si la lecture d'un CV PDF est refusée.

@@ -31,6 +31,44 @@ export class ActionImpact {
 
 const ActionImpactSchema = SchemaFactory.createForClass(ActionImpact);
 
+// Traduction anglaise de l'impact (fonctionnalité 014) : les partenaires ne
+// se traduisent pas.
+@Schema({ _id: false })
+export class ActionImpactEn {
+  @Prop({ type: String, trim: true, maxlength: 500 })
+  objective?: string;
+
+  @Prop({ type: String, trim: true, maxlength: 500 })
+  beneficiaries?: string;
+
+  @Prop({ type: String, trim: true, maxlength: 500 })
+  location?: string;
+
+  @Prop({ type: String, trim: true, maxlength: 500 })
+  period?: string;
+
+  @Prop({ type: String, trim: true, maxlength: 500 })
+  results?: string;
+}
+
+// Traduction anglaise facultative ; le français reste la référence.
+@Schema({ _id: false })
+export class ActionEn {
+  @Prop({ type: String, trim: true, maxlength: 120 })
+  title?: string;
+
+  @Prop({ type: String, trim: true, maxlength: 500 })
+  summary?: string;
+
+  @Prop({ type: String, trim: true, maxlength: 20000 })
+  description?: string;
+
+  @Prop({ type: SchemaFactory.createForClass(ActionImpactEn) })
+  impact?: ActionImpactEn;
+}
+
+const ActionEnSchema = SchemaFactory.createForClass(ActionEn);
+
 // Projet ou activité du club. Entité distincte des actualités.
 @Schema({ timestamps: true })
 export class Action {
@@ -55,6 +93,9 @@ export class Action {
 
   @Prop({ type: [String], enum: Object.values(FocusArea), default: [] })
   focusAreas: FocusArea[];
+
+  @Prop({ type: ActionEnSchema })
+  en?: ActionEn;
 
   @Prop({ type: ActionImpactSchema })
   impact?: ActionImpact;

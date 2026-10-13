@@ -55,6 +55,13 @@ export class MediaRef {
   @Prop({ type: String, trim: true, maxlength: 120 })
   credit?: string;
 
+  // Traductions anglaises facultatives (fonctionnalité 014).
+  @Prop({ type: String, trim: true, maxlength: 300 })
+  altEn?: string;
+
+  @Prop({ type: String, trim: true, maxlength: 300 })
+  captionEn?: string;
+
   // Point d'intérêt gardé au recadrage, en syntaxe CSS.
   @Prop({ type: String, required: true, default: DEFAULT_FOCUS })
   focus: string;
@@ -71,6 +78,8 @@ export type AdminImage = {
   alt: string;
   caption: string | null;
   credit: string | null;
+  altEn: string | null;
+  captionEn: string | null;
   focus: string;
   name: string;
   mimeType: string;
@@ -85,6 +94,8 @@ export type PublicImage = {
   alt: string;
   caption?: string;
   credit?: string;
+  altEn?: string;
+  captionEn?: string;
   focus: string;
 };
 
@@ -97,6 +108,8 @@ export function toAdminImage(image: MediaRef): AdminImage {
     alt: image.alt,
     caption: image.caption ?? null,
     credit: image.credit ?? null,
+    altEn: image.altEn ?? null,
+    captionEn: image.captionEn ?? null,
     focus: image.focus,
     name: image.name,
     mimeType: image.mimeType,
@@ -112,6 +125,8 @@ export function toPublicImage(image: MediaRef): PublicImage {
     alt: image.alt,
     ...(image.caption ? { caption: image.caption } : {}),
     ...(image.credit ? { credit: image.credit } : {}),
+    ...(image.altEn ? { altEn: image.altEn } : {}),
+    ...(image.captionEn ? { captionEn: image.captionEn } : {}),
     focus: image.focus,
   };
 }

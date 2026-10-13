@@ -18,6 +18,12 @@
   border-bottom: var(--rule-width) solid var(--border-rule);
 }
 
+.datelineTools {
+  display: flex;
+  align-items: center;
+  column-gap: var(--space-16);
+}
+
 .datelineText {
   display: flex;
   flex-wrap: wrap;

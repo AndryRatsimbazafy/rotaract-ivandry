@@ -6,6 +6,23 @@ import {
 import { SchemaTypes, Types } from 'mongoose';
 import { NewsType } from '../../common/enums/news-type.enum';
 
+// Traduction anglaise facultative (fonctionnalité 014) ; le français reste la
+// référence.
+@Schema({ _id: false })
+export class NewsEn {
+  @Prop({ type: String, trim: true, maxlength: 120 })
+  title?: string;
+
+  @Prop({ type: String, trim: true, maxlength: 500 })
+  summary?: string;
+
+  @Prop({ type: String, trim: true, maxlength: 20000 })
+  content?: string;
+
+  @Prop({ type: String, trim: true, maxlength: 120 })
+  location?: string;
+}
+
 // Une actualité du club. Entité distincte des actions : la date y domine, et
 // elle n'a ni impact, ni domaine, ni ordre manuel.
 // Le nom de collection est fixé : « news » n'a pas de pluriel.
@@ -36,6 +53,9 @@ export class News {
 
   @Prop({ type: String, trim: true, maxlength: 20000 })
   content?: string;
+
+  @Prop({ type: SchemaFactory.createForClass(NewsEn) })
+  en?: NewsEn;
 
   @Prop({ type: Boolean, required: true, default: false })
   isPublished: boolean;

@@ -1,4 +1,5 @@
 import { mainNavigation } from "@/config/routes";
+import { getContent } from "@/content";
 import { NavLink } from "./NavLink";
 import styles from "./SiteNav.module.css";
 
@@ -8,7 +9,8 @@ interface SiteNavProps {
   variant: "header" | "footer";
 }
 
-export function SiteNav({ label, variant }: SiteNavProps) {
+export async function SiteNav({ label, variant }: SiteNavProps) {
+  const { navigation } = (await getContent()).common.chrome;
   return (
     <nav aria-label={label} className={styles[variant]}>
       <ul className={styles.list}>
@@ -22,7 +24,7 @@ export function SiteNav({ label, variant }: SiteNavProps) {
                   : styles.link
               }
             >
-              <span className={styles.text}>{item.label}</span>
+              <span className={styles.text}>{navigation[item.key]}</span>
             </NavLink>
           </li>
         ))}

@@ -8,6 +8,14 @@ export type NewsType =
   | "formation"
   | "annonce";
 
+// Traduction anglaise facultative (fonctionnalité 014).
+export type NewsEn = {
+  title?: string;
+  summary?: string;
+  content?: string;
+  location?: string;
+};
+
 export type News = {
   id: string;
   title: string;
@@ -18,6 +26,7 @@ export type News = {
   location: string | null;
   summary: string | null;
   content: string | null;
+  en?: NewsEn;
   isPublished: boolean;
   publishedAt: string | null;
   photos: AdminImage[];

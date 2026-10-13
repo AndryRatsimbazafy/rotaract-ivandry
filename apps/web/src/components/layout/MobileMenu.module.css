@@ -115,6 +115,13 @@
   padding-top: var(--space-32);
 }
 
+.tools {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  row-gap: var(--space-8);
+}
+
 .dateline {
   display: flex;
   flex-direction: column;

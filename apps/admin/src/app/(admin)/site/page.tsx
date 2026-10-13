@@ -18,8 +18,12 @@ export default async function SitePage() {
   const { social, club } = settings;
   // Une réponse jamais enregistrée : celle que le site affiche aujourd'hui.
   const faq = Object.fromEntries(
-    FAQ_QUESTIONS.map(({ id, currentAnswer }) => [id, settings.faq[id] ?? currentAnswer]),
+    FAQ_QUESTIONS.flatMap(({ id, currentAnswer }) => [
+      [id, settings.faq[id] ?? currentAnswer],
+      [`en.${id}`, settings.en?.faq?.[id] ?? ""],
+    ]),
   );
+  const clubEn = settings.en?.club ?? {};
 
   return (
     <>
@@ -68,6 +72,9 @@ export default async function SitePage() {
             memberCount: club.memberCount?.toString() ?? "",
             meetingPlace: club.meetingPlace ?? "",
             meetingRhythm: club.meetingRhythm ?? "",
+            "en.sponsorClub": clubEn.sponsorClub ?? "",
+            "en.meetingPlace": clubEn.meetingPlace ?? "",
+            "en.meetingRhythm": clubEn.meetingRhythm ?? "",
           }}
         />
         <Typography variant="h3" component="h3" sx={{ mt: 4, mb: 1.5 }}>

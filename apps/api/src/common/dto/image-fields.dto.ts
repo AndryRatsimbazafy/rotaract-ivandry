@@ -16,6 +16,10 @@ export const ALT_LENGTH_MESSAGE =
   'Le texte alternatif compte 300 caractères au plus.';
 export const CAPTION_MESSAGE = 'La légende compte 300 caractères au plus.';
 export const CREDIT_MESSAGE = 'Le crédit compte 120 caractères au plus.';
+export const ALT_EN_MESSAGE =
+  'Le texte alternatif (anglais) compte 300 caractères au plus.';
+export const CAPTION_EN_MESSAGE =
+  'La légende (anglais) compte 300 caractères au plus.';
 export const FOCUS_MESSAGE =
   "Le point d'intérêt doit être de la forme « 50% 30% ».";
 
@@ -70,6 +74,19 @@ export class ImageFieldsDto {
   @IsString({ message: FOCUS_MESSAGE })
   @Matches(FOCUS_PATTERN, { message: FOCUS_MESSAGE })
   focus?: string;
+
+  // Traductions anglaises facultatives (fonctionnalité 014).
+  @ValidateIf(isSent)
+  @Transform(trimOrAbsent)
+  @IsString({ message: ALT_EN_MESSAGE })
+  @MaxLength(300, { message: ALT_EN_MESSAGE })
+  altEn?: string;
+
+  @ValidateIf(isSent)
+  @Transform(trimOrAbsent)
+  @IsString({ message: CAPTION_EN_MESSAGE })
+  @MaxLength(300, { message: CAPTION_EN_MESSAGE })
+  captionEn?: string;
 }
 
 // Modification des champs d'une image : un champ absent est inchangé ; null
@@ -99,6 +116,18 @@ export class UpdateImageFieldsDto {
   @IsString({ message: FOCUS_MESSAGE })
   @Matches(FOCUS_PATTERN, { message: FOCUS_MESSAGE })
   focus?: string;
+
+  @ValidateIf(isSentAndNotNull)
+  @Transform(trimOrNull)
+  @IsString({ message: ALT_EN_MESSAGE })
+  @MaxLength(300, { message: ALT_EN_MESSAGE })
+  altEn?: string | null;
+
+  @ValidateIf(isSentAndNotNull)
+  @Transform(trimOrNull)
+  @IsString({ message: CAPTION_EN_MESSAGE })
+  @MaxLength(300, { message: CAPTION_EN_MESSAGE })
+  captionEn?: string | null;
 }
 
 export const ORDER_MESSAGE =

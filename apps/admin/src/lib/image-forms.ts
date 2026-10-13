@@ -5,7 +5,7 @@ import { text, type FormState, type FormValues } from "./form-state";
 // Champs d'une image, partagés par les actions serveur des portraits et des
 // photographies (specs/011-image-storage, contracts/api-images.md).
 
-const IMAGE_FIELDS = ["alt", "caption", "credit", "focus"] as const;
+const IMAGE_FIELDS = ["alt", "caption", "credit", "focus", "altEn", "captionEn"] as const;
 
 // Corps multipart d'un envoi : l'image et ses champs. Un champ facultatif
 // vide n'est pas envoyé.
@@ -31,6 +31,8 @@ export function imageFieldsBody(formData: FormData): Record<string, string | nul
     alt: text(formData, "alt"),
     caption: text(formData, "caption") || null,
     credit: text(formData, "credit") || null,
+    altEn: text(formData, "altEn") || null,
+    captionEn: text(formData, "captionEn") || null,
     ...(text(formData, "focus") ? { focus: text(formData, "focus") } : {}),
   };
 }

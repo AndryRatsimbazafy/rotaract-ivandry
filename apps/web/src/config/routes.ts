@@ -18,17 +18,20 @@ export function newsItemPath(slug: string): string {
 
 export type RoutePath = (typeof routes)[keyof typeof routes];
 
+export type NavKey = "home" | "actions" | "news" | "members" | "join";
+
 export interface NavItem {
+  key: NavKey;
   href: RoutePath;
-  label: string;
   /** Entrée vers le recrutement : mise en avant dans l'en-tête. */
   isRecruitment?: boolean;
 }
 
+/** Libellés : chrome.navigation du dictionnaire de la langue. */
 export const mainNavigation: NavItem[] = [
-  { href: routes.home, label: "Accueil" },
-  { href: routes.actions, label: "Actions" },
-  { href: routes.news, label: "Actualités" },
-  { href: routes.members, label: "Membres" },
-  { href: routes.join, label: "Nous rejoindre", isRecruitment: true },
+  { key: "home", href: routes.home },
+  { key: "actions", href: routes.actions },
+  { key: "news", href: routes.news },
+  { key: "members", href: routes.members },
+  { key: "join", href: routes.join, isRecruitment: true },
 ];

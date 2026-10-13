@@ -1,3 +1,4 @@
+import type { FrenchFields } from "./locale";
 import type { Photo } from "./media";
 import type { RotaryYear } from "./rotary-year";
 
@@ -28,4 +29,16 @@ export interface Action {
   /** Toujours vide tant que l'API ne fournit pas de photographie. */
   photos: Photo[];
   impact?: ActionImpact;
+  /** Champs affichés en français sur une page anglaise (fonctionnalité 014). */
+  french?: FrenchFields<ActionTextField>;
 }
+
+export type ActionTextField =
+  | "title"
+  | "summary"
+  | "description"
+  | "objective"
+  | "beneficiaries"
+  | "location"
+  | "period"
+  | "results";

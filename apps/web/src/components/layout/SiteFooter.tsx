@@ -1,12 +1,14 @@
 import Image from "next/image";
 import { site } from "@/config/site";
-import { rotaryYearLabel } from "@/content/common";
 import { getCurrentRotaryYear } from "@/data/rotary-years";
 import { SiteNav } from "./SiteNav";
 import { SocialLinks } from "./SocialLinks";
 import styles from "./SiteFooter.module.css";
+import { getContent } from "@/content";
 
 export async function SiteFooter() {
+  const content = await getContent();
+  const { rotaryYearLabel, chrome } = content.common;
   const currentYear = await getCurrentRotaryYear();
 
   return (
@@ -23,7 +25,7 @@ export async function SiteFooter() {
             className={styles.logo}
           />
         </p>
-        <SiteNav label="Navigation du pied de page" variant="footer" />
+        <SiteNav label={chrome.footerNavLabel} variant="footer" />
         <div>
           <p className={`label ${styles.dateline}`}>
             <span>{site.location}</span>
