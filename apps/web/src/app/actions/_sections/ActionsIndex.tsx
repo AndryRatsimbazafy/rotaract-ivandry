@@ -182,7 +182,7 @@ export function ActionsIndex({
               </ul>
             </div>
 
-            <details className={styles.filter}>
+            <details className={`fold ${styles.filter}`}>
               <summary className={styles.summary}>
                 <span className={`label ${styles.filterLabel}`}>
                   {actionsIndex.areaFilter.label}
@@ -287,7 +287,7 @@ async function ActionsEntries({
                   {entry.description.length > 0 ||
                   entry.facts.length > 0 ||
                   more.length > 0 ? (
-                    <details className={styles.more}>
+                    <details className={`fold ${styles.more}`}>
                       <summary className={styles.moreSummary}>
                         {actionsIndex.moreLabel}
                       </summary>

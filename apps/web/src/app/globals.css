@@ -128,6 +128,33 @@ a {
   line-height: var(--text-meta-leading);
 }
 
+/* Dépliant (DESIGN.md, section 12) : le contenu d'un details se déploie en
+ * hauteur et en fondu. Un navigateur sans ::details-content l'ouvre d'un coup.
+ * La marge de découpe laisse voir le contour de focus. */
+@media (prefers-reduced-motion: no-preference) {
+  .fold {
+    interpolate-size: allow-keywords;
+  }
+
+  .fold::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow: clip;
+    overflow-clip-margin: calc(
+      var(--focus-ring-width) + var(--focus-ring-offset)
+    );
+    transition:
+      block-size var(--duration-state) var(--ease-out),
+      opacity var(--duration-state) var(--ease-out),
+      content-visibility var(--duration-state) allow-discrete;
+  }
+
+  .fold[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+}
+
 /* Le menu plein écran bloque le défilement de la page. */
 html:has(dialog[open]) {
   overflow: hidden;

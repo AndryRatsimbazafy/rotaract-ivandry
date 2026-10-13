@@ -24,9 +24,16 @@
     bottom / 0 var(--border-width-strong);
 }
 
-.link:hover .text,
 .link:focus-visible .text {
   background-size: 100% var(--border-width-strong);
+}
+
+/* Au survol, réservé aux pointeurs précis : sur un écran tactile, le filet
+ * resterait tracé après l'appui. */
+@media (hover: hover) and (pointer: fine) {
+  .link:hover .text {
+    background-size: 100% var(--border-width-strong);
+  }
 }
 
 .link[aria-current="page"] .text {

@@ -19,7 +19,7 @@ export function JoinFaq() {
         </div>
         <div className={styles.list}>
           {items.map((item) => (
-            <details key={item.id} className={styles.item}>
+            <details key={item.id} className={`fold ${styles.item}`}>
               <summary className={styles.question}>
                 <h3 className={styles.name}>{item.question}</h3>
                 <span className={styles.sign} aria-hidden="true" />

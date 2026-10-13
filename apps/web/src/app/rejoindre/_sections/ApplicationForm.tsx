@@ -227,10 +227,10 @@ export function ApplicationForm() {
         {outcome === "too-many" ? <p>{joinApplication.tooMany}</p> : null}
         {outcome === "unavailable" ? <p>{joinApplication.unavailable}</p> : null}
         {outcome === "sent" ? (
-          <>
+          <div className={styles.sent}>
             <p className={styles.outcomeTitle}>{joinApplication.sentTitle}</p>
             <p>{joinApplication.sent}</p>
-          </>
+          </div>
         ) : null}
       </div>
     </form>

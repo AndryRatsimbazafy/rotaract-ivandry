@@ -76,7 +76,7 @@ export function NewsFeature({ item }: NewsFeatureProps) {
             </p>
           ) : null}
           {item && hasDetail ? (
-            <details className={styles.more}>
+            <details className={`fold ${styles.more}`}>
               <summary className={styles.moreSummary}>{newsFeature.more}</summary>
               {item.body?.map((paragraph, position) => (
                 <p key={position} className={styles.paragraph}>

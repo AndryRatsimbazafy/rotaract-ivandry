@@ -62,9 +62,17 @@
       var(--border-width-strong) 100% no-repeat;
 }
 
+/* Ouvert : le trait vertical se résorbe, il reste un signe moins. */
 .item[open] .sign {
-  background: linear-gradient(currentColor, currentColor) center / 100%
-    var(--border-width-strong) no-repeat;
+  background-size:
+    100% var(--border-width-strong),
+    var(--border-width-strong) 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sign {
+    transition: background-size var(--duration-state) var(--ease-out);
+  }
 }
 
 .question:hover .name {

@@ -15,9 +15,16 @@
     bottom / 0 var(--rule-width);
 }
 
-.link:hover .label,
 .link:focus-visible .label {
   background-size: 100% var(--rule-width);
+}
+
+/* Au survol, réservé aux pointeurs précis : sur un écran tactile, le filet et
+ * la flèche resteraient figés après l'appui. */
+@media (hover: hover) and (pointer: fine) {
+  .link:hover .label {
+    background-size: 100% var(--rule-width);
+  }
 }
 
 .arrow,
@@ -38,7 +45,9 @@
   .arrowDown {
     transition: translate var(--duration-state) var(--ease-out);
   }
+}
 
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
   .link:hover .arrow {
     translate: var(--space-4) 0;
   }

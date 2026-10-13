@@ -479,7 +479,7 @@ Rejoindre un club est un engagement, pas un achat. Le site invite, explique et l
 | Durée | Usage |
 |---|---|
 | 120 ms | Changement de couleur au survol ou à l'appui |
-| 200 ms | Tracé d'un filet, déplacement d'une flèche |
+| 200 ms | Tracé d'un filet, déplacement d'une flèche, dépliant, fermeture du sommaire |
 | 320 ms | Ouverture du sommaire, d'une modale |
 | 480 ms | Grossissement d'une image au survol |
 
@@ -492,10 +492,14 @@ Courbe unique, en décélération. Aucun rebond.
 | **Image d'un contenu cliquable** | Grossit de 3 % dans son cadre. |
 | **Ligne du registre** | Devient blanche, le jour passe au bleu. |
 | **Appel du champ cranberry** | La ligne s'inverse (fond blanc, texte encre), se resserre de 16 px, la flèche avance de 8 px. |
-| **Sommaire du téléphone** | Apparaît en fondu avec un déplacement de 8 px. |
+| **Sommaire du téléphone** | Apparaît en fondu avec un déplacement de 8 px ; repart par le même chemin, plus vite (200 ms). |
+| **Dépliant** (FAQ, fiche d'une action ou d'une actualité, filtre des domaines) | Le contenu se déploie en hauteur et en fondu ; il se replie de même. Le signe plus perd son trait vertical en se résorbant. Sans prise en charge du navigateur, il s'ouvre d'un coup. |
+| **Candidature envoyée** | Le message de confirmation apparaît en fondu avec un déplacement de 8 px (320 ms). |
 | **Focus** | Contour de 2 px, décalé de 2 px : bleu royal sur fond clair, blanc sur champ fort. Toujours visible. |
 
 **Interdits.** Animation permanente, apparition des sections au défilement, parallaxe, défilement détourné, effet 3D, compteur animé, transition lente.
+
+**Survol.** Les déplacements, tracés et grossissements déclenchés par le survol ne s'appliquent qu'aux écrans à pointeur précis (`(hover: hover) and (pointer: fine)`) : sur un écran tactile, ils resteraient figés après un appui. Les changements de couleur et les états de focus restent partout.
 
 **Mouvement réduit.** Quand `prefers-reduced-motion` est actif, tous les déplacements, tracés et grossissements sont supprimés. Les changements de couleur restent, instantanés.
 

@@ -112,7 +112,10 @@
   .arrow {
     transition: translate var(--duration-state) var(--ease-out);
   }
+}
 
+/* Resserrement et flèche au survol, réservés aux pointeurs précis. */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
   .action:hover {
     padding-inline: var(--space-16);
   }

@@ -133,7 +133,10 @@
   .frame img {
     transition: scale var(--duration-reveal) var(--ease-out);
   }
+}
 
+/* Grossissement au survol, réservé aux pointeurs précis. */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
   .entry:has(.link:hover) .frame img {
     scale: 1.03;
   }

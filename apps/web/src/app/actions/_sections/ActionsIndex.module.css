@@ -109,9 +109,15 @@
 }
 
 .filter[open] .current::after {
-  background:
-    linear-gradient(currentColor, currentColor) center / 100%
-      var(--border-width-strong) no-repeat;
+  background-size:
+    100% var(--border-width-strong),
+    var(--border-width-strong) 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .current::after {
+    transition: background-size var(--duration-state) var(--ease-out);
+  }
 }
 
 .areas {

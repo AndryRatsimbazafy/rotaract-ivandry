@@ -122,16 +122,39 @@
   color: var(--on-field-text-secondary);
 }
 
+/* Ouverture : fondu et déplacement de 8 px, le fond couvre la page aussitôt.
+ * Fermeture : le sommaire repart par le même chemin, plus vite, avec son fond. */
 @media (prefers-reduced-motion: no-preference) {
-  .panel[open] {
-    animation: menu-in var(--duration-overlay) var(--ease-out);
+  .panel {
+    transition:
+      opacity var(--duration-state) var(--ease-out),
+      translate var(--duration-state) var(--ease-out),
+      display var(--duration-state) allow-discrete,
+      overlay var(--duration-state) allow-discrete;
   }
-}
 
-@keyframes menu-in {
-  from {
+  .panel[open] {
+    transition-duration: var(--duration-overlay);
+  }
+
+  .panel:not([open]) {
     opacity: 0;
     translate: 0 calc(-1 * var(--space-8));
+  }
+
+  .panel::backdrop {
+    transition: opacity var(--duration-state) var(--ease-out);
+  }
+
+  .panel:not([open])::backdrop {
+    opacity: 0;
+  }
+
+  @starting-style {
+    .panel[open] {
+      opacity: 0;
+      translate: 0 calc(-1 * var(--space-8));
+    }
   }
 }
 

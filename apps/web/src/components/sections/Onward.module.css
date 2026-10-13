@@ -48,7 +48,10 @@
   .arrow {
     transition: translate var(--duration-state) var(--ease-out);
   }
+}
 
+/* Déplacement au survol, réservé aux pointeurs précis. */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
   .link:hover .arrow {
     translate: var(--space-8) 0;
   }

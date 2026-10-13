@@ -192,7 +192,7 @@ async function NewsLines({
                         <p className={styles.summary}>{item.summary}</p>
                       ) : null}
                       {hasDetail ? (
-                        <details className={styles.more}>
+                        <details className={`fold ${styles.more}`}>
                           <summary className={styles.moreSummary}>
                             {newsRegister.more}
                           </summary>
