@@ -17,7 +17,7 @@ export default function DeleteSection({
   action: () => Promise<ActionResult>;
 }) {
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ mt: 4, pt: 2, borderTop: 1, borderColor: "divider" }}>
       <ConfirmDialog
         triggerLabel={label}
         variant="outlined"

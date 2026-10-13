@@ -6,7 +6,6 @@ import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -16,6 +15,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import ArrowDownward from "@mui/icons-material/ArrowDownward";
 import ArrowUpward from "@mui/icons-material/ArrowUpward";
+import { tabularNums } from "@/theme/theme";
 import { reorderMandates } from "../actions";
 
 export type OrderRow = { id: string; name: string; roles: string };
@@ -95,7 +95,7 @@ export default function MandateOrderList({ rotaryYearId, rows, returnTo }: Props
           {error}
         </Alert>
       )}
-      <Paper>
+      <Box sx={{ borderTop: 1, borderColor: "divider" }}>
         <TableContainer>
           <Table>
             <TableHead>
@@ -109,7 +109,7 @@ export default function MandateOrderList({ rotaryYearId, rows, returnTo }: Props
             <TableBody>
               {order.map((row, index) => (
                 <TableRow key={row.id} id={`mandat-${row.id}`}>
-                  <TableCell>{index + 1}</TableCell>
+                  <TableCell sx={tabularNums}>{index + 1}</TableCell>
                   <TableCell component="th" scope="row">
                     {row.name}
                   </TableCell>
@@ -137,8 +137,12 @@ export default function MandateOrderList({ rotaryYearId, rows, returnTo }: Props
             </TableBody>
           </Table>
         </TableContainer>
-      </Paper>
-      <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+      </Box>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: "divider" }}
+      >
         <Button variant="contained" onClick={save} disabled={!dirty || pending}>
           Enregistrer l&apos;ordre
         </Button>

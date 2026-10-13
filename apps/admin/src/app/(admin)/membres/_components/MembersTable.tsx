@@ -2,18 +2,21 @@
 
 import Link from "next/link";
 import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import ConfirmDialog from "@/components/ConfirmDialog";
 import EmptyState from "@/components/EmptyState";
+import InspectorLayout, { secondaryCell } from "@/components/InspectorLayout";
 import ListPagination from "@/components/ListPagination";
 import ListToolbar, { type ListFilter } from "@/components/ListToolbar";
+import RowMenu from "@/components/RowMenu";
+import { useRowSelection } from "@/components/SelectableGrid";
 import SortableHeader from "@/components/SortableHeader";
+import { withSelection } from "@/lib/navigation";
+import { tabularNums } from "@/theme/theme";
 import { deleteMember } from "../actions";
 
 export type MemberRow = {
@@ -36,9 +39,9 @@ type Props = {
   total: number;
   // Adresse de cette liste, avec son état : retour depuis une fiche.
   returnTo: string;
+  selected: string | null;
+  inspector: React.ReactNode;
 };
-
-const hiddenBelowSm = { display: { xs: "none", sm: "table-cell" } };
 
 export default function MembersTable({
   rows,
@@ -49,8 +52,83 @@ export default function MembersTable({
   limit,
   total,
   returnTo,
+  selected,
+  inspector,
 }: Props) {
   const back = `?retour=${encodeURIComponent(returnTo)}`;
+  const hrefOf = (id: string) => `/membres/${id}${back}`;
+  const { rowProps } = useRowSelection({
+    ids: rows.map((row) => row.id),
+    selected,
+    hrefOf,
+  });
+
+  const grid =
+    rows.length === 0 ? (
+      <EmptyState filtered={filtered} resetHref="/membres" emptyText="Aucun membre.">
+        <Button component={Link} href="/membres/nouveau" variant="contained">
+          Nouveau membre
+        </Button>
+      </EmptyState>
+    ) : (
+      <>
+        <TableContainer sx={{ borderTop: 1, borderColor: "divider" }}>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                <SortableHeader field="lastName" label="Nom" defaultSort="lastName" />
+                <TableCell>Prénom</TableCell>
+                <TableCell sx={secondaryCell}>Profession ou études</TableCell>
+                <TableCell sx={secondaryCell}>Email</TableCell>
+                <TableCell sx={secondaryCell}>Téléphone</TableCell>
+                <SortableHeader
+                  field="createdAt"
+                  label="Création"
+                  defaultSort="lastName"
+                  sx={secondaryCell}
+                />
+                <TableCell align="right">
+                  <span className="visually-hidden">Actions</span>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => {
+                const name = `${row.firstName} ${row.lastName}`;
+                return (
+                  <TableRow key={row.id} {...rowProps(row.id)}>
+                    <TableCell component="th" scope="row" sx={{ fontWeight: 600 }}>
+                      {row.lastName}
+                    </TableCell>
+                    <TableCell>{row.firstName}</TableCell>
+                    <TableCell sx={secondaryCell}>{row.occupation}</TableCell>
+                    <TableCell sx={secondaryCell}>{row.email}</TableCell>
+                    <TableCell sx={{ ...secondaryCell, ...tabularNums, whiteSpace: "nowrap" }}>
+                      {row.phone}
+                    </TableCell>
+                    <TableCell sx={{ ...secondaryCell, ...tabularNums }}>
+                      {row.createdAt}
+                    </TableCell>
+                    <TableCell align="right" sx={{ width: 48, py: 0 }}>
+                      <RowMenu
+                        name={name}
+                        openHref={hrefOf(row.id)}
+                        remove={{
+                          title: "Supprimer ce membre ?",
+                          text: `${name} sera supprimé. Ses mandats seront supprimés avec lui.`,
+                          action: deleteMember.bind(null, row.id, withSelection(returnTo, null)),
+                        }}
+                      />
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <ListPagination page={page} limit={limit} total={total} />
+      </>
+    );
 
   return (
     <>
@@ -59,74 +137,7 @@ export default function MembersTable({
         filters={filters}
         errors={errors}
       />
-      <Paper>
-        {rows.length === 0 ? (
-          <EmptyState
-            filtered={filtered}
-            resetHref="/membres"
-            emptyText="Aucun membre."
-          >
-            <Button component={Link} href="/membres/nouveau" variant="contained">
-              Nouveau membre
-            </Button>
-          </EmptyState>
-        ) : (
-          <>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <SortableHeader field="lastName" label="Nom" defaultSort="lastName" />
-                    <TableCell>Prénom</TableCell>
-                    <TableCell>Profession ou études</TableCell>
-                    <TableCell sx={hiddenBelowSm}>Email</TableCell>
-                    <TableCell sx={hiddenBelowSm}>Téléphone</TableCell>
-                    <SortableHeader
-                      field="createdAt"
-                      label="Création"
-                      defaultSort="lastName"
-                      hideBelowSm
-                    />
-                    <TableCell align="right">Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.id} hover>
-                      <TableCell component="th" scope="row">
-                        {row.lastName}
-                      </TableCell>
-                      <TableCell>{row.firstName}</TableCell>
-                      <TableCell>{row.occupation}</TableCell>
-                      <TableCell sx={hiddenBelowSm}>{row.email}</TableCell>
-                      <TableCell sx={hiddenBelowSm}>{row.phone}</TableCell>
-                      <TableCell sx={hiddenBelowSm}>{row.createdAt}</TableCell>
-                      <TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
-                        <Button
-                          component={Link}
-                          href={`/membres/${row.id}${back}`}
-                          size="small"
-                          aria-label={`Ouvrir ${row.firstName} ${row.lastName}`}
-                        >
-                          Ouvrir
-                        </Button>
-                        <ConfirmDialog
-                          triggerLabel="Supprimer"
-                          ariaLabel={`Supprimer ${row.firstName} ${row.lastName}`}
-                          title="Supprimer ce membre ?"
-                          text={`${row.firstName} ${row.lastName} sera supprimé. Ses mandats seront supprimés avec lui.`}
-                          action={deleteMember.bind(null, row.id, returnTo)}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <ListPagination page={page} limit={limit} total={total} />
-          </>
-        )}
-      </Paper>
+      <InspectorLayout grid={grid} inspector={inspector} />
     </>
   );
 }

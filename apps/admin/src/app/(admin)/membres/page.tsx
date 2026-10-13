@@ -1,13 +1,17 @@
+import { Suspense } from "react";
+import { InspectorPending } from "@/components/Inspector";
 import LinkButton from "@/components/LinkButton";
 import PageHeader from "@/components/PageHeader";
 import { apiRead } from "@/lib/api";
 import { formatDate } from "@/lib/dates";
 import { MEMBER_ROLE_OPTIONS } from "@/lib/labels";
 import { clampPage, readList, toSearch } from "@/lib/lists";
+import { pickSelection } from "@/lib/inspector";
 import { listPath, param } from "@/lib/navigation";
 import type { Listed } from "@/types/api";
 import type { Member } from "@/types/member";
 import type { RotaryYear } from "@/types/rotary-year";
+import MemberInspector from "./_components/MemberInspector";
 import MembersTable from "./_components/MembersTable";
 
 export default async function MembresPage({
@@ -31,6 +35,12 @@ export default async function MembresPage({
     apiRead<Listed<RotaryYear>>("/admin/rotary-years"),
   ]);
   clampPage(list, "/membres", toSearch({ q, annee, fonction, tri, page }));
+
+  const returnTo = listPath("/membres", params);
+  const selected = pickSelection(
+    params,
+    list.data.map(({ id }) => id),
+  );
 
   return (
     <>
@@ -65,7 +75,15 @@ export default async function MembresPage({
         page={list.meta.page}
         limit={list.meta.limit}
         total={list.meta.total}
-        returnTo={listPath("/membres", params)}
+        returnTo={returnTo}
+        selected={selected}
+        inspector={
+          selected && (
+            <Suspense key={selected} fallback={<InspectorPending />}>
+              <MemberInspector id={selected} returnTo={returnTo} />
+            </Suspense>
+          )
+        }
       />
     </>
   );

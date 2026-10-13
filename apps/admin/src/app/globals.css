@@ -1,5 +1,18 @@
 /* Le thème MUI porte les couleurs et la typographie. */
 html,
 body {
-  height: 100%;
+  min-height: 100%;
+}
+
+/* Texte lu par les lecteurs d'écran seulement. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }

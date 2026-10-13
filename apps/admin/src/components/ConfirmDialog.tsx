@@ -11,8 +11,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import type { ActionResult } from "@/lib/form-state";
 
 type Props = {
-  // Libellé du bouton qui ouvre le dialogue ; il nomme l'élément.
-  triggerLabel: string;
+  // Libellé du bouton qui ouvre le dialogue ; il nomme l'élément. Sans
+  // libellé, le dialogue est ouvert par l'appelant (open, onClose).
+  triggerLabel?: string;
+  open?: boolean;
+  onClose?: () => void;
   ariaLabel?: string;
   title: string;
   // Nomme l'élément et annonce la conséquence.
@@ -32,8 +35,17 @@ export default function ConfirmDialog({
   confirmLabel = "Supprimer",
   action,
   variant = "text",
+  open: controlledOpen,
+  onClose,
 }: Props) {
-  const [open, setOpen] = useState(false);
+  const [ownOpen, setOwnOpen] = useState(false);
+  const open = controlledOpen ?? ownOpen;
+  const setOpen = (value: boolean) => {
+    setOwnOpen(value);
+    if (!value) {
+      onClose?.();
+    }
+  };
   const [error, setError] = useState<string>();
   const [pending, startTransition] = useTransition();
   const titleId = useId();
@@ -58,15 +70,17 @@ export default function ConfirmDialog({
 
   return (
     <>
-      <Button
-        color="error"
-        size="small"
-        variant={variant}
-        aria-label={ariaLabel}
-        onClick={() => setOpen(true)}
-      >
-        {triggerLabel}
-      </Button>
+      {triggerLabel && (
+        <Button
+          color="error"
+          size="small"
+          variant={variant}
+          aria-label={ariaLabel}
+          onClick={() => setOpen(true)}
+        >
+          {triggerLabel}
+        </Button>
+      )}
       <Dialog
         open={open}
         onClose={close}

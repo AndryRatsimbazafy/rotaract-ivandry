@@ -14,7 +14,7 @@ export default function MemberDelete({
   returnTo: string;
 }) {
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ mt: 4, pt: 2, borderTop: 1, borderColor: "divider", maxWidth: 720 }}>
       <ConfirmDialog
         triggerLabel="Supprimer ce membre"
         variant="outlined"

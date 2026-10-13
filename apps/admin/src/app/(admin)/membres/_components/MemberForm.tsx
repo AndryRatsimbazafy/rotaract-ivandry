@@ -3,8 +3,8 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import Alert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { useFocusFirstError } from "@/components/useFocusFirstError";
@@ -36,7 +36,7 @@ export default function MemberForm({ action, initial = {}, returnTo }: Props) {
   const errors = state.fieldErrors ?? {};
 
   return (
-    <Paper sx={{ p: { xs: 2, sm: 3 }, maxWidth: 720 }}>
+    <Box sx={{ maxWidth: 720 }}>
       <form action={formAction} ref={ref} noValidate>
         <input type="hidden" name="retour" value={returnTo} />
         <Stack spacing={2}>
@@ -58,7 +58,11 @@ export default function MemberForm({ action, initial = {}, returnTo }: Props) {
               slotProps={{ htmlInput: { maxLength } }}
             />
           ))}
-          <Stack direction="row" spacing={1}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ pt: 2, borderTop: 1, borderColor: "divider" }}
+          >
             <Button type="submit" variant="contained" disabled={pending}>
               Enregistrer
             </Button>
@@ -68,6 +72,6 @@ export default function MemberForm({ action, initial = {}, returnTo }: Props) {
           </Stack>
         </Stack>
       </form>
-    </Paper>
+    </Box>
   );
 }

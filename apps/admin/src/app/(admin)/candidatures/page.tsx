@@ -1,9 +1,13 @@
+import { Suspense } from "react";
+import { InspectorPending } from "@/components/Inspector";
 import PageHeader from "@/components/PageHeader";
 import { formatDateTime, madagascarDayEnd, madagascarDayStart } from "@/lib/dates";
 import { APPLICANT_STATUS_LABELS } from "@/lib/labels";
 import { clampPage, readList, toSearch } from "@/lib/lists";
+import { pickSelection } from "@/lib/inspector";
 import { listPath, param } from "@/lib/navigation";
 import type { Application } from "@/types/application";
+import ApplicationInspector from "./_components/ApplicationInspector";
 import ApplicationsTable from "./_components/ApplicationsTable";
 
 export default async function CandidaturesPage({
@@ -28,6 +32,12 @@ export default async function CandidaturesPage({
   });
   clampPage(list, "/candidatures", toSearch({ q, du, au, tri, page }));
 
+  const returnTo = listPath("/candidatures", params);
+  const selected = pickSelection(
+    params,
+    list.data.map(({ id }) => id),
+  );
+
   return (
     <>
       <PageHeader title="Candidatures" />
@@ -45,7 +55,15 @@ export default async function CandidaturesPage({
         page={list.meta.page}
         limit={list.meta.limit}
         total={list.meta.total}
-        returnTo={listPath("/candidatures", params)}
+        returnTo={returnTo}
+        selected={selected}
+        inspector={
+          selected && (
+            <Suspense key={selected} fallback={<InspectorPending />}>
+              <ApplicationInspector id={selected} returnTo={returnTo} />
+            </Suspense>
+          )
+        }
       />
     </>
   );

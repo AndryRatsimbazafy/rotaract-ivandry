@@ -17,7 +17,7 @@ export default async function NouvelleActualitePage({
   const years = await apiRead<Listed<RotaryYear>>("/admin/rotary-years");
   return (
     <>
-      <PageHeader title="Nouvelle actualité" />
+      <PageHeader back={{ href: returnTo, label: "Actualités" }} title="Nouvelle actualité" />
       <NewsForm
         action={createNews}
         years={yearsForMadagascarInput(years.data)}

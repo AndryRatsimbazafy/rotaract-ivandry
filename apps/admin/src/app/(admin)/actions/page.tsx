@@ -1,14 +1,18 @@
+import { Suspense } from "react";
 import ContentTable from "@/components/ContentTable";
+import { InspectorPending } from "@/components/Inspector";
 import LinkButton from "@/components/LinkButton";
 import PageHeader from "@/components/PageHeader";
 import { apiRead } from "@/lib/api";
 import { formatDate, formatUtcDate } from "@/lib/dates";
 import { FOCUS_AREA_OPTIONS, PUBLISHED_OPTIONS } from "@/lib/labels";
 import { clampPage, readList, toSearch } from "@/lib/lists";
+import { pickSelection } from "@/lib/inspector";
 import { listPath, param } from "@/lib/navigation";
 import type { Action } from "@/types/action";
 import type { Listed } from "@/types/api";
 import type { RotaryYear } from "@/types/rotary-year";
+import ActionInspector from "./_components/ActionInspector";
 import { deleteAction, setActionPublished } from "./actions";
 
 export default async function ActionsPage({
@@ -35,6 +39,12 @@ export default async function ActionsPage({
   ]);
   clampPage(list, "/actions", toSearch({ q, annee, domaine, publie, tri, page }));
 
+  const returnTo = listPath("/actions", params);
+  const selected = pickSelection(
+    params,
+    list.data.map(({ id }) => id),
+  );
+
   return (
     <>
       <PageHeader title="Actions">
@@ -49,6 +59,7 @@ export default async function ActionsPage({
         emptyText="Aucune action."
         itemName="L'action"
         extraLabel="Ordre"
+        extraNumeric
         dateLabel="Date"
         rows={list.data.map((action) => ({
           id: action.id,
@@ -74,7 +85,15 @@ export default async function ActionsPage({
         page={list.meta.page}
         limit={list.meta.limit}
         total={list.meta.total}
-        returnTo={listPath("/actions", params)}
+        returnTo={returnTo}
+        selected={selected}
+        inspector={
+          selected && (
+            <Suspense key={selected} fallback={<InspectorPending />}>
+              <ActionInspector id={selected} returnTo={returnTo} />
+            </Suspense>
+          )
+        }
         publishAction={setActionPublished}
         deleteAction={deleteAction}
       />

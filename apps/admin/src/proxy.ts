@@ -22,6 +22,8 @@ export function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
+// Les images publiques du logo (public/images) restent servies sans session :
+// la page de connexion les affiche.
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|images/).*)"],
 };

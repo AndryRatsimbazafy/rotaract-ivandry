@@ -22,6 +22,7 @@ export default function ListPagination({ page, limit, total }: Props) {
         const params = new URLSearchParams(searchParams.toString());
         params.set("page", String(next + 1));
         params.delete("avis");
+        params.delete("selection");
         router.push(`${pathname}?${params.toString()}`);
       }}
       labelDisplayedRows={({ from, to, count }) =>

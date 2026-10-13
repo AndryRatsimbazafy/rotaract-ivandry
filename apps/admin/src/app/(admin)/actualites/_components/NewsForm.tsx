@@ -3,14 +3,15 @@
 import { useActionState, useState } from "react";
 import Link from "next/link";
 import Alert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormHelperText from "@mui/material/FormHelperText";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { SectionHeading } from "@/components/PageHeader";
 import PublishedSlugDialog from "@/components/PublishedSlugDialog";
 import RotaryYearField from "@/components/RotaryYearField";
 import SlugField from "@/components/SlugField";
@@ -23,6 +24,7 @@ import {
   type FormState,
 } from "@/lib/form-state";
 import { NEWS_TYPE_OPTIONS } from "@/lib/labels";
+import { tabularText } from "@/theme/theme";
 
 export type NewsFormInitial = {
   // date : valeur du champ, déjà exprimée en heure de Madagascar par le serveur.
@@ -63,7 +65,7 @@ export default function NewsForm({
   const noYear = years.length === 0;
 
   return (
-    <Paper sx={{ p: { xs: 2, sm: 3 }, maxWidth: 720 }}>
+    <Box sx={{ maxWidth: 720 }}>
       <form action={formAction} onSubmit={guard.onSubmit} ref={ref} noValidate>
         <input type="hidden" name="retour" value={returnTo} />
         <Stack spacing={2}>
@@ -73,7 +75,7 @@ export default function NewsForm({
             </Alert>
           )}
 
-          <Typography variant="h2">Contenu</Typography>
+          <SectionHeading title="Contenu" />
           <TextField
             name="title"
             label="Titre"
@@ -132,7 +134,7 @@ export default function NewsForm({
             slotProps={{ htmlInput: { maxLength: 20000 } }}
           />
 
-          <Typography variant="h2">Calendrier</Typography>
+          <SectionHeading title="Calendrier" />
           <TextField
             name="date"
             type="datetime-local"
@@ -154,7 +156,7 @@ export default function NewsForm({
             error={errors.rotaryYear}
           />
 
-          <Typography variant="h2">Publication</Typography>
+          <SectionHeading title="Publication" />
           <FormControlLabel
             label="Publié"
             control={
@@ -169,12 +171,16 @@ export default function NewsForm({
             <FormHelperText error>{errors.isPublished}</FormHelperText>
           )}
           {initial.publishedAt && (
-            <Typography color="text.secondary">
+            <Typography variant="body2" color="text.secondary" sx={tabularText}>
               Première publication le {initial.publishedAt}
             </Typography>
           )}
 
-          <Stack direction="row" spacing={1}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ pt: 2, borderTop: 1, borderColor: "divider" }}
+          >
             <Button type="submit" variant="contained" disabled={pending || noYear}>
               Enregistrer
             </Button>
@@ -189,6 +195,6 @@ export default function NewsForm({
         onCancel={guard.cancel}
         onConfirm={guard.confirm}
       />
-    </Paper>
+    </Box>
   );
 }

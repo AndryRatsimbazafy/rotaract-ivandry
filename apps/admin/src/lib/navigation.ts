@@ -45,3 +45,17 @@ export function listPath(pathname: string, params: SearchParams): string {
   const text = search.toString();
   return text ? `${pathname}?${text}` : pathname;
 }
+
+// Pose ou retire la ligne choisie d'une liste (paramètre selection).
+export function withSelection(path: string, id: string | null): string {
+  const [pathname, query = ""] = path.split("?");
+  const search = new URLSearchParams(query);
+  if (id) {
+    search.set("selection", id);
+  } else {
+    search.delete("selection");
+  }
+  search.delete("avis");
+  const text = search.toString();
+  return text ? `${pathname}?${text}` : pathname;
+}

@@ -14,7 +14,7 @@ export default async function NouvelleActionPage({
   const years = await apiRead<Listed<RotaryYear>>("/admin/rotary-years");
   return (
     <>
-      <PageHeader title="Nouvelle action" />
+      <PageHeader back={{ href: returnTo, label: "Actions" }} title="Nouvelle action" />
       <ActionForm
         action={createAction}
         years={yearsForDateInput(years.data)}

@@ -4,10 +4,9 @@ import Link from "next/link";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import FieldList from "@/components/FieldList";
 import { deleteApplication } from "../actions";
 
 export type ApplicationView = {
@@ -39,39 +38,21 @@ export default function ApplicationDetail({
           {cvError}
         </Alert>
       )}
-      <Paper sx={{ p: { xs: 2, sm: 3 } }}>
-        <Box
-          component="dl"
-          sx={{
-            m: 0,
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", sm: "200px 1fr" },
-            rowGap: 1.5,
-            columnGap: 2,
-          }}
-        >
-          {application.fields.map(({ label, value }) => (
-            <Box key={label} sx={{ display: "contents" }}>
-              <Typography component="dt" color="text.secondary">
-                {label}
-              </Typography>
-              <Typography component="dd" sx={{ m: 0, overflowWrap: "anywhere" }}>
-                {value}
-              </Typography>
-            </Box>
-          ))}
-          <Typography component="dt" color="text.secondary">
-            CV
-          </Typography>
-          <Typography component="dd" sx={{ m: 0, overflowWrap: "anywhere" }}>
-            {application.cv.name} — {application.cv.type}, {application.cv.size}
-          </Typography>
-        </Box>
-      </Paper>
+      <FieldList
+        labelWidth={200}
+        fields={[
+          ...application.fields,
+          {
+            label: "CV",
+            value: `${application.cv.name} — ${application.cv.type}, ${application.cv.size}`,
+            numeric: true,
+          },
+        ]}
+      />
       <Stack
         direction={{ xs: "column", sm: "row" }}
         spacing={1}
-        sx={{ mt: 2, alignItems: { sm: "center" } }}
+        sx={{ mt: 3, alignItems: { sm: "center" } }}
       >
         {/* Lien ordinaire : le fichier est renvoyé en pièce jointe par le
             Back Office lui-même, jamais par une adresse de stockage. */}

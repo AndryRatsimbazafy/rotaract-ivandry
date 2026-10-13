@@ -1,5 +1,6 @@
 import DeleteSection from "@/components/DeleteSection";
 import PageHeader from "@/components/PageHeader";
+import { PublishedMark } from "@/components/StatusMark";
 import { apiRead } from "@/lib/api";
 import { formatDateTime, isoToDateInput, yearsForDateInput } from "@/lib/dates";
 import { param, safeReturnPath } from "@/lib/navigation";
@@ -23,7 +24,11 @@ export default async function ActionPage({
 
   return (
     <>
-      <PageHeader title={action.title} />
+      <PageHeader
+        back={{ href: returnTo, label: "Actions" }}
+        title={action.title}
+        marks={<PublishedMark isPublished={action.isPublished} />}
+      />
       <ActionForm
         action={updateAction.bind(null, action.id, action.slug)}
         initial={{

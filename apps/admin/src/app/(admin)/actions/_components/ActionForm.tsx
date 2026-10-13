@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import Link from "next/link";
 import Alert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
@@ -10,11 +11,11 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import FormHelperText from "@mui/material/FormHelperText";
 import FormLabel from "@mui/material/FormLabel";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { SectionHeading } from "@/components/PageHeader";
 import PublishedSlugDialog from "@/components/PublishedSlugDialog";
 import RotaryYearField from "@/components/RotaryYearField";
 import SlugField from "@/components/SlugField";
@@ -27,6 +28,7 @@ import {
   type FormState,
 } from "@/lib/form-state";
 import { FOCUS_AREA_OPTIONS } from "@/lib/labels";
+import { tabularText } from "@/theme/theme";
 
 export type ActionFormInitial = {
   values: Record<string, string>;
@@ -83,7 +85,7 @@ export default function ActionForm({
   const noYear = years.length === 0;
 
   return (
-    <Paper sx={{ p: { xs: 2, sm: 3 }, maxWidth: 720 }}>
+    <Box sx={{ maxWidth: 720 }}>
       <form action={formAction} onSubmit={guard.onSubmit} ref={ref} noValidate>
         <input type="hidden" name="retour" value={returnTo} />
         <Stack spacing={2}>
@@ -93,7 +95,7 @@ export default function ActionForm({
             </Alert>
           )}
 
-          <Typography variant="h2">Contenu</Typography>
+          <SectionHeading title="Contenu" />
           <TextField
             name="title"
             label="Titre"
@@ -127,7 +129,7 @@ export default function ActionForm({
             slotProps={{ htmlInput: { maxLength: 20000 } }}
           />
 
-          <Typography variant="h2">Calendrier</Typography>
+          <SectionHeading title="Calendrier" />
           <TextField
             name="date"
             type="date"
@@ -173,7 +175,7 @@ export default function ActionForm({
             )}
           </FormControl>
 
-          <Typography variant="h2">Impact (facultatif)</Typography>
+          <SectionHeading title="Impact (facultatif)" />
           <Typography color="text.secondary">
             Seules les rubriques renseignées sont enregistrées et affichées.
           </Typography>
@@ -207,7 +209,7 @@ export default function ActionForm({
             }
           />
 
-          <Typography variant="h2">Publication</Typography>
+          <SectionHeading title="Publication" />
           <FormControlLabel
             label="Publié"
             control={
@@ -222,7 +224,7 @@ export default function ActionForm({
             <FormHelperText error>{errors.isPublished}</FormHelperText>
           )}
           {initial.publishedAt && (
-            <Typography color="text.secondary">
+            <Typography variant="body2" color="text.secondary" sx={tabularText}>
               Première publication le {initial.publishedAt}
             </Typography>
           )}
@@ -240,7 +242,11 @@ export default function ActionForm({
             sx={{ maxWidth: 240 }}
           />
 
-          <Stack direction="row" spacing={1}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ pt: 2, borderTop: 1, borderColor: "divider" }}
+          >
             <Button type="submit" variant="contained" disabled={pending || noYear}>
               Enregistrer
             </Button>
@@ -255,6 +261,6 @@ export default function ActionForm({
         onCancel={guard.cancel}
         onConfirm={guard.confirm}
       />
-    </Paper>
+    </Box>
   );
 }

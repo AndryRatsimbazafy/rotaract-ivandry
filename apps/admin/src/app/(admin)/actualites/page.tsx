@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import ContentTable from "@/components/ContentTable";
+import { InspectorPending } from "@/components/Inspector";
 import LinkButton from "@/components/LinkButton";
 import PageHeader from "@/components/PageHeader";
 import { apiRead } from "@/lib/api";
@@ -9,10 +11,12 @@ import {
   PUBLISHED_OPTIONS,
 } from "@/lib/labels";
 import { clampPage, readList, toSearch } from "@/lib/lists";
+import { pickSelection } from "@/lib/inspector";
 import { listPath, param } from "@/lib/navigation";
 import type { Listed } from "@/types/api";
 import type { News } from "@/types/news";
 import type { RotaryYear } from "@/types/rotary-year";
+import NewsInspector from "./_components/NewsInspector";
 import { deleteNews, setNewsPublished } from "./actions";
 
 export default async function ActualitesPage({
@@ -38,6 +42,12 @@ export default async function ActualitesPage({
     apiRead<Listed<RotaryYear>>("/admin/rotary-years"),
   ]);
   clampPage(list, "/actualites", toSearch({ q, annee, type, publie, tri, page }));
+
+  const returnTo = listPath("/actualites", params);
+  const selected = pickSelection(
+    params,
+    list.data.map(({ id }) => id),
+  );
 
   return (
     <>
@@ -78,7 +88,15 @@ export default async function ActualitesPage({
         page={list.meta.page}
         limit={list.meta.limit}
         total={list.meta.total}
-        returnTo={listPath("/actualites", params)}
+        returnTo={returnTo}
+        selected={selected}
+        inspector={
+          selected && (
+            <Suspense key={selected} fallback={<InspectorPending />}>
+              <NewsInspector id={selected} returnTo={returnTo} />
+            </Suspense>
+          )
+        }
         publishAction={setNewsPublished}
         deleteAction={deleteNews}
       />

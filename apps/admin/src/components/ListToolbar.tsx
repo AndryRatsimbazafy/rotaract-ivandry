@@ -45,6 +45,7 @@ export default function ListToolbar({
     }
     next.delete("page");
     next.delete("avis");
+    next.delete("selection");
     const query = next.toString();
     router.push(query ? `${pathname}?${query}` : pathname);
   };

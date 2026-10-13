@@ -23,7 +23,7 @@ export default async function MembrePage({
 
   return (
     <>
-      <PageHeader title={name} />
+      <PageHeader back={{ href: returnTo, label: "Membres" }} title={name} />
       <MemberForm
         action={updateMember.bind(null, member.id)}
         initial={{

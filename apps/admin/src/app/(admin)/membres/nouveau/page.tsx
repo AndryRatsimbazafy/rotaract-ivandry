@@ -9,7 +9,7 @@ export default async function NouveauMembrePage({
   const returnTo = safeReturnPath(param(await searchParams, "retour"), "/membres");
   return (
     <>
-      <PageHeader title="Nouveau membre" />
+      <PageHeader back={{ href: returnTo, label: "Membres" }} title="Nouveau membre" />
       <MemberForm action={createMember} returnTo={returnTo} />
     </>
   );

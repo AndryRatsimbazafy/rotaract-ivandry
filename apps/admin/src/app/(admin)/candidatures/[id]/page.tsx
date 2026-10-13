@@ -5,25 +5,12 @@ import { APPLICANT_STATUS_LABELS } from "@/lib/labels";
 import { param, safeReturnPath } from "@/lib/navigation";
 import type { Application } from "@/types/application";
 import ApplicationDetail from "../_components/ApplicationDetail";
+import { cvType, fileSize } from "../_components/cv";
 
 const CV_ERRORS: Record<string, string> = {
   introuvable: "Le fichier du CV est introuvable.",
   indisponible: "Service indisponible.",
 };
-
-const CV_TYPES: Record<string, string> = {
-  "application/pdf": "PDF",
-  "application/msword": "Word (DOC)",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-    "Word (DOCX)",
-};
-
-function fileSize(bytes: number): string {
-  const format = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
-  return bytes < 1024 * 1024
-    ? `${format.format(Math.max(1, Math.round(bytes / 1024)))} Ko`
-    : `${format.format(bytes / (1024 * 1024))} Mo`;
-}
 
 export default async function CandidaturePage({
   params,
@@ -37,7 +24,10 @@ export default async function CandidaturePage({
 
   return (
     <>
-      <PageHeader title={`Candidature de ${name}`} />
+      <PageHeader
+        back={{ href: returnTo, label: "Candidatures" }}
+        title={`Candidature de ${name}`}
+      />
       <ApplicationDetail
         application={{
           id: application.id,
@@ -59,7 +49,7 @@ export default async function CandidaturePage({
           ],
           cv: {
             name: application.cv.name,
-            type: CV_TYPES[application.cv.mimeType] ?? "Document",
+            type: cvType(application.cv.mimeType),
             size: fileSize(application.cv.size),
           },
         }}

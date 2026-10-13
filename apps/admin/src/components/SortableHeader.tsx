@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import TableCell from "@mui/material/TableCell";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import type { SxProps, Theme } from "@mui/material/styles";
 
 type Props = {
   // Champ de tri du contrat de l'API.
@@ -12,6 +13,7 @@ type Props = {
   // Tri appliqué quand l'adresse n'en porte pas.
   defaultSort: string;
   hideBelowSm?: boolean;
+  sx?: SxProps<Theme>;
 };
 
 // En-tête de colonne triable : bascule entre « champ » et « -champ ».
@@ -20,6 +22,7 @@ export default function SortableHeader({
   label,
   defaultSort,
   hideBelowSm,
+  sx,
 }: Props) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -31,11 +34,12 @@ export default function SortableHeader({
   next.set("tri", active && !descending ? `-${field}` : field);
   next.delete("page");
   next.delete("avis");
+  next.delete("selection");
 
   return (
     <TableCell
       aria-sort={active ? (descending ? "descending" : "ascending") : undefined}
-      sx={hideBelowSm ? { display: { xs: "none", sm: "table-cell" } } : undefined}
+      sx={sx ?? (hideBelowSm ? { display: { xs: "none", sm: "table-cell" } } : undefined)}
     >
       <TableSortLabel
         component={Link}

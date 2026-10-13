@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import ArrowForward from "@mui/icons-material/ArrowForward";
 import Box from "@mui/material/Box";
-import CardActionArea from "@mui/material/CardActionArea";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import { SectionHeading } from "@/components/PageHeader";
 
 const DOMAINS = [
   {
@@ -34,26 +34,57 @@ const DOMAINS = [
   },
 ];
 
-// Accueil : un accès par domaine, sans chiffre.
+// Accueil : un accès par domaine, en liste à filets.
 export default function HomeLinks() {
   return (
-    <Box
-      sx={{
-        display: "grid",
-        gap: 2,
-        gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", lg: "1fr 1fr 1fr" },
-      }}
-    >
-      {DOMAINS.map(({ href, title, text }) => (
-        <Paper key={href}>
-          <CardActionArea component={Link} href={href} sx={{ p: 2.5, height: "100%" }}>
-            <Typography variant="h2" sx={{ mb: 0.5 }}>
-              {title}
-            </Typography>
-            <Typography color="text.secondary">{text}</Typography>
-          </CardActionArea>
-        </Paper>
-      ))}
+    <Box component="nav" aria-label="Domaines" sx={{ mt: 4 }}>
+      <SectionHeading title="Domaines" />
+      <Box component="ul" sx={{ m: 0, p: 0, listStyle: "none" }}>
+        {DOMAINS.map(({ href, title, text }) => (
+          <Box component="li" key={href} sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Box
+              component={Link}
+              href={href}
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", sm: "200px minmax(0, 1fr) auto" },
+                alignItems: "baseline",
+                columnGap: 2,
+                rowGap: 0.25,
+                px: 1,
+                py: 1.25,
+                color: "inherit",
+                textDecoration: "none",
+                transition: "background-color 120ms",
+                "&:hover": { bgcolor: "action.hover" },
+                "&:hover .fleche": { color: "primary.main" },
+                "&:focus-visible": {
+                  outline: 2,
+                  outlineColor: "primary.main",
+                  outlineOffset: -2,
+                },
+              }}
+            >
+              <Typography variant="body2" component="span" sx={{ fontWeight: 700 }}>
+                {title}
+              </Typography>
+              <Typography variant="body2" component="span" color="text.secondary">
+                {text}
+              </Typography>
+              <ArrowForward
+                className="fleche"
+                aria-hidden
+                sx={{
+                  display: { xs: "none", sm: "block" },
+                  fontSize: 16,
+                  color: "text.secondary",
+                  alignSelf: "center",
+                }}
+              />
+            </Box>
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 }

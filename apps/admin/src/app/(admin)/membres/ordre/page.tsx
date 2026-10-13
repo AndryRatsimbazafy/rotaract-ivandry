@@ -1,5 +1,4 @@
 import Alert from "@/components/InfoAlert";
-import LinkButton from "@/components/LinkButton";
 import PageHeader from "@/components/PageHeader";
 import { apiRead, queryString } from "@/lib/api";
 import { MEMBER_ROLE_LABELS } from "@/lib/labels";
@@ -36,11 +35,7 @@ export default async function OrdrePage({
 
   const header = (
     <>
-      <PageHeader title="Ordre d'une année">
-        <LinkButton href="/membres" variant="outlined">
-          Retour aux membres
-        </LinkButton>
-      </PageHeader>
+      <PageHeader back={{ href: "/membres", label: "Membres" }} title="Ordre d'une année" />
       <OrderYearPicker
         labels={years.data.map(({ label }) => label)}
         current={year?.label ?? ""}

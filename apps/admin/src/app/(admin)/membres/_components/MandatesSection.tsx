@@ -7,16 +7,12 @@ import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import FormHelperText from "@mui/material/FormHelperText";
 import FormLabel from "@mui/material/FormLabel";
-import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -26,9 +22,12 @@ import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { SectionHeading } from "@/components/PageHeader";
+import SideSheet from "@/components/SideSheet";
 import { EMPTY_FORM_STATE, type FormState } from "@/lib/form-state";
 import { MEMBER_ROLE_LABELS, MEMBER_ROLE_OPTIONS } from "@/lib/labels";
 import type { MemberMandate, MemberRole } from "@/types/member";
+import { tabularNums } from "@/theme/theme";
 import type { YearRef } from "@/types/rotary-year";
 import { createMandate, deleteMandate, updateMandateRoles } from "../actions";
 
@@ -50,7 +49,8 @@ type DialogProps = {
   onClose: () => void;
 };
 
-function MandateDialog({
+// Saisie d'un mandat dans un panneau latéral : la fiche reste en place.
+function MandateSheet({
   title,
   action,
   notice,
@@ -76,17 +76,20 @@ function MandateDialog({
   }, [state, notice, onClose, pathname, router, searchParams]);
 
   return (
-    <Dialog open onClose={onClose} aria-labelledby="mandat-titre" fullWidth maxWidth="sm">
+    <SideSheet open onClose={onClose} title={title}>
       <form action={formAction} noValidate>
-        <DialogTitle id="mandat-titre">{title}</DialogTitle>
-        <DialogContent>
           {state.message && (
             <Alert severity="error" role="alert" sx={{ mb: 2 }}>
               {state.message}
             </Alert>
           )}
           {fixedYear ? (
-            <Typography sx={{ mb: 2 }}>Année : {fixedYear}</Typography>
+            <Typography sx={{ mb: 2 }}>
+              Année :{" "}
+              <Box component="span" sx={{ ...tabularNums, fontWeight: 600 }}>
+                {fixedYear}
+              </Box>
+            </Typography>
           ) : (
             <TextField
               select
@@ -111,7 +114,7 @@ function MandateDialog({
               Fonctions (aucune, une ou plusieurs)
             </FormLabel>
             <FormGroup
-              sx={{ display: "grid", gridTemplateColumns: { sm: "1fr 1fr" } }}
+              sx={{ display: "grid", gridTemplateColumns: "1fr" }}
             >
               {MEMBER_ROLE_OPTIONS.map(({ value, label }) => (
                 <FormControlLabel
@@ -130,17 +133,16 @@ function MandateDialog({
             </FormGroup>
             {errors.roles && <FormHelperText>{errors.roles}</FormHelperText>}
           </FormControl>
-        </DialogContent>
-        <DialogActions>
+        <Stack direction="row" spacing={1} sx={{ mt: 3, justifyContent: "flex-end" }}>
           <Button onClick={onClose} disabled={pending}>
             Annuler
           </Button>
           <Button type="submit" variant="contained" disabled={pending}>
             Enregistrer
           </Button>
-        </DialogActions>
+        </Stack>
       </form>
-    </Dialog>
+    </SideSheet>
   );
 }
 
@@ -163,26 +165,20 @@ export default function MandatesSection({
 
   return (
     <Box component="section" aria-labelledby="mandats" sx={{ mt: 4, maxWidth: 720 }}>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 1,
-          mb: 1.5,
-        }}
-      >
-        <Typography variant="h2" id="mandats">
-          Mandats
-        </Typography>
-        <Button
-          variant="outlined"
-          onClick={() => setAdding(true)}
-          disabled={years.length === 0}
-        >
-          Ajouter un mandat
-        </Button>
-      </Box>
+      <SectionHeading
+        id="mandats"
+        title="Mandats"
+        actions={
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => setAdding(true)}
+            disabled={years.length === 0}
+          >
+            Ajouter un mandat
+          </Button>
+        }
+      />
       {years.length === 0 && (
         <Alert
           severity="info"
@@ -196,9 +192,9 @@ export default function MandatesSection({
           Créez d&apos;abord une année Rotary.
         </Alert>
       )}
-      <Paper>
+      <Box sx={{ border: 1, borderColor: "divider" }}>
         {mandates.length === 0 ? (
-          <Typography sx={{ p: 2 }} color="text.secondary">
+          <Typography variant="body2" sx={{ p: 2 }} color="text.secondary">
             Aucun mandat.
           </Typography>
         ) : (
@@ -214,7 +210,11 @@ export default function MandatesSection({
               <TableBody>
                 {mandates.map((mandate) => (
                   <TableRow key={mandate.id}>
-                    <TableCell component="th" scope="row" sx={{ whiteSpace: "nowrap" }}>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ whiteSpace: "nowrap", ...tabularNums, fontWeight: 600 }}
+                    >
                       {mandate.rotaryYear.label}
                     </TableCell>
                     <TableCell>
@@ -224,7 +224,7 @@ export default function MandatesSection({
                             .join(", ")
                         : "Sans fonction"}
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
                       <Button
                         size="small"
                         onClick={() => setEditing(mandate)}
@@ -254,9 +254,9 @@ export default function MandatesSection({
             </Table>
           </TableContainer>
         )}
-      </Paper>
+      </Box>
       {adding && (
-        <MandateDialog
+        <MandateSheet
           title="Ajouter un mandat"
           action={createMandate.bind(null, memberId)}
           notice="cree"
@@ -266,7 +266,7 @@ export default function MandatesSection({
         />
       )}
       {editing && (
-        <MandateDialog
+        <MandateSheet
           title="Modifier les fonctions"
           action={updateMandateRoles.bind(null, editing.id)}
           notice="modifie"

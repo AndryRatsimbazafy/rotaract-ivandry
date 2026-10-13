@@ -1,5 +1,6 @@
 import DeleteSection from "@/components/DeleteSection";
 import PageHeader from "@/components/PageHeader";
+import { PublishedMark } from "@/components/StatusMark";
 import { apiRead } from "@/lib/api";
 import {
   formatDateTime,
@@ -29,7 +30,11 @@ export default async function ActualitePage({
 
   return (
     <>
-      <PageHeader title={news.title} />
+      <PageHeader
+        back={{ href: returnTo, label: "Actualités" }}
+        title={news.title}
+        marks={<PublishedMark isPublished={news.isPublished} />}
+      />
       <NewsForm
         action={updateNews.bind(null, news.id, news.slug)}
         initial={{

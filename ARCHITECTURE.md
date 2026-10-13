@@ -1,7 +1,7 @@
 # ARCHITECTURE : Backend et Back Office
 
 > Référence technique avant implémentation de `apps/api` et `apps/admin`, et de la connexion de `apps/web` à l'API.
-> État au 2026-10-02. **Implémenté** : l'API (étapes 1 à 5 de la section 15), le Back Office (étapes 6 et 7) et la connexion du Front Office à l'API (étape 8, fonctionnalité 009). **Reste à faire** : la refonte visuelle du Back Office (fonctionnalité 010), puis le stockage des images (fonctionnalité 011).
+> État au 2026-10-13. **Implémenté** : l'API (étapes 1 à 5 de la section 15), le Back Office (étapes 6 et 7), la connexion du Front Office à l'API (étape 8, fonctionnalité 009) et la refonte visuelle du Back Office (étape 9, fonctionnalité 010). **Reste à faire** : le stockage des images (fonctionnalité 011).
 > Les décisions verrouillées et les décisions encore ouvertes sont listées en section 14 ; les points marqués **[ouvert]** y renvoient. Une décision qui change se corrige ici avant de se corriger dans le code.
 > La direction visuelle du Front Office reste dans `DESIGN.md` ; le contexte général dans `PROJECT_CONTEXT.md`.
 
@@ -491,24 +491,26 @@ Le Back Office est une application Next.js dont **le serveur fait l'intermédiai
 
 ```
 apps/admin/src/
-├── proxy.ts                redirection vers /connexion sans cookie
+├── proxy.ts                redirection vers /connexion sans cookie (sauf public/images, servi sans session)
 ├── app/
 │   ├── connexion/
 │   ├── session/fin/        adresse technique : efface le cookie (impossible pendant un rendu)
 │   ├── acces-refuse/       adresse technique : page du 403
-│   └── (admin)/            layout protégé : barre latérale, vérification de session
-│       ├── page.tsx        accueil du Back Office
-│       ├── annees/  membres/  actions/  actualites/  candidatures/
+│   └── (admin)/            layout protégé : cadre, vérification de session, année en cours
+│       ├── actions.ts      déconnexion et recherche rapide (quickSearch)
+│       ├── page.tsx        accueil du Back Office : barre de chiffres, accès aux domaines
+│       ├── annees/  membres/  actions/  actualites/  candidatures/   listes, aperçus (*Inspector), fiches
 │       └── candidatures/[id]/cv/   relais du fichier renvoyé par l'API
-├── components/ cadre, dialogue de confirmation, avis, états, barre de liste, champs partagés
-├── lib/        api.ts, session.ts, dates.ts (seul fichier à connaître le fuseau), labels.ts, …
-├── theme/      thème MUI
+├── components/ cadre (AppShell, CommandSearch, ColorModeButton, AccountMenu), en-tête de page, grilles
+│               (SelectableGrid, InspectorLayout, Inspector, RowMenu), SideSheet, marques d'état, avis, états
+├── lib/        api.ts, session.ts, dates.ts (seul fichier à connaître le fuseau), inspector.ts, labels.ts, …
+├── theme/      thème MUI clair et sombre (apps/admin/DESIGN.md)
 └── types/      formes d'administration des ressources
 ```
 
 Les adresses des écrans sont `/connexion`, `/`, `/annees`, `/membres`, `/actions`, `/actualites`, `/candidatures` et leurs sous-adresses ; aucune n'est sous `/admin`, qui désigne les routes de l'API.
 
-Interface en français. MUI installé : `@mui/material`, `@emotion/react`, `@emotion/styled`, `@mui/material-nextjs`, `@mui/icons-material`, et `@emotion/cache`, dépendance paire obligatoire de `@mui/material-nextjs` que l'installation sans hoisting ne rend pas accessible autrement. Les tableaux utilisent le `Table` de MUI ; `@mui/x-data-grid` ne s'ajoute que si un besoin le justifie. **Aspect.** `DESIGN.md` ne régit pas le Back Office. Depuis le 2026-10-13, sa direction visuelle reprend celle de l'application de trésorerie du club (`rotaract-app/rotaract-ivandry-runner`, son `DESIGN.md` « La grille ») : grille dense à filets, couleurs officielles Rotary, coins de 2px, boutons chanfreinés, Open Sans et Red Hat Mono, thèmes clair et sombre, barre latérale et barre supérieure, aperçu à droite des tables, recherche Ctrl+K. La fonctionnalité 010 l'adapte au Back Office et la consigne dans `apps/admin/DESIGN.md`, qui devient la référence visuelle du Back Office. Les exigences fonctionnelles restent : états d'attente, d'erreur et de liste vide, confirmation des suppressions, retour après chaque opération.
+Interface en français. MUI installé : `@mui/material`, `@emotion/react`, `@emotion/styled`, `@mui/material-nextjs`, `@mui/icons-material`, et `@emotion/cache`, dépendance paire obligatoire de `@mui/material-nextjs` que l'installation sans hoisting ne rend pas accessible autrement. Les tableaux utilisent le `Table` de MUI ; `@mui/x-data-grid` ne s'ajoute que si un besoin le justifie. **Aspect.** `DESIGN.md` ne régit pas le Back Office. Depuis le 2026-10-13, sa direction visuelle reprend celle de l'application de trésorerie du club (`rotaract-app/rotaract-ivandry-runner`, son `DESIGN.md` « La grille ») : grille dense à filets, couleurs officielles Rotary, coins de 2px, boutons chanfreinés, Open Sans et Red Hat Mono, thèmes clair et sombre, barre latérale et barre supérieure, aperçu à droite des tables, recherche Ctrl+K. La fonctionnalité 010 l'a adaptée au Back Office et consignée dans `apps/admin/DESIGN.md`, la référence visuelle du Back Office ; les logos sont dans `apps/admin/public/images/`. La ligne choisie d'une liste vit dans l'adresse (`selection`) ; son aperçu est lu sur le serveur. La recherche rapide passe par une action serveur. La préférence de thème est gardée dans le navigateur, par MUI. Les exigences fonctionnelles restent : états d'attente, d'erreur et de liste vide, confirmation des suppressions, retour après chaque opération.
 
 ### Types partagés
 
