@@ -1,4 +1,4 @@
-import { apiGet, apiGetAll } from "@/lib/api";
+import { apiGet, apiGetAll, apiGetOrNull } from "@/lib/api";
 import { toParagraphs } from "@/lib/paragraphs";
 import { toPhoto, type ApiImage } from "./media";
 import type { NewsItem, NewsType } from "@/types/news";
@@ -34,6 +34,12 @@ function toNewsItem(news: ApiNews): NewsItem {
     // La première est la principale.
     photos: (news.photos ?? []).map(toPhoto),
   };
+}
+
+/** Une actualité publiée par son slug ; null si elle n'existe pas ou plus. */
+export async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
+  const news = await apiGetOrNull<ApiNews>(`/news/${encodeURIComponent(slug)}`);
+  return news && toNewsItem(news);
 }
 
 /** Les actualités les plus récentes. */

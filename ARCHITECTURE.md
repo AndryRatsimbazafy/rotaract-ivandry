@@ -1,7 +1,7 @@
 # ARCHITECTURE : Backend et Back Office
 
 > Référence technique avant implémentation de `apps/api` et `apps/admin`, et de la connexion de `apps/web` à l'API.
-> État au 2026-10-13. **Implémenté** : l'API (étapes 1 à 5 de la section 15), le Back Office (étapes 6 et 7), la connexion du Front Office à l'API (étape 8, fonctionnalité 009), la refonte visuelle du Back Office (étape 9, fonctionnalité 010), le stockage des images (étape 10, fonctionnalité 011) et les réglages du site (étape 11, fonctionnalité 012). **Reste à faire** : rien de planifié ; les décisions encore ouvertes sont en section 14.
+> État au 2026-10-13. **Implémenté** : l'API (étapes 1 à 5 de la section 15), le Back Office (étapes 6 et 7), la connexion du Front Office à l'API (étape 8, fonctionnalité 009), la refonte visuelle du Back Office (étape 9, fonctionnalité 010), le stockage des images (étape 10, fonctionnalité 011), les réglages du site (étape 11, fonctionnalité 012) et les pages de détail (étape 12, fonctionnalité 013). **Reste à faire** : rien de planifié ; les décisions encore ouvertes sont en section 14.
 > Les décisions verrouillées et les décisions encore ouvertes sont listées en section 14 ; les points marqués **[ouvert]** y renvoient. Une décision qui change se corrige ici avant de se corriger dans le code.
 > La direction visuelle du Front Office reste dans `DESIGN.md` ; le contexte général dans `PROJECT_CONTEXT.md`.
 
@@ -343,10 +343,10 @@ Pas de déconnexion côté API (le jeton est sans état : le Back Office efface 
 | GET | `/members/years` | | Années qui ont au moins un membre, dans la même forme que `/rotary-years` |
 | GET | `/actions` | `year`, `focusArea`, `q`, `page`, `limit` | Liste paginée. Liste vide (`200`) si l'année n'existe pas |
 | GET | `/actions/years` | | Années qui ont au moins une action publiée |
-| GET | `/actions/:slug` | | Détail (page à venir côté Front Office) |
+| GET | `/actions/:slug` | | Détail ; page `/actions/<slug>` du Front Office (fonctionnalité 013) |
 | GET | `/news` | `year`, `type`, `q`, `page`, `limit` | Liste paginée, plus récente d'abord. Liste vide (`200`) si l'année n'existe pas |
 | GET | `/news/archives` | | Années qui ont des actualités publiées, avec leur nombre. Une entrée par année : `rotaryYear` dans la forme de `/rotary-years`, et `count`, le nombre d'actualités publiées |
-| GET | `/news/:slug` | | Détail |
+| GET | `/news/:slug` | | Détail ; page `/actualites/<slug>` du Front Office (fonctionnalité 013) |
 | GET | `/site-settings` | | Réglages du site (fonctionnalité 012) : `social`, `club`, `faq`, `photos`, toujours présents en objets, avec seulement les champs renseignés ; images en lecture publique |
 | POST | `/applications` | `multipart/form-data` | Dépôt d'une candidature. Limité à 20 demandes par heure et par adresse IP. Ne renvoie rien de la candidature. `201` ; `400` (validation), `413` (CV trop lourd), `415` (type de fichier refusé), `429` (limite dépassée), `503` (stockage indisponible). |
 
@@ -490,6 +490,10 @@ Format unique, pour les deux surfaces :
 ### Réglages du site (fonctionnalité 012)
 
 `apps/web/src/data/site-settings.ts` lit `GET /site-settings` (`getSiteSettings`) et renvoie l'état vide si la lecture échoue. Correspondances : `social.*` → liens de `SocialLinks` (en-tête, pied de page, menu du téléphone) ; `club.*` → fiche du club de la section « Qui sommes-nous ? » de l'accueil ; `faq.<id>` → réponse de la question de même `id` dans `content/join.ts`, découpée en paragraphes, à défaut la réponse du code ; `photos.<emplacement>` → `Photo` par `toPhoto`, pour les sept emplacements fixes (ouverture de l'accueil : à défaut, la photographie livrée avec le site ; ouverture de « Nous rejoindre » : à défaut, l'ouverture de l'accueil). `/rejoindre` est rendue à la demande, comme l'accueil (décision 20).
+
+### Pages de détail (fonctionnalité 013)
+
+`data/actions.ts` (`getActionBySlug`) et `data/news.ts` (`getNewsBySlug`) lisent `GET /actions/:slug` et `GET /news/:slug` par `apiGetOrNull` (`lib/api.ts`) : un `404` de l'API devient `null`, et la page appelle `notFound()` (page introuvable, statut `404`) ; toute autre erreur remonte à la page d'erreur du site (`app/error.tsx`), une version déjà lue restant servie par le cache. Les pages sont rendues à la demande, comme l'accueil (décision 20). Les pages de liste vivent dans un groupe de routes `(liste)` : leur `loading.tsx` n'englobe pas les pages de détail, dont la réponse n'est pas envoyée en flux et peut donc porter le statut `404`. Métadonnées : titre, description tirée du résumé, image de partage (photographie principale, à défaut l'ouverture de l'accueil des réglages du site).
 
 ### Écarts traités à la migration
 
@@ -805,3 +809,4 @@ Chaque étape démarre sur demande explicite.
 9. Refonte visuelle du Back Office selon la direction « La grille » (fonctionnalité 010).
 10. Stockage des images chez Cloudinary, saisie dans le Back Office, affichage dans le Front Office (fonctionnalité 011).
 11. Réglages du site : photographies fixes, réseaux sociaux, présentation du club et réponses de la FAQ, saisis dans l'écran « Site » du Back Office (fonctionnalité 012).
+12. Pages de détail des actions et des actualités, page introuvable et page d'erreur du Front Office (fonctionnalité 013).

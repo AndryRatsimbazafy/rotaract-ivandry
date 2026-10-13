@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PhotoFrame } from "@/components/media/PhotoFrame";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { routes } from "@/config/routes";
+import { actionPath, routes } from "@/config/routes";
 import { pendingLabel } from "@/content/common";
 import { latestActions } from "@/content/home";
 import type { Action } from "@/types/action";
@@ -36,8 +36,7 @@ function toEntry(action: Action): ActionEntry {
     summary: action.summary,
     impact: impact?.results ?? impact?.beneficiaries ?? impact?.objective,
     photo: action.photos[0],
-    // La page de détail d'une action n'existe pas encore.
-    href: routes.actions,
+    href: actionPath(action.slug),
   };
 }
 

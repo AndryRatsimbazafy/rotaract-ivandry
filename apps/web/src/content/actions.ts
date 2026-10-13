@@ -2,6 +2,7 @@
 // Aucune donnée n'est inventée : quand une information manque, la page affiche
 // un emplacement discret.
 
+import { routes } from "@/config/routes";
 import { rotaryYearLabel } from "./common";
 import { latestActions } from "./home";
 
@@ -55,4 +56,22 @@ export const actionsIndex = {
   reset: "Voir toutes les actions",
   // Affiché tant qu'aucune action n'est publiée : le même emplacement que sur l'accueil.
   placeholder: latestActions.placeholder,
+};
+
+// Page d'une action (DESIGN.md, section 10, « le reportage »).
+export const actionPage = {
+  label: "Action",
+  yearLabel: rotaryYearLabel,
+  photoBrief: "Photographie principale de l'action.",
+  impactTitle: "Impact",
+  partnersLabel: "Partenaires",
+  plateTitle: "Sur le terrain",
+  backLabel: "Toutes les actions",
+  onward: {
+    label: "Poursuivre",
+    links: [
+      { href: routes.news, label: "Lire les actualités" },
+      { href: routes.members, label: "Rencontrer les membres" },
+    ],
+  },
 };

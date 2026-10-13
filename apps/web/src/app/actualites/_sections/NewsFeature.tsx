@@ -1,5 +1,8 @@
+import Link from "next/link";
 import { PhotoFrame } from "@/components/media/PhotoFrame";
+import { ArrowLink } from "@/components/ui/ArrowLink";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { newsItemPath } from "@/config/routes";
 import { newsFeature, newsTypeLabels } from "@/content/news";
 import { formatDay, formatMonthYear } from "@/lib/dates";
 import type { NewsItem } from "@/types/news";
@@ -12,8 +15,7 @@ interface NewsFeatureProps {
 
 export function NewsFeature({ item }: NewsFeatureProps) {
   const placeholder = newsFeature.placeholder;
-  const more = item?.photos.slice(1) ?? [];
-  const hasDetail = Boolean(item?.body?.length) || more.length > 0;
+  const href = item ? newsItemPath(item.slug) : undefined;
 
   return (
     <section
@@ -44,15 +46,29 @@ export function NewsFeature({ item }: NewsFeatureProps) {
         </div>
 
         <div className={styles.media}>
-          <PhotoFrame
-            photo={item?.photos[0]}
-            brief={newsFeature.photoBrief}
-            format="16:9"
-            sizes="(min-width: 1024px) 78vw, 100vw"
-            priority
-            tone="dark"
-            className={styles.frame}
-          />
+          {href ? (
+            // Doublon du lien du titre : hors de l'ordre du clavier.
+            <Link href={href} tabIndex={-1} aria-hidden="true" className={styles.mediaLink}>
+              <PhotoFrame
+                photo={item?.photos[0]}
+                brief={newsFeature.photoBrief}
+                format="16:9"
+                sizes="(min-width: 1024px) 78vw, 100vw"
+                priority
+                tone="dark"
+                className={styles.frame}
+              />
+            </Link>
+          ) : (
+            <PhotoFrame
+              brief={newsFeature.photoBrief}
+              format="16:9"
+              sizes="(min-width: 1024px) 78vw, 100vw"
+              priority
+              tone="dark"
+              className={styles.frame}
+            />
+          )}
         </div>
 
         {/* Le texte, sur un aplat blanc qui mord sur la photographie. */}
@@ -61,7 +77,13 @@ export function NewsFeature({ item }: NewsFeatureProps) {
             {item ? newsTypeLabels[item.type] : placeholder.type}
           </p>
           <h2 id="une-titre" className={styles.title}>
-            {item ? item.title : placeholder.title}
+            {item && href ? (
+              <Link href={href} className={styles.link}>
+                {item.title}
+              </Link>
+            ) : (
+              placeholder.title
+            )}
           </h2>
           {/* Une actualité sans résumé n'a pas de ligne de résumé. */}
           {!item || item.summary ? (
@@ -75,29 +97,10 @@ export function NewsFeature({ item }: NewsFeatureProps) {
               {item.location}
             </p>
           ) : null}
-          {item && hasDetail ? (
-            <details className={`fold ${styles.more}`}>
-              <summary className={styles.moreSummary}>{newsFeature.more}</summary>
-              {item.body?.map((paragraph, position) => (
-                <p key={position} className={styles.paragraph}>
-                  {paragraph}
-                </p>
-              ))}
-              {more.length > 0 ? (
-                <div className={styles.plate}>
-                  {more.map((photo) => (
-                    <PhotoFrame
-                      key={photo.src}
-                      photo={photo}
-                      brief={newsFeature.photoBrief}
-                      format="3:2"
-                      sizes="(min-width: 1024px) 22vw, 45vw"
-                      className={styles.plateFrame}
-                    />
-                  ))}
-                </div>
-              ) : null}
-            </details>
+          {href ? (
+            <p className={styles.more}>
+              <ArrowLink href={href}>{newsFeature.more}</ArrowLink>
+            </p>
           ) : null}
         </div>
       </div>

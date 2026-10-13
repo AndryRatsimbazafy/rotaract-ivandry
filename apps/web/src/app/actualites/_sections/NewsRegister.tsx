@@ -4,7 +4,7 @@ import { PhotoFrame } from "@/components/media/PhotoFrame";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { ListSkeleton } from "@/components/ui/PageSkeleton";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { routes } from "@/config/routes";
+import { newsItemPath, routes } from "@/config/routes";
 import { incompleteLabel, pendingLabel } from "@/content/common";
 import { newsRegister, newsTypeLabels } from "@/content/news";
 import type { NewsFilters, NewsList } from "@/data/news";
@@ -170,8 +170,7 @@ async function NewsLines({
             <h3 className={styles.month}>{group.month}</h3>
             <ol className={styles.rows}>
               {group.items.map((item) => {
-                const more = item.photos.slice(1);
-                const hasDetail = Boolean(item.body?.length) || more.length > 0;
+                const href = newsItemPath(item.slug);
 
                 return (
                   <li key={item.id} className={styles.row}>
@@ -187,36 +186,17 @@ async function NewsLines({
                           </span>
                         ) : null}
                       </p>
-                      <h4 className={styles.name}>{item.title}</h4>
+                      <h4 className={styles.name}>
+                        <Link href={href} className={styles.link}>
+                          {item.title}
+                        </Link>
+                      </h4>
                       {item.summary ? (
                         <p className={styles.summary}>{item.summary}</p>
                       ) : null}
-                      {hasDetail ? (
-                        <details className={`fold ${styles.more}`}>
-                          <summary className={styles.moreSummary}>
-                            {newsRegister.more}
-                          </summary>
-                          {item.body?.map((paragraph, position) => (
-                            <p key={position} className={styles.paragraph}>
-                              {paragraph}
-                            </p>
-                          ))}
-                          {more.length > 0 ? (
-                            <div className={styles.plate}>
-                              {more.map((photo) => (
-                                <PhotoFrame
-                                  key={photo.src}
-                                  photo={photo}
-                                  brief={newsRegister.thumbBrief}
-                                  format="3:2"
-                                  sizes="(min-width: 1024px) 22vw, 45vw"
-                                  className={styles.plateFrame}
-                                />
-                              ))}
-                            </div>
-                          ) : null}
-                        </details>
-                      ) : null}
+                      <p className={styles.more}>
+                        <ArrowLink href={href}>{newsRegister.more}</ArrowLink>
+                      </p>
                     </div>
                     {item.photos[0] ? (
                       <div className={styles.thumb}>

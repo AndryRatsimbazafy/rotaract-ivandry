@@ -13,10 +13,10 @@ import {
 } from "@/data/news";
 import { getCurrentRotaryYear } from "@/data/rotary-years";
 import { single } from "@/lib/search-params";
-import { NewsArchives } from "./_sections/NewsArchives";
-import { NewsFeature } from "./_sections/NewsFeature";
-import { NewsOpening } from "./_sections/NewsOpening";
-import { NewsRegister, newsListKey } from "./_sections/NewsRegister";
+import { NewsArchives } from "../_sections/NewsArchives";
+import { NewsFeature } from "../_sections/NewsFeature";
+import { NewsOpening } from "../_sections/NewsOpening";
+import { NewsRegister, newsListKey } from "../_sections/NewsRegister";
 
 export const metadata: Metadata = {
   title: newsPage.title,

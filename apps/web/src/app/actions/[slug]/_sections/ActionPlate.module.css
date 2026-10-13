@@ -1,0 +1,63 @@
+/*
+ * La planche : une grande image sur huit colonnes, puis deux plus petites
+ * décalées, à des hauteurs de départ différentes. Le motif se répète.
+ */
+
+.plate {
+  padding-block: var(--rhythm-major);
+}
+
+.title {
+  color: var(--text-secondary);
+}
+
+.photos {
+  row-gap: var(--space-48);
+  margin-top: var(--rhythm-heading);
+  list-style: none;
+}
+
+.wide,
+.tall,
+.offset {
+  grid-column: 1 / -1;
+}
+
+.frame3x2 {
+  aspect-ratio: 3 / 2;
+}
+
+.frame4x5 {
+  aspect-ratio: 4 / 5;
+}
+
+/* Sur téléphone, la verticale ne prend pas toute la largeur. */
+.tall {
+  width: 72%;
+}
+
+.offset {
+  width: 86%;
+  margin-left: auto;
+}
+
+@media (min-width: 1024px) {
+  .photos {
+    row-gap: var(--space-96);
+  }
+
+  .wide {
+    grid-column: 1 / span 8;
+  }
+
+  .tall {
+    grid-column: 2 / span 4;
+    width: auto;
+  }
+
+  .offset {
+    grid-column: 7 / -1;
+    width: auto;
+    margin-top: var(--space-160);
+  }
+}

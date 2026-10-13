@@ -1,0 +1,155 @@
+/*
+ * L'article : ouverture typographique sur le fond de page, le jour au trait
+ * dans la marge. Puis la photographie à bord perdu, et sur feuille blanche le
+ * texte, décalé d'une colonne, avec les autres images dans la marge droite.
+ */
+
+.opening {
+  padding-block: var(--rhythm-section);
+}
+
+.stage {
+  row-gap: var(--space-24);
+}
+
+.date,
+.head {
+  grid-column: 1 / -1;
+}
+
+.date {
+  display: flex;
+  align-items: flex-end;
+  column-gap: var(--space-16);
+}
+
+.day {
+  color: transparent;
+  font-size: var(--text-numeral-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--text-numeral-leading);
+  -webkit-text-stroke: var(--rule-width) var(--numeral-outline);
+}
+
+.month {
+  padding-bottom: var(--space-8);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-16);
+}
+
+.type {
+  color: var(--text-secondary);
+}
+
+.title {
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-xl-tracking);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-16);
+  padding-top: var(--space-12);
+  border-top: var(--rule-width) solid var(--rule-strong);
+  color: var(--text-secondary);
+  list-style: none;
+}
+
+/* La photographie touche les deux bords de l'écran. */
+.frame {
+  aspect-ratio: 16 / 9;
+}
+
+.sheet {
+  padding-block: var(--rhythm-major);
+  background: var(--bg-page);
+}
+
+.body {
+  row-gap: var(--space-48);
+}
+
+.text,
+.photos {
+  grid-column: 1 / -1;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1em;
+  max-width: var(--container-reading);
+}
+
+/* Le chapeau : la voix de structure, pas celle du récit. */
+.lede {
+  margin-bottom: var(--space-8);
+  font-size: var(--text-lede-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--text-body-leading);
+}
+
+.paragraph {
+  font-family: var(--font-recit);
+  font-size: var(--text-reading-size);
+  line-height: var(--text-reading-leading);
+}
+
+.photoList {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-32);
+  list-style: none;
+}
+
+.photoFrame {
+  aspect-ratio: 3 / 2;
+}
+
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .stage {
+    row-gap: 0;
+    align-items: end;
+  }
+
+  /* Le jour dans la marge, sur trois colonnes. */
+  .date {
+    grid-column: 1 / span 3;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .head {
+    grid-column: 4 / span 8;
+  }
+
+  /* Le texte décalé d'une colonne, les images dans la marge droite. */
+  .text {
+    grid-column: 2 / span 6;
+  }
+
+  .photos {
+    grid-column: 10 / -1;
+    align-self: start;
+  }
+}

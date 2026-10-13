@@ -1,0 +1,71 @@
+/*
+ * Pages système (introuvable, erreur) : typographiques, sur le fond de page.
+ * Le chiffre au trait en marge, le titre et les issues à droite.
+ */
+
+.page {
+  padding-block: var(--rhythm-section);
+  background: var(--bg-page);
+}
+
+.layout {
+  row-gap: var(--space-24);
+}
+
+.numeral,
+.body {
+  grid-column: 1 / -1;
+}
+
+.numeral {
+  color: transparent;
+  font-size: var(--text-numeral-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: var(--text-numeral-leading);
+  -webkit-text-stroke: var(--rule-width) var(--numeral-outline);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: var(--space-24);
+  max-width: var(--container-reading);
+}
+
+.title {
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-xl-tracking);
+  text-wrap: balance;
+}
+
+.text {
+  font-family: var(--font-recit);
+  font-size: var(--text-reading-size);
+  line-height: var(--text-reading-leading);
+}
+
+.links {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-12);
+  padding-top: var(--space-16);
+  border-top: var(--rule-width) solid var(--rule-strong);
+  list-style: none;
+}
+
+@media (min-width: 1024px) {
+  .numeral {
+    grid-column: 1 / span 4;
+    align-self: start;
+  }
+
+  .body {
+    grid-column: 6 / span 6;
+    align-self: end;
+  }
+}

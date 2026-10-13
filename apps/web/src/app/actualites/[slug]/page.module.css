@@ -1,0 +1,4 @@
+/* Retour à la liste, sous l'article. */
+.back {
+  padding-block: var(--rhythm-section);
+}

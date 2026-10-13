@@ -1,4 +1,4 @@
-import { apiGet, apiGetAll } from "@/lib/api";
+import { apiGet, apiGetAll, apiGetOrNull } from "@/lib/api";
 import { toParagraphs } from "@/lib/paragraphs";
 import { toPhoto, type ApiImage } from "./media";
 import type { Action, ActionImpact } from "@/types/action";
@@ -35,6 +35,12 @@ function toAction(action: ApiAction): Action {
     // des gabarits.
     photos: (action.photos ?? []).map(toPhoto),
   };
+}
+
+/** Une action publiée par son slug ; null si elle n'existe pas ou plus. */
+export async function getActionBySlug(slug: string): Promise<Action | null> {
+  const action = await apiGetOrNull<ApiAction>(`/actions/${encodeURIComponent(slug)}`);
+  return action && toAction(action);
 }
 
 /** Les premières actions, dans l'ordre que le club a choisi. */

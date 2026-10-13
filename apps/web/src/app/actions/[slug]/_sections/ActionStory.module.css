@@ -1,0 +1,154 @@
+/*
+ * Le reportage : sur le fond de page, les métadonnées en marge, la
+ * photographie à bord perdu à droite et le titre posé sur un aplat blanc qui
+ * la mord. Puis, sur feuille blanche, le récit et la fiche d'impact en marge.
+ */
+
+.opening {
+  padding-top: var(--rhythm-section);
+  padding-bottom: var(--rhythm-section);
+}
+
+.stage {
+  row-gap: var(--space-24);
+}
+
+.meta,
+.media,
+.title {
+  grid-column: 1 / -1;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-16);
+  color: var(--text-secondary);
+  list-style: none;
+}
+
+/* Sur téléphone, l'image touche les deux bords de l'écran. */
+.media {
+  margin-inline: calc(-1 * var(--page-margin));
+}
+
+.frame {
+  aspect-ratio: 3 / 2;
+}
+
+.title {
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: var(--text-xl-leading);
+  letter-spacing: var(--text-xl-tracking);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.sheet {
+  padding-block: var(--rhythm-major);
+  background: var(--bg-page);
+}
+
+.story {
+  row-gap: var(--space-48);
+}
+
+.text,
+.impact {
+  grid-column: 1 / -1;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1em;
+  max-width: var(--container-reading);
+}
+
+.lede {
+  margin-bottom: var(--space-16);
+  font-family: var(--font-recit);
+  font-size: var(--text-statement-size);
+  line-height: var(--text-statement-leading);
+  text-wrap: pretty;
+}
+
+.paragraph {
+  font-family: var(--font-recit);
+  font-size: var(--text-reading-size);
+  line-height: var(--text-reading-leading);
+}
+
+.impactTitle {
+  color: var(--text-secondary);
+}
+
+.facts {
+  margin-top: var(--space-12);
+  border-bottom: var(--rule-width) solid var(--rule-strong);
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-4);
+  padding-block: var(--space-12);
+  border-top: var(--rule-width) solid var(--rule-strong);
+}
+
+.fact dt {
+  color: var(--text-secondary);
+}
+
+.fact dd {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--text-body-leading);
+}
+
+.partners {
+  list-style: none;
+}
+
+@media (min-width: 1024px) {
+  .stage {
+    grid-template-rows: auto auto;
+    row-gap: 0;
+  }
+
+  /* Métadonnées en marge, sur deux colonnes. */
+  .meta {
+    grid-column: 1 / span 2;
+    grid-row: 1 / span 2;
+    flex-direction: column;
+    align-self: start;
+  }
+
+  /* L'image sur dix colonnes, à bord perdu à droite. */
+  .media {
+    grid-column: 3 / -1;
+    grid-row: 1;
+    margin-inline: 0 calc(-1 * var(--edge));
+  }
+
+  /* Le titre sur huit colonnes, sur un aplat blanc qui mord l'image. */
+  .title {
+    position: relative;
+    grid-column: 3 / span 8;
+    grid-row: 2;
+    margin-top: calc(-1 * var(--space-96));
+    padding: var(--space-32) var(--space-32) var(--space-24);
+    background: var(--bg-page);
+  }
+
+  .text {
+    grid-column: 3 / span 6;
+  }
+
+  .impact {
+    grid-column: 10 / -1;
+    align-self: start;
+  }
+}

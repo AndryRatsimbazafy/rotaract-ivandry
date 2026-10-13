@@ -44,7 +44,7 @@ Flux cible (voir `ARCHITECTURE.md`) : les deux fronts appellent l'API depuis leu
 
 ### apps/web — Front Office (terminé en V1)
 
-Cinq routes publiques, conçues et auditées ensemble selon `DESIGN.md` :
+Cinq pages publiques et deux pages de détail, conçues selon `DESIGN.md` :
 
 | Route | Page | Rendu |
 |---|---|---|
@@ -52,13 +52,17 @@ Cinq routes publiques, conçues et auditées ensemble selon `DESIGN.md` :
 | `/actions` | Actions (filtres par année et domaine dans l'adresse) | dynamique |
 | `/actualites` | Actualités (rubriques et archives dans l'adresse) | dynamique |
 | `/membres` | Membres (année dans l'adresse) | dynamique |
-| `/rejoindre` | Nous rejoindre (parcours, formulaire de candidature) | statique |
+| `/rejoindre` | Nous rejoindre (parcours, formulaire de candidature) | dynamique (depuis 012) |
+| `/actions/<slug>` | Une action : le reportage (fonctionnalité 013) | dynamique ; `404` si non publiée ou inconnue |
+| `/actualites/<slug>` | Une actualité : l'article (fonctionnalité 013) | dynamique ; `404` si non publiée ou inconnue |
+
+Toute adresse inconnue affiche la page introuvable du site (`app/not-found.tsx`, statut `404`) ; une erreur de lecture, la page d'erreur (`app/error.tsx`, « Réessayer »). Les pages de liste vivent dans un groupe de routes `(liste)`, pour que leur attente n'englobe pas les pages de détail (un flux partirait avec le statut `200`). Dans les listes, « Lire la suite » mène à la page du contenu ; il n'y a plus de fiche dépliable.
 
 Organisation de `apps/web/src` :
 
 | Dossier | Contenu |
 |---|---|
-| `app/` | Routes, `layout.tsx`, `tokens.css`, `globals.css` ; les sections de chaque page dans `_sections/`. |
+| `app/` | Routes, `layout.tsx`, `tokens.css`, `globals.css`, `not-found.tsx`, `error.tsx` ; les sections de chaque page dans `_sections/` ; `actions/` et `actualites/` : `(liste)/` pour la liste, `[slug]/` pour le détail. |
 | `components/` | `layout/` (en-tête, pied de page, navigation, menu du téléphone), `media/` (`PhotoFrame`), `sections/` (rappel cranberry, liens de sortie), `ui/` (lien fléché, étiquette de section, bouton). |
 | `config/` | `routes.ts` (routes et navigation), `site.ts` (nom, lieu, logo, réseaux sociaux). |
 | `content/` | Textes de chaque page, en français ; `common.ts` pour les libellés partagés. |
@@ -224,11 +228,11 @@ Autres points repoussés : contenu de `packages/` ; solution d'internationalisat
 
 ## 10. Périmètre et prochaines étapes
 
-**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary (modèle, calculs, liste publique, administration) ; authentification de l'administrateur (compte par commande manuelle, connexion, jeton, gardes, limitation des tentatives) ; membres et mandats (administration, ordre par année, annuaire public) ; actions (administration, slug, publication, impact, lectures publiques) ; actualités (administration, slug, publication, lectures publiques, archives par année) ; candidatures (dépôt public avec CV, consultation, téléchargement du CV, suppression, stockage du CV chez Cloudinary) ; Back Office (connexion et session, navigation, années Rotary, membres et mandats avec l'ordre d'une année, actions, actualités en heure de Madagascar, candidatures) ; connexion du Front Office à l'API (lectures avec revalidation d'environ 60 secondes, listes lues en entier, dates des actualités en heure de Madagascar, dépôt réel des candidatures) ; refonte visuelle du Back Office (direction « La grille », thèmes clair et sombre, aperçu des listes, recherche rapide, chiffres de l'accueil) ; stockage des images (portraits, photographies des actions et des actualités, chez Cloudinary par l'API, affichées par le Front Office à la place des gabarits) ; réglages du site (écran « Site » du Back Office : photographies fixes, réseaux sociaux, fiche du club, réponses de la FAQ).
+**Fait** : fondations du monorepo ; direction design ; Front Office V1 (cinq pages, responsive, accessible) ; spécification de l'architecture Backend et Back Office ; socle de l'API (configuration, MongoDB, validation, erreurs, route de santé) ; années Rotary (modèle, calculs, liste publique, administration) ; authentification de l'administrateur (compte par commande manuelle, connexion, jeton, gardes, limitation des tentatives) ; membres et mandats (administration, ordre par année, annuaire public) ; actions (administration, slug, publication, impact, lectures publiques) ; actualités (administration, slug, publication, lectures publiques, archives par année) ; candidatures (dépôt public avec CV, consultation, téléchargement du CV, suppression, stockage du CV chez Cloudinary) ; Back Office (connexion et session, navigation, années Rotary, membres et mandats avec l'ordre d'une année, actions, actualités en heure de Madagascar, candidatures) ; connexion du Front Office à l'API (lectures avec revalidation d'environ 60 secondes, listes lues en entier, dates des actualités en heure de Madagascar, dépôt réel des candidatures) ; refonte visuelle du Back Office (direction « La grille », thèmes clair et sombre, aperçu des listes, recherche rapide, chiffres de l'accueil) ; stockage des images (portraits, photographies des actions et des actualités, chez Cloudinary par l'API, affichées par le Front Office à la place des gabarits) ; réglages du site (écran « Site » du Back Office : photographies fixes, réseaux sociaux, fiche du club, réponses de la FAQ) ; pages de détail des actions et des actualités, page introuvable et page d'erreur du Front Office.
 
 **Prochaines étapes**, chacune sur demande explicite, selon `ARCHITECTURE.md` :
 
-Planifiée : la fonctionnalité 013, pages de détail des actions et des actualités (demandée le 2026-10-13). Restent ouvertes les décisions de `ARCHITECTURE.md`, section 14 (registre d'impact, anti-spam), et le déploiement, hors périmètre pour l'instant.
+Aucune étape n'est planifiée. Restent ouvertes les décisions de `ARCHITECTURE.md`, section 14 (registre d'impact, anti-spam), et le déploiement, hors périmètre pour l'instant.
 
 **Hors périmètre pour l'instant** : tests, CI/CD, Docker, déploiement, version anglaise, rôles autres que `ADMIN`, workflow de candidature.
 

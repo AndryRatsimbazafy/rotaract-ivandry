@@ -74,3 +74,12 @@ export const newsOnward = {
     { href: routes.members, label: "Rencontrer les membres" },
   ],
 };
+
+// Page d'une actualité (DESIGN.md, section 10, « l'article »).
+export const newsPage = {
+  yearLabel: rotaryYearLabel,
+  locationLabel: "Lieu",
+  photosTitle: "En images",
+  backLabel: "Toutes les actualités",
+  onward: newsOnward,
+};

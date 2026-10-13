@@ -88,34 +88,23 @@
   color: var(--text-secondary);
 }
 
-.moreSummary {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--target-min);
-  margin-top: var(--space-12);
-  font-weight: var(--font-weight-semibold);
-  text-decoration: underline;
-  text-underline-offset: 0.3em;
-  cursor: pointer;
+/* Le lien vers la page de l'actualité. */
+.more {
+  margin-top: var(--space-16);
 }
 
-.paragraph {
-  max-width: var(--container-reading);
-  margin-top: 1em;
-  font-family: var(--font-recit);
-  font-size: var(--text-reading-size);
-  line-height: var(--text-reading-leading);
+.link {
+  color: inherit;
+  text-decoration: none;
 }
 
-.plate {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--grid-gutter);
-  margin-top: var(--space-24);
+.link:hover {
+  color: var(--link);
 }
 
-.plateFrame {
-  aspect-ratio: 3 / 2;
+.mediaLink {
+  display: block;
+  overflow: hidden;
 }
 
 /* Emplacement sans contenu. */
@@ -169,5 +158,23 @@
 
   .text::before {
     content: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .link {
+    transition: color var(--duration-instant) var(--ease-out);
+  }
+
+  .mediaLink img {
+    transition: scale var(--duration-reveal) var(--ease-out);
+  }
+}
+
+/* Grossissement au survol, réservé aux pointeurs précis. */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .feature:has(.link:hover) .mediaLink img,
+  .mediaLink:hover img {
+    scale: 1.03;
   }
 }

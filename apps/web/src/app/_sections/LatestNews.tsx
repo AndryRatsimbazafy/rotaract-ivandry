@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { routes } from "@/config/routes";
+import { newsItemPath, routes } from "@/config/routes";
 import { pendingLabel } from "@/content/common";
 import { latestNews } from "@/content/home";
 import { newsRegister, newsTypeLabels } from "@/content/news";
@@ -29,8 +29,7 @@ function toRow(item: NewsItem): NewsRow {
     title: item.title,
     summary: item.summary,
     type: newsTypeLabels[item.type],
-    // La page de détail d'une actualité n'existe pas encore.
-    href: routes.news,
+    href: newsItemPath(item.slug),
   };
 }
 

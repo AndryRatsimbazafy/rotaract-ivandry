@@ -4,12 +4,12 @@ import { PhotoFrame } from "@/components/media/PhotoFrame";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { ListSkeleton } from "@/components/ui/PageSkeleton";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { routes } from "@/config/routes";
+import { actionPath, routes } from "@/config/routes";
 import { actionsIndex } from "@/content/actions";
 import { incompleteLabel, pendingLabel } from "@/content/common";
 import { focusAreas } from "@/content/home";
 import type { ActionFilters, ActionList } from "@/data/actions";
-import type { Action, ActionImpact } from "@/types/action";
+import type { Action } from "@/types/action";
 import type { Photo } from "@/types/media";
 import type { RotaryYear } from "@/types/rotary-year";
 import styles from "./ActionsIndex.module.css";
@@ -23,35 +23,14 @@ const VARIANTS = [
 
 interface Entry {
   key: string;
+  /** Adresse de la page de l'action ; absente pour un emplacement. */
+  href?: string;
   meta: string[];
   title: string;
   summary?: string;
-  /** L'essentiel, toujours visible. */
+  /** L'essentiel, toujours visible. Le reste se lit sur la page de l'action. */
   impact?: string;
-  /** La description, paragraphe par paragraphe, dans la fiche dépliable. */
-  description: string[];
-  /** Les rubriques d'impact renseignées, dans la fiche dépliable. */
-  facts: { label: string; value: string }[];
-  photos: Photo[];
-}
-
-function toFacts(impact: ActionImpact | undefined) {
-  if (!impact) return [];
-
-  const labels = actionsIndex.impactLabels;
-  const facts = [
-    { label: labels.objective, value: impact.objective },
-    { label: labels.beneficiaries, value: impact.beneficiaries },
-    { label: labels.location, value: impact.location },
-    { label: labels.period, value: impact.period },
-    { label: labels.partners, value: impact.partners?.join(", ") },
-    { label: labels.results, value: impact.results },
-  ];
-
-  // Une rubrique vide disparaît.
-  return facts.filter(
-    (fact): fact is { label: string; value: string } => Boolean(fact.value),
-  );
+  photo?: Photo;
 }
 
 function toEntry(action: Action): Entry {
@@ -62,6 +41,7 @@ function toEntry(action: Action): Entry {
 
   return {
     key: action.id,
+    href: actionPath(action.slug),
     meta: [
       `${actionsIndex.yearLabel} ${action.rotaryYear}`,
       ...areas.map((area) => area.title),
@@ -69,9 +49,7 @@ function toEntry(action: Action): Entry {
     title: action.title,
     summary: action.summary,
     impact: action.impact?.results ?? action.impact?.beneficiaries,
-    description: action.description ?? [],
-    facts: toFacts(action.impact),
-    photos: action.photos,
+    photo: action.photos[0],
   };
 }
 
@@ -84,9 +62,6 @@ function placeholderEntries(): Entry[] {
     title,
     summary,
     impact,
-    description: [],
-    facts: [],
-    photos: [],
   }));
 }
 
@@ -254,7 +229,6 @@ async function ActionsEntries({
         <div className={isPending ? styles.pending : undefined}>
           {entries.map((entry, index) => {
             const variant = VARIANTS[index % VARIANTS.length];
-            const more = entry.photos.slice(1);
 
             return (
               <article
@@ -266,16 +240,37 @@ async function ActionsEntries({
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
-                <h3 className={styles.name}>{entry.title}</h3>
+                <h3 className={styles.name}>
+                  {entry.href ? (
+                    <Link href={entry.href} className={styles.link}>
+                      {entry.title}
+                    </Link>
+                  ) : (
+                    entry.title
+                  )}
+                </h3>
                 <div className={styles.media}>
-                  <PhotoFrame
-                    photo={entry.photos[0]}
-                    brief={actionsIndex.photoBrief}
-                    format={variant.format}
-                    sizes={variant.sizes}
-                    tone="paper"
-                    className={styles.frame}
-                  />
+                  {entry.href ? (
+                    // Doublon du lien du titre : hors de l'ordre du clavier.
+                    <Link href={entry.href} tabIndex={-1} aria-hidden="true" className={styles.mediaLink}>
+                      <PhotoFrame
+                        photo={entry.photo}
+                        brief={actionsIndex.photoBrief}
+                        format={variant.format}
+                        sizes={variant.sizes}
+                        tone="paper"
+                        className={styles.frame}
+                      />
+                    </Link>
+                  ) : (
+                    <PhotoFrame
+                      brief={actionsIndex.photoBrief}
+                      format={variant.format}
+                      sizes={variant.sizes}
+                      tone="paper"
+                      className={styles.frame}
+                    />
+                  )}
                 </div>
                 <div className={styles.body}>
                   {entry.summary ? (
@@ -284,43 +279,10 @@ async function ActionsEntries({
                   {entry.impact ? (
                     <p className={styles.impact}>{entry.impact}</p>
                   ) : null}
-                  {entry.description.length > 0 ||
-                  entry.facts.length > 0 ||
-                  more.length > 0 ? (
-                    <details className={`fold ${styles.more}`}>
-                      <summary className={styles.moreSummary}>
-                        {actionsIndex.moreLabel}
-                      </summary>
-                      {entry.description.map((paragraph, position) => (
-                        <p key={position} className={styles.text}>
-                          {paragraph}
-                        </p>
-                      ))}
-                      {entry.facts.length > 0 ? (
-                        <dl className={styles.facts}>
-                          {entry.facts.map((fact) => (
-                            <div key={fact.label}>
-                              <dt className="label">{fact.label}</dt>
-                              <dd>{fact.value}</dd>
-                            </div>
-                          ))}
-                        </dl>
-                      ) : null}
-                      {more.length > 0 ? (
-                        <div className={styles.plate}>
-                          {more.map((photo) => (
-                            <PhotoFrame
-                              key={photo.src}
-                              photo={photo}
-                              brief={actionsIndex.photoBrief}
-                              format="3:2"
-                              sizes="(min-width: 1024px) 20vw, 45vw"
-                              className={styles.plateFrame}
-                            />
-                          ))}
-                        </div>
-                      ) : null}
-                    </details>
+                  {entry.href ? (
+                    <p className={styles.more}>
+                      <ArrowLink href={entry.href}>{actionsIndex.moreLabel}</ArrowLink>
+                    </p>
                   ) : null}
                 </div>
               </article>

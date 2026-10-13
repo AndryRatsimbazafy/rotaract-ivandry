@@ -1,0 +1,4 @@
+/* Retour à la liste, sous la planche. */
+.back {
+  padding-bottom: var(--rhythm-section);
+}

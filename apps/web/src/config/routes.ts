@@ -6,6 +6,16 @@ export const routes = {
   join: "/rejoindre",
 } as const;
 
+/** Page d'une action. */
+export function actionPath(slug: string): string {
+  return `${routes.actions}/${encodeURIComponent(slug)}`;
+}
+
+/** Page d'une actualité. */
+export function newsItemPath(slug: string): string {
+  return `${routes.news}/${encodeURIComponent(slug)}`;
+}
+
 export type RoutePath = (typeof routes)[keyof typeof routes];
 
 export interface NavItem {

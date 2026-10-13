@@ -40,6 +40,23 @@ export async function apiGet<T>(path: string, params?: Params): Promise<T> {
   return (await response.json()) as T;
 }
 
+// Lecture d'un contenu par son adresse. 404 : le contenu n'existe pas ou
+// n'est pas publié ; toute autre erreur n'est pas une absence, et n'est pas
+// mise en cache.
+export async function apiGetOrNull<T>(path: string, params?: Params): Promise<T | null> {
+  const response = await fetch(apiUrl(path, params), {
+    next: { revalidate: REVALIDATE_SECONDS },
+    signal: AbortSignal.timeout(TIMEOUT_MS),
+  });
+  if (response.status === 404) {
+    return null;
+  }
+  if (response.status !== 200) {
+    throw new Error(`Lecture refusée (${response.status}).`);
+  }
+  return (await response.json()) as T;
+}
+
 type Page<T> = {
   data: T[];
   meta: { page: number; limit: number; total: number; totalPages: number };

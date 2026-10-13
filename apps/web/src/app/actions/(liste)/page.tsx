@@ -5,9 +5,9 @@ import { getActionCount, getActions, getActionYears } from "@/data/actions";
 import { getCurrentRotaryYear } from "@/data/rotary-years";
 import { getSiteSettings } from "@/data/site-settings";
 import { single } from "@/lib/search-params";
-import { ActionDefinition } from "./_sections/ActionDefinition";
-import { ActionsIndex } from "./_sections/ActionsIndex";
-import { ActionsOpening } from "./_sections/ActionsOpening";
+import { ActionDefinition } from "../_sections/ActionDefinition";
+import { ActionsIndex } from "../_sections/ActionsIndex";
+import { ActionsOpening } from "../_sections/ActionsOpening";
 
 export const metadata: Metadata = {
   title: actionsPage.title,

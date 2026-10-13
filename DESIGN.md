@@ -422,7 +422,8 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 | **Modale, tiroir** | Rayon 0, l'unique ombre du système. |
 | **Notification** | Bandeau à fond teinté d'état avec bordure de 1 px, icône et texte. |
 | **Chargement** | Squelettes aux dimensions du contenu. |
-| **Erreur** | Une phrase calme, la cause et la correction. |
+| **Erreur** | Une phrase calme, la cause et la correction. Une page qui ne peut pas se charger affiche la page d'erreur : même composition que la page introuvable, sans chiffre, avec un bouton « Réessayer ». |
+| **Page introuvable** | Sur le fond de page, « 404 » en chiffre monumental au trait dans la marge, le titre « Cette page n'existe pas, ou plus. », une phrase calme, trois liens fléchés (Accueil, Actions, Actualités). |
 | **Pied de page** | Sur encre : signature du club, navigation en colonne, lieu, année et réseaux sociaux, puis le nom du club en très grand, tracé au trait et coupé par le bas. |
 
 **Icônes.** Trait de 1,5 px, 20 ou 24 px. Jamais d'émoji. La famille reste à choisir.
@@ -451,7 +452,11 @@ L'impact n'affiche que des données réelles.
 
 **Les archives.** Les années Rotary se lisent comme le dos des volumes d'une collection : une ligne par année, en très grand, avec le nombre d'actualités. Seules les années qui ont du contenu apparaissent.
 
-**La fiche dépliable.** Tant que la page de détail n'existe pas, une action ou une actualité publiée offre un « plus » sous la forme d'un bloc qui se déplie sur place : la fiche complète ou le texte, et les autres photographies.
+**Le lien vers la page.** Dans les listes (accueil, Actions, Actualités), une action ou une actualité montre son titre, ses métadonnées, son résumé et sa photographie principale. Le titre et la photographie mènent à sa page, ainsi que le lien fléché « Lire la suite ». Le récit, l'impact et les autres photographies ne se lisent que sur la page.
+
+**La page d'une action : le reportage.** La photographie domine. Ouverture sur le fond de page : les métadonnées en marge gauche sur deux colonnes (étiquette « Action », année Rotary, date, domaines), le titre condensé très grand sur huit colonnes, la photographie principale en 3:2 à bord perdu à droite, que le titre mord par un aplat blanc. Sur feuille blanche : le résumé en accroche, en voix de récit, puis le récit sur la colonne de lecture ; en marge droite, la fiche d'impact (une ligne par rubrique renseignée, filets encre, intitulé en étiquette) et les partenaires. Puis la planche : les autres photographies en alternance d'une grande sur huit colonnes et de deux plus petites décalées, de formats et de hauteurs de départ différents, chacune avec sa légende. Jamais une grille de vignettes égales. Sortie : lien fléché vers toutes les actions, liens de sortie, rappel cranberry. Sans photographie, l'ouverture garde le gabarit 3:2 et la planche disparaît.
+
+**La page d'une actualité : l'article.** La date domine. Ouverture typographique sur le fond de page : le jour en chiffre monumental au trait dans la marge gauche, le mois et l'année puis le type en étiquettes, le titre en largeur normale et très grand, le lieu en métadonnée dessous. La photographie principale, si elle existe, en 16:9 à bord perdu sous l'ouverture. Sur feuille blanche : le résumé en chapeau (Open Sans 600), puis le texte en voix de récit sur la colonne de lecture, décalée d'une colonne ; les autres photographies dans la marge droite, au fil du texte, sur trois colonnes (sous le texte sur téléphone). Sortie : lien fléché vers toutes les actualités, liens de sortie. Sans photographie, aucun gabarit : la date et le texte suffisent.
 
 ---
 
@@ -495,7 +500,7 @@ Courbe unique, en décélération. Aucun rebond.
 | **Ligne du registre** | Devient blanche, le jour passe au bleu. |
 | **Appel du champ cranberry** | La ligne s'inverse (fond blanc, texte encre), se resserre de 16 px, la flèche avance de 8 px. |
 | **Sommaire du téléphone** | Apparaît en fondu avec un déplacement de 8 px ; repart par le même chemin, plus vite (200 ms). |
-| **Dépliant** (FAQ, fiche d'une action ou d'une actualité, filtre des domaines) | Le contenu se déploie en hauteur et en fondu ; il se replie de même. Le signe plus perd son trait vertical en se résorbant. Sans prise en charge du navigateur, il s'ouvre d'un coup. |
+| **Dépliant** (FAQ, filtre des domaines) | Le contenu se déploie en hauteur et en fondu ; il se replie de même. Le signe plus perd son trait vertical en se résorbant. Sans prise en charge du navigateur, il s'ouvre d'un coup. |
 | **Candidature envoyée** | Le message de confirmation apparaît en fondu avec un déplacement de 8 px (320 ms). |
 | **Focus** | Contour de 2 px, décalé de 2 px : bleu royal sur fond clair, blanc sur champ fort. Toujours visible. |
 
@@ -605,7 +610,7 @@ Une valeur absente des tokens s'ajoute là avant d'être utilisée. Points de ru
 
 ## 17. Direction par page
 
-Les cinq pages sont conçues. Ces lignes décrivent la composition retenue pour chacune ; elles fixent une intention, pas un périmètre fonctionnel.
+Les cinq pages et les deux pages de détail sont conçues. Ces lignes décrivent la composition retenue pour chacune ; elles fixent une intention, pas un périmètre fonctionnel.
 
 | Page | Intention |
 |---|---|
@@ -614,6 +619,8 @@ Les cinq pages sont conçues. Ces lignes décrivent la composition retenue pour 
 | **News** | Le journal. Ouverture purement typographique, en deux lignes décalées, comme une manchette. Une actualité à la une : le jour en chiffre monumental, une grande photographie à bord perdu, le titre sur un aplat blanc qui mord dessus. Sur feuille blanche, les rubriques en index puis le registre, groupé par mois : le mois reste en marge pendant que ses lignes défilent. Les archives par année Rotary sur champ encre, les années en très grand. Deux liens vers les actions et les membres, puis le rappel cranberry. |
 | **Join** | L'invitation. Ouverture sur champ cranberry partiel, photographie verticale qui le recouvre. « Un club, des actions, des liens » en trois lignes décalées sur feuille blanche. Les valeurs de part et d'autre d'un axe central : le nom à gauche de l'axe, la définition à droite. Les sept domaines sur champ encre, en lignes alternées gauche et droite. Le parcours en six étapes le long d'un filet vertical, chiffres au trait, le statut de sympathisant expliqué à son étape. Les quatre questions du Rotary en voix de récit, en grand, le titre au-dessus et les questions en retrait de deux colonnes. La candidature : colonne éditoriale et formulaire. Les questions fréquentes en accordéon. Liens de sortie. |
 | **Members** | L'annuaire. Le titre sur une seule ligne, en signature. Une photographie de groupe panoramique à bord perdu à gauche, les années Rotary en regard à droite. Sur feuille blanche, l'année tracée au trait en très grand, puis trois niveaux de lecture : une personne en grand format, trois portraits de tailles et de hauteurs différentes, puis les autres en lignes. Sur champ encre, l'index des fonctions : qui tient quoi, sans hiérarchie entre les fonctions. Liens de sortie, rappel cranberry. L'ordre des personnes est celui que le club choisit, jamais un classement par fonction. |
+| **Action (détail)** | Le reportage (section 10). Métadonnées en marge, titre condensé qui mord la photographie principale à bord perdu, récit et fiche d'impact en marge, planche asymétrique des autres photographies, rappel cranberry. |
+| **Actualité (détail)** | L'article (section 10). Jour monumental en marge, titre et lieu, photographie 16:9 à bord perdu, chapeau, texte et photographies dans la marge droite. |
 
 ---
 
