@@ -3,13 +3,14 @@ import { PhotoFrame } from "@/components/media/PhotoFrame";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { mainNavigation, routes } from "@/config/routes";
 import { joinField } from "@/content/home";
+import type { Photo } from "@/types/media";
 import styles from "./JoinField.module.css";
 
 // Un libellé par intention : le même que dans la navigation.
 const joinLabel =
   mainNavigation.find((item) => item.href === routes.join)?.label ?? "";
 
-export function JoinField() {
+export function JoinField({ photo }: { photo?: Photo }) {
   return (
     <section
       id="rejoindre"
@@ -19,6 +20,7 @@ export function JoinField() {
       <div className={`container grid ${styles.layout}`}>
         <div className={styles.photo}>
           <PhotoFrame
+            photo={photo}
             brief={joinField.photoBrief}
             format="4:5"
             sizes="(min-width: 1024px) 30vw, 60vw"

@@ -8,6 +8,7 @@ import CalendarMonthOutlined from "@mui/icons-material/CalendarMonthOutlined";
 import GroupsOutlined from "@mui/icons-material/GroupsOutlined";
 import HomeOutlined from "@mui/icons-material/HomeOutlined";
 import InboxOutlined from "@mui/icons-material/InboxOutlined";
+import LanguageOutlined from "@mui/icons-material/LanguageOutlined";
 import VolunteerActivismOutlined from "@mui/icons-material/VolunteerActivismOutlined";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
@@ -37,9 +38,10 @@ const ENTRIES: Entry[] = [
   { href: "/actions", label: "Actions", short: "Actions", Icon: VolunteerActivismOutlined },
   { href: "/actualites", label: "Actualités", short: "Actualités", Icon: ArticleOutlined },
   { href: "/candidatures", label: "Candidatures", short: "Candidatures", Icon: InboxOutlined },
+  { href: "/site", label: "Site", short: "Site", Icon: LanguageOutlined },
 ];
 
-// Sur téléphone, cinq onglets : l'accueil s'atteint par le logo.
+// Sur téléphone, six onglets : l'accueil s'atteint par le logo.
 const TABS = ENTRIES.slice(1);
 
 // « / » préfixe toutes les adresses : l'accueil n'est actif que seul.

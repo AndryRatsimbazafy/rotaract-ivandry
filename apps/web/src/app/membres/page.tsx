@@ -7,6 +7,7 @@ import { membersDirectory, membersOnward } from "@/content/members";
 import { membersPage } from "@/content/pages";
 import { getMembers, getMemberYears } from "@/data/members";
 import { getCurrentRotaryYear } from "@/data/rotary-years";
+import { getSiteSettings } from "@/data/site-settings";
 import { single } from "@/lib/search-params";
 import { MembersDirectory } from "./_sections/MembersDirectory";
 import { MembersFunctions } from "./_sections/MembersFunctions";
@@ -37,9 +38,10 @@ async function Directory({
 
 export default async function MembersPage(props: PageProps<"/membres">) {
   const query = await props.searchParams;
-  const [publishedYears, currentYear] = await Promise.all([
+  const [publishedYears, currentYear, settings] = await Promise.all([
     getMemberYears(),
     getCurrentRotaryYear(),
+    getSiteSettings(),
   ]);
   // Sans aucun membre publié, seule l'année en cours est proposée.
   const years = publishedYears.length > 0 ? publishedYears : [currentYear];
@@ -48,7 +50,11 @@ export default async function MembersPage(props: PageProps<"/membres">) {
 
   return (
     <>
-      <MembersOpening years={years} selectedYear={selectedYear} />
+      <MembersOpening
+        years={years}
+        selectedYear={selectedYear}
+        photo={settings.photos["membres-ouverture"]}
+      />
       {/* Une frontière d'attente par année : l'annuaire montre son squelette
           pendant la lecture, l'ouverture et ses années restent en place. */}
       <Suspense

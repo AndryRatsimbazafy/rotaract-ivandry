@@ -4,6 +4,7 @@
 
 import { routes } from "@/config/routes";
 import type { ApplicantStatus, ApplicationField } from "@/types/application";
+import type { FaqQuestionId } from "@/types/site-settings";
 
 export const joinOpening = {
   label: "Recrutement",
@@ -141,7 +142,8 @@ export const joinApplication: {
 };
 
 export interface FaqItem {
-  id: string;
+  /** Identifiant partagé avec les réglages du site (Back Office). */
+  id: FaqQuestionId;
   question: string;
   /**
    * Un paragraphe par élément. Absente tant que le club n'a pas validé la
@@ -155,7 +157,7 @@ export const joinFaq: { number: string; label: string; title: string; items: Faq
   label: "Questions fréquentes",
   title: "Avant de candidater",
   items: [
-    // Réponse à fournir par le club.
+    // Réponse à saisir dans le Back Office.
     { id: "qui", question: "Qui peut candidater ?" },
     {
       id: "rencontre",
@@ -186,7 +188,7 @@ export const joinFaq: { number: string; label: string; title: string; items: Faq
         "Le sympathisant devient membre après validation par l'Assemblée Générale.",
       ],
     },
-    // Réponse à fournir par le club.
+    // Réponse à saisir dans le Back Office.
     { id: "frequence", question: "À quelle fréquence le club se réunit-il ?" },
   ],
 };

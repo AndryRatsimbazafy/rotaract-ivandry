@@ -1,4 +1,5 @@
 import { site, type SocialLink } from "@/config/site";
+import { getSiteSettings } from "@/data/site-settings";
 import styles from "./SocialLinks.module.css";
 
 /** Deux pictogrammes au trait, dans le même dessin que les flèches du site. */
@@ -17,9 +18,11 @@ const icons: Record<SocialLink["id"], React.ReactNode> = {
 
 /**
  * Liens vers les réseaux sociaux du club. Tant qu'une adresse n'est pas
- * renseignée dans la configuration, le pictogramme s'affiche sans lien.
+ * renseignée dans le Back Office, le pictogramme s'affiche sans lien.
  */
-export function SocialLinks() {
+export async function SocialLinks() {
+  const { social } = await getSiteSettings();
+
   return (
     <ul className={styles.list} aria-label="Réseaux sociaux du club">
       {site.social.map((network) => {
@@ -37,11 +40,13 @@ export function SocialLinks() {
           </svg>
         );
 
+        const href = social[network.id];
+
         return (
           <li key={network.id}>
-            {network.href ? (
+            {href ? (
               <a
-                href={network.href}
+                href={href}
                 className={styles.link}
                 aria-label={`${network.label} du club`}
                 rel="noopener noreferrer"

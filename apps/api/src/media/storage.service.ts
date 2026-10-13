@@ -7,8 +7,9 @@ export class StorageError extends Error {
 
 export type StorageDeletion = 'deleted' | 'absent';
 
-// Dossier d'une image au stockage, selon le contenu qui la porte.
-export type ImageFolder = 'membres' | 'actions' | 'actualites';
+// Dossier d'une image au stockage, selon le contenu qui la porte ; pages :
+// photographies fixes du site.
+export type ImageFolder = 'membres' | 'actions' | 'actualites' | 'pages';
 
 // Image déposée : identifiant interne, adresse publique et ce que le stockage
 // a constaté (dimensions après orientation, poids, format).

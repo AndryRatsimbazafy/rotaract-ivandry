@@ -12,6 +12,7 @@ import { HealthModule } from './health/health.module';
 import { MembersModule } from './members/members.module';
 import { NewsModule } from './news/news.module';
 import { RotaryYearsModule } from './rotary-years/rotary-years.module';
+import { SiteSettingsModule } from './site-settings/site-settings.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { RotaryYearsModule } from './rotary-years/rotary-years.module';
     ActionsModule,
     NewsModule,
     ApplicationsModule,
+    SiteSettingsModule,
   ],
 })
 export class AppModule {}

@@ -29,9 +29,17 @@ export const about = {
   paragraphs: [
     "Le Rotaract fait partie de la famille du Rotary, un réseau mondial de clubs de service.",
   ],
-  // À remplacer par le texte du club.
+  // Affichée tant qu'aucune information du club n'est saisie dans le Back Office.
   pending:
     "Présentation à compléter : année de création, club parrain, nombre de membres, lieu et rythme des réunions.",
+  /** Intitulés de la fiche du club, dans l'ordre d'affichage (DESIGN.md, section 6). */
+  facts: {
+    foundedYear: "Création",
+    sponsorClub: "Club parrain",
+    memberCount: "Membres",
+    meetingPlace: "Réunions",
+    meetingRhythm: "Rythme",
+  },
   photoBrief: "La vie du club : une réunion, un moment d'équipe.",
 };
 

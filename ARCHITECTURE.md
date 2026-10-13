@@ -1,7 +1,7 @@
 # ARCHITECTURE : Backend et Back Office
 
 > Référence technique avant implémentation de `apps/api` et `apps/admin`, et de la connexion de `apps/web` à l'API.
-> État au 2026-10-13. **Implémenté** : l'API (étapes 1 à 5 de la section 15), le Back Office (étapes 6 et 7), la connexion du Front Office à l'API (étape 8, fonctionnalité 009), la refonte visuelle du Back Office (étape 9, fonctionnalité 010) et le stockage des images (étape 10, fonctionnalité 011). **Reste à faire** : rien de planifié ; les décisions encore ouvertes sont en section 14.
+> État au 2026-10-13. **Implémenté** : l'API (étapes 1 à 5 de la section 15), le Back Office (étapes 6 et 7), la connexion du Front Office à l'API (étape 8, fonctionnalité 009), la refonte visuelle du Back Office (étape 9, fonctionnalité 010), le stockage des images (étape 10, fonctionnalité 011) et les réglages du site (étape 11, fonctionnalité 012). **Reste à faire** : rien de planifié ; les décisions encore ouvertes sont en section 14.
 > Les décisions verrouillées et les décisions encore ouvertes sont listées en section 14 ; les points marqués **[ouvert]** y renvoient. Une décision qui change se corrige ici avant de se corriger dans le code.
 > La direction visuelle du Front Office reste dans `DESIGN.md` ; le contexte général dans `PROJECT_CONTEXT.md`.
 
@@ -189,6 +189,24 @@ Le compte d'administration. Hors des entités métier, nécessaire à l'authenti
 | `passwordHash` | string | oui | Jamais renvoyé par l'API. |
 | `role` | `ADMIN` | oui | Seule valeur possible. |
 
+### 1.8 SiteSettings
+
+Les réglages du site public (fonctionnalité 012) : ce qui était écrit dans le code du Front Office et que le club fournit. Hors des entités métier : ils ne référencent rien et ne sont référencés par rien. Collection `site_settings`, **un seul document**, d'identifiant fixe `"site"` ; il n'existe pas tant que rien n'a été enregistré, et sa lecture renvoie alors l'état vide. Un champ vide n'est pas stocké.
+
+| Champ | Type | Obligatoire | Notes |
+|---|---|---|---|
+| `_id` | string | oui | Toujours `"site"`. |
+| `social.facebook`, `social.instagram` | string | non | Adresse `https://` du réseau (hôtes `facebook.com`, `www.facebook.com`, `m.facebook.com`, `fb.com` ; `instagram.com`, `www.instagram.com`), 300 caractères au plus. |
+| `club.foundedYear` | number | non | Entier de 1968 à l'année en cours. |
+| `club.sponsorClub` | string | non | 120 caractères au plus. |
+| `club.memberCount` | number | non | Entier de 1 à 999, saisi à la main. |
+| `club.meetingPlace`, `club.meetingRhythm` | string | non | 160 caractères au plus. |
+| `faq.<question>` | string | non | Réponse, 1000 caractères au plus, paragraphes séparés par une ligne vide. `<question>` : `qui`, `rencontre`, `sympathisant`, `avant`, `membre`, `frequence` (liste fermée, identique aux `id` du Front Office). Les réponses de `rencontre`, `sympathisant`, `avant` et `membre` ne se vident pas. Les intitulés restent dans le code. |
+| `photos.<emplacement>` | MediaRef | non | Une image par emplacement : `accueil-ouverture`, `accueil-club`, `accueil-rejoindre`, `actions-ouverture`, `actions-detail`, `membres-ouverture`, `rejoindre-ouverture` (liste fermée). |
+| `updatedAt` | Date | auto | |
+
+Sans réglage, le Front Office garde son état d'avant 012 : pictogrammes sans lien, mention « Présentation à compléter », réponses écrites dans le code, gabarits, photographie d'ouverture livrée avec le site.
+
 ## 2. Médias et fichiers
 
 **Le CV des candidatures est conservé chez Cloudinary** (décision du 2026-10-02) ; **les images aussi** (décision du 2026-10-13) : portraits des membres, photographies des actions et des actualités, avec le même compte et les mêmes variables `CLOUDINARY_*`. Une image est envoyée par le Back Office à l'API, qui la dépose chez Cloudinary : aucun envoi direct du navigateur vers le fournisseur, aucun CORS à ouvrir. Dans les deux cas l'abstraction demeure : les modèles portent les références dont le fournisseur a besoin, et le code métier ne connaît qu'une interface.
@@ -199,7 +217,7 @@ Le compte d'administration. Hors des entités métier, nécessaire à l'authenti
 |---|---|---|---|
 | `id` | ObjectId | oui | Identifiant du sous-document (fonctionnalité 011) : modifier, retirer, réordonner une photographie. Renvoyé seulement par les lectures d'administration. |
 | `url` | string | oui | Adresse publique servie au navigateur. |
-| `publicId` | string | oui | Identifiant chez le fournisseur (`site/<membres\|actions\|actualites>/<uuid>`), pour supprimer. **Jamais renvoyé par l'API.** |
+| `publicId` | string | oui | Identifiant chez le fournisseur (`site/<membres\|actions\|actualites\|pages>/<uuid>` ; `pages` pour les photographies fixes du site, fonctionnalité 012), pour supprimer. **Jamais renvoyé par l'API.** |
 | `name` | string | non | Nom de fichier d'origine. |
 | `mimeType` | string | non | |
 | `size` | number | non | Octets. |
@@ -329,6 +347,7 @@ Pas de déconnexion côté API (le jeton est sans état : le Back Office efface 
 | GET | `/news` | `year`, `type`, `q`, `page`, `limit` | Liste paginée, plus récente d'abord. Liste vide (`200`) si l'année n'existe pas |
 | GET | `/news/archives` | | Années qui ont des actualités publiées, avec leur nombre. Une entrée par année : `rotaryYear` dans la forme de `/rotary-years`, et `count`, le nombre d'actualités publiées |
 | GET | `/news/:slug` | | Détail |
+| GET | `/site-settings` | | Réglages du site (fonctionnalité 012) : `social`, `club`, `faq`, `photos`, toujours présents en objets, avec seulement les champs renseignés ; images en lecture publique |
 | POST | `/applications` | `multipart/form-data` | Dépôt d'une candidature. Limité à 20 demandes par heure et par adresse IP. Ne renvoie rien de la candidature. `201` ; `400` (validation), `413` (CV trop lourd), `415` (type de fichier refusé), `429` (limite dépassée), `503` (stockage indisponible). |
 
 Un contenu non publié répond `404` sur la surface publique, comme s'il n'existait pas.
@@ -344,6 +363,7 @@ Un contenu non publié répond `404` sur la surface publique, comme s'il n'exist
 | Actualités | `GET /admin/news` (`year`, `type`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` Création : `201`. Suppression : `204`. `409` pour un slug déjà pris. |
 | Candidatures | `GET /admin/applications` (`q`, `from`, `to`, `page`, `limit`, `sort`) · `GET /:id` · `GET /:id/cv` · `DELETE /:id`. Consultation et suppression seulement : ni création, ni modification, ni statut. `GET /:id/cv` : l'API renvoie le fichier lui-même, en pièce jointe et sans cache ; `404` si le fichier n'existe plus au stockage. Suppression : `204` ; elle retire le fichier puis la candidature ; un fichier déjà absent ne l'empêche pas (`204`) ; `503` si le stockage est indisponible, et la candidature est alors conservée. |
 | Images | Rattachées à leur contenu (fonctionnalité 011, `specs/011-image-storage/contracts/api-images.md`) : `PUT` · `PATCH` · `DELETE /admin/members/:id/portrait` ; `POST /admin/actions/:id/photos` · `PATCH` · `DELETE /admin/actions/:id/photos/:photoId` · `PUT /admin/actions/:id/photos/order`, et de même sous `/admin/news/:id/photos`. Envoi en `multipart/form-data` (champ `image`, plus `alt`, `caption`, `credit`, `focus`) ; `413`, `415`, `409` (20 photographies), `503`. Aucune route `/admin/media` générique : une image n'existe jamais sans son contenu. |
+| Réglages du site | Fonctionnalité 012, `specs/012-site-settings/contracts/api-site-settings.md` : `GET /admin/site-settings` · `PATCH /admin/site-settings` (corps partiel `social`, `club`, `faq` ; `null` vide un champ ; `400` si une des quatre réponses obligatoires est vidée) · `PUT` · `PATCH` · `DELETE /admin/site-settings/photos/:slot` (comme le portrait d'un membre ; emplacement inconnu : `404`). Le document se crée au premier enregistrement. |
 
 La publication passe par `PATCH` (`isPublished`), sans endpoint dédié. Les corps de création et de modification d'une action ou d'une actualité portent `rotaryYear` (identifiant), obligatoire à la création.
 
@@ -467,6 +487,10 @@ Format unique, pour les deux surfaces :
 | `MembershipApplication` | `status` | `applicantStatus` | Renommage |
 | `ImpactIndicator` | | (aucune entité) | Voir « Écarts » ci-dessous |
 
+### Réglages du site (fonctionnalité 012)
+
+`apps/web/src/data/site-settings.ts` lit `GET /site-settings` (`getSiteSettings`) et renvoie l'état vide si la lecture échoue. Correspondances : `social.*` → liens de `SocialLinks` (en-tête, pied de page, menu du téléphone) ; `club.*` → fiche du club de la section « Qui sommes-nous ? » de l'accueil ; `faq.<id>` → réponse de la question de même `id` dans `content/join.ts`, découpée en paragraphes, à défaut la réponse du code ; `photos.<emplacement>` → `Photo` par `toPhoto`, pour les sept emplacements fixes (ouverture de l'accueil : à défaut, la photographie livrée avec le site ; ouverture de « Nous rejoindre » : à défaut, l'ouverture de l'accueil). `/rejoindre` est rendue à la demande, comme l'accueil (décision 20).
+
 ### Écarts traités à la migration
 
 Trois décisions de ce document n'étaient pas reflétées par le Front Office V1 ni par `DESIGN.md`. La fonctionnalité 009 les a traitées :
@@ -503,6 +527,7 @@ apps/admin/src/
 │       ├── actions.ts      déconnexion et recherche rapide (quickSearch)
 │       ├── page.tsx        accueil du Back Office : barre de chiffres, accès aux domaines
 │       ├── annees/  membres/  actions/  actualites/  candidatures/   listes, aperçus (*Inspector), fiches
+│       ├── site/           réglages du site (fonctionnalité 012) : photographies fixes, réseaux sociaux, textes
 │       └── candidatures/[id]/cv/   relais du fichier renvoyé par l'API
 ├── components/ cadre (AppShell, CommandSearch, ColorModeButton, AccountMenu), en-tête de page, grilles
 │               (SelectableGrid, InspectorLayout, Inspector, RowMenu), SideSheet, marques d'état, avis, états
@@ -754,6 +779,7 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 | 18 | **Aspect du Back Office** | Distinct de `DESIGN.md`. Révisé le 2026-10-13 : direction « La grille » de l'application de trésorerie du club (`rotaract-app/rotaract-ivandry-runner`), complète (thèmes clair et sombre, Red Hat Mono, barre latérale et barre supérieure, barre d'onglets sur téléphone, aperçu à droite des tables, recherche Ctrl+K), adaptée par la fonctionnalité 010 et consignée dans `apps/admin/DESIGN.md`. Restent exigés : états d'attente, d'erreur et de liste vide, confirmation des suppressions, retour après chaque opération. |
 | 19 | **Dates du Back Office** | La date d'une actualité est saisie en date et heure, en heure de Madagascar, et convertie en temps universel avant l'enregistrement. Le Back Office affiche en heure de Madagascar la date des actualités et les dates de création, de première publication et de candidature, quel que soit le fuseau de l'ordinateur. L'API n'enregistre et ne renvoie que du temps universel. Le Front Office affiche le jour et le mois d'une actualité en heure de Madagascar, sans l'heure. |
 | 20 | **Cache du Front Office** | Revalidation par durée, configurée à environ 60 secondes, sans garantie à la seconde près. Une visite ne déclenche pas systématiquement une lecture de l'API. Une revalidation qui échoue ne remplace pas volontairement par un état vide un contenu déjà correctement mis en cache. Les listes d'actions et d'actualités sont lues en entier, par pages de 100 ; aucune pagination n'est visible. |
+| 21 | **Réglages du site** | Fonctionnalité 012 : un document unique (`site_settings`, `_id: "site"`) de champs nommés : réseaux sociaux, présentation du club en cinq champs, réponses des six questions de la FAQ, sept photographies fixes. Aucun éditeur générique des textes ; les intitulés de la FAQ et tous les autres textes restent dans le code. Les quatre réponses de FAQ déjà écrites dans le code sont recopiées dans le Back Office pour pré-remplir ses champs. |
 
 ### Encore ouvertes
 
@@ -778,3 +804,4 @@ Chaque étape démarre sur demande explicite.
 8. Connexion du Front Office à l'API, en remplaçant le corps des fonctions de `src/data`.
 9. Refonte visuelle du Back Office selon la direction « La grille » (fonctionnalité 010).
 10. Stockage des images chez Cloudinary, saisie dans le Back Office, affichage dans le Front Office (fonctionnalité 011).
+11. Réglages du site : photographies fixes, réseaux sociaux, présentation du club et réponses de la FAQ, saisis dans l'écran « Site » du Back Office (fonctionnalité 012).

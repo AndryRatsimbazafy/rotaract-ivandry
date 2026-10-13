@@ -334,6 +334,8 @@ Une section utilise un procédé, deux au plus. Jamais d'ombre, de flou ni de tr
 | **06 Le collectif** | Noms en très grand, une ligne par personne, une sur deux en retrait ; deux portraits qui se chevauchent sur une bande bleue | Blanc |
 | **07 Nous rejoindre** | Champ cranberry, question en signature, photographie qui dépasse par le haut, appel sur une ligne entière, parcours d'adhésion en quatre étapes au bas | Cranberry |
 
+**La fiche du club.** Dans la section 01, sous le texte, les informations du club fournies dans le Back Office se lisent comme une fiche : une ligne par information, séparées par des filets encre de 1 px ; l'intitulé en étiquette Charcoal en marge gauche, la valeur en Open Sans 600 à droite, en chiffres tabulaires pour l'année et le nombre. Intitulés, dans cet ordre : Création, Club parrain, Membres, Réunions, Rythme. Une information absente n'a pas de ligne. Sans aucune information, la mention « Présentation à compléter » reste à sa place. Aucun chiffre monumental ni animé : le « 01 » au trait reste le seul grand chiffre de la section.
+
 ### Règles
 
 **La règle de non-répétition.** Sur une page qui persuade, deux sections voisines n'ont ni la même composition ni le même fond.
@@ -634,9 +636,9 @@ Les cinq pages sont conçues. Ces lignes décrivent la composition retenue pour 
 ## Points ouverts
 
 1. **Logo officiel à fond transparent.** Le fichier utilisé est tiré du logo fourni. Sur le pied de page encre, le cranberry du mot « Rotaract » est peu contrasté : une version inversée officielle serait préférable.
-1. **Adresses des réseaux sociaux.** À renseigner dans `apps/web/src/config/site.ts` ; d'ici là, les pictogrammes s'affichent sans lien.
-2. **Photographies.** Seule l'ouverture en a une, reprise recadrée en tête de Join en attendant une image propre à cette page. Les autres sont à fournir, avec pour chacune sa légende (quoi, où, quand).
-3. **Textes.** Présentation du club, accroches, libellés des étiquettes.
+1. **Adresses des réseaux sociaux.** Se renseignent dans le Back Office, écran « Site » (fonctionnalité 012) ; d'ici là, les pictogrammes s'affichent sans lien.
+2. **Photographies.** Les sept photographies fixes (ouverture et sections de l'accueil, ouvertures d'Actions, de Members et de Join) se déposent dans le Back Office, écran « Site », avec leur légende (quoi, où, quand). Sans elles : la photographie d'ouverture livrée avec le site, reprise en tête de Join, et les gabarits.
+3. **Textes.** La présentation du club (fiche du club) et les réponses des questions fréquentes se saisissent dans le Back Office, écran « Site ». Les accroches et les libellés des étiquettes restent à fournir.
 4. **Famille d'icônes.**
 5. **Chiffres tabulaires d'Open Sans.** À vérifier sur le fichier servi.
 6. **Georgia sur Android.** Le rendu de la serif système de remplacement est à contrôler sur un téléphone réel.

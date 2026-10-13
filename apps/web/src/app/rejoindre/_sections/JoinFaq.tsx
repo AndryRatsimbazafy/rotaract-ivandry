@@ -1,11 +1,19 @@
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { joinFaq } from "@/content/join";
+import type { SiteSettings } from "@/types/site-settings";
 import styles from "./JoinFaq.module.css";
 
-// Une question sans réponse validée par le club n'est pas affichée.
-const items = joinFaq.items.filter((item) => item.answer?.length);
+interface JoinFaqProps {
+  /** Réponses saisies dans le Back Office ; à défaut, celles du code. */
+  answers: SiteSettings["faq"];
+}
 
-export function JoinFaq() {
+export function JoinFaq({ answers }: JoinFaqProps) {
+  // Une question sans réponse validée par le club n'est pas affichée.
+  const items = joinFaq.items.flatMap((item) => {
+    const answer = answers[item.id] ?? item.answer;
+    return answer?.length ? [{ ...item, answer }] : [];
+  });
   if (items.length === 0) return null;
 
   return (
@@ -25,7 +33,7 @@ export function JoinFaq() {
                 <span className={styles.sign} aria-hidden="true" />
               </summary>
               <div className={styles.answer}>
-                {item.answer?.map((paragraph) => (
+                {item.answer.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </div>

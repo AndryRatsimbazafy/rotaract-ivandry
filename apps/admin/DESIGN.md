@@ -311,7 +311,8 @@ L'aperçu ne modifie aucun champ : il propose les actions de la ligne et le lien
 ### Navigation
 - **Barre latérale :** éléments de 34 px, icône outlined de 18 px, libellé 600 en encre secondaire. Élément actif : fond feuille, filet de 1 px, icône cranberry.
 - **Barre supérieure :** fil d'Ariane, recherche Ctrl+K, thème (Clair, Sombre, Comme le système), compte (avatar Royal Blue ; email, « Administrateur », « Se déconnecter »).
-- **Téléphone :** barre d'onglets du bas, libellé 0.75rem 600, onglet actif en cranberry avec un trait de 2 px en haut. Lien d'évitement « Aller au contenu ».
+- **Téléphone :** barre d'onglets du bas, six onglets (l'accueil s'atteint par le logo), libellé 0.75rem 600, onglet actif en cranberry avec un trait de 2 px en haut. Lien d'évitement « Aller au contenu ».
+- **Écran « Site » :** réglages du site public, en trois sections l'une sous l'autre : « Photographies » (cartes d'emplacement sur deux colonnes à partir de 900 px), « Réseaux sociaux », « Textes » (présentation du club, puis questions fréquentes). Chaque formulaire s'enregistre seul.
 
 ### Recherche rapide
 Ctrl+K ou ⌘K, même dans un champ. Dialogue à ombre de dialogue (plein écran sur téléphone). Les écrans sont filtrés dans le navigateur ; les membres, actions, actualités et candidatures passent par une action serveur, jamais par l'API depuis le navigateur. Les résultats sont groupés par nature et parcourus au clavier ; « Aucun résultat » quand il n'y en a pas.
@@ -327,6 +328,7 @@ Ctrl+K ou ⌘K, même dans un champ. Dialogue à ombre de dialogue (plein écran
 - **Point d'intérêt** (`FocusPicker`) : l'image entière, sans recadrage, avec un repère circulaire de 16 px (contour cranberry, liseré blanc pour rester visible sur toute image). Un clic place le repère ; au clavier, les flèches le déplacent par pas de 5 % ; « Recentrer » le remet à 50 %, 50 %.
 - **Portrait** (`PortraitSection`) : sur la fiche d'un membre, entre le formulaire et les mandats. Vignette 4:5 de 160 px recadrée selon le point d'intérêt ; sans portrait, un aplat d'outillage 4:5 et « Aucun portrait. ».
 - **Photographies d'un contenu** (`PhotosSection`) : sur la fiche d'une action ou d'une actualité. Titre « Photographies · N / 20 » ; une grille avec le rang (marque « Principale » en Azure au rang 1), une vignette 3:2 de 96 px, le texte alternatif, les dimensions, « Monter » et « Descendre », et un menu de ligne avec « Modifier » et « Retirer ». L'ordre s'enregistre à chaque déplacement.
+- **Carte d'emplacement photographique** (`SitePhotoCard`, écran « Site ») : une photographie fixe du site public. En tête, la page en surtitre et l'emplacement en titre, puis le format en chiffres tabulaires et la description de l'image attendue. Vignette de 160 px au format de l'emplacement ; vide, un aplat d'outillage au même format et le repli du site (« Aucune photographie. », « Photographie livrée avec le site. », « Reprend l'ouverture de l'accueil. »). Mêmes boutons et même panneau que le portrait ; largeur conseillée de l'emplacement (2400 ou 1600 px).
 - **Vignettes** (`ImageThumb`) : cadre à filet sur fond d'outillage ; l'image est servie à la taille de la vignette.
 - **Aperçus** : l'image principale (portrait en 4:5, photographie en 3:2) en tête de l'aperçu, sur toute sa largeur.
 - Une image ne s'ajoute que sur la fiche d'un contenu enregistré ; les formulaires de création le disent en une ligne d'encre secondaire.

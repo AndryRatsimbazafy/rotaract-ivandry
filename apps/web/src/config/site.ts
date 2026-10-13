@@ -1,13 +1,12 @@
 export interface SocialLink {
   id: "facebook" | "instagram";
   label: string;
-  /** Adresse du compte. Vide tant que le club ne l'a pas fournie. */
-  href: string;
 }
 
+/** Les adresses se saisissent dans le Back Office (réglages du site). */
 const social: SocialLink[] = [
-  { id: "facebook", label: "Facebook", href: "" },
-  { id: "instagram", label: "Instagram", href: "" },
+  { id: "facebook", label: "Facebook" },
+  { id: "instagram", label: "Instagram" },
 ];
 
 export const site = {
@@ -17,7 +16,7 @@ export const site = {
   location: "Antananarivo, Madagascar",
   /** Signature du club, fond transparent (tirée de logo-club.png, dont le fond est blanc). */
   logo: { src: "/images/logo-club-transparent.png", width: 960, height: 299 },
-  /** Réseaux sociaux. Une adresse vide affiche l'icône sans lien. */
+  /** Réseaux sociaux ; sans adresse, l'icône s'affiche sans lien. */
   social,
   description: "Site du Rotaract Club Ivandry",
   lang: "fr",

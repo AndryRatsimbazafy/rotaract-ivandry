@@ -5,10 +5,17 @@ import { joinOpening } from "@/content/join";
 import type { Photo } from "@/types/media";
 import styles from "./JoinOpening.module.css";
 
-// La photographie d'action du club, recadrée en hauteur sur les deux visages.
-const photo: Photo = { ...opening.photo, focus: "55% 40%" };
+// À défaut d'une photographie propre à la page : l'ouverture de l'accueil
+// saisie dans le Back Office, sinon la photographie livrée avec le site,
+// recadrée en hauteur sur les deux visages.
+const fallback: Photo = { ...opening.photo, focus: "55% 40%" };
 
-export function JoinOpening() {
+interface JoinOpeningProps {
+  photo?: Photo;
+  homeOpening?: Photo;
+}
+
+export function JoinOpening({ photo, homeOpening }: JoinOpeningProps) {
   const [lead, rest] = joinOpening.titleLines;
 
   return (
@@ -34,7 +41,7 @@ export function JoinOpening() {
         {/* La photographie recouvre le bord du champ et descend sous lui. */}
         <div className={styles.photo}>
           <PhotoFrame
-            photo={photo}
+            photo={photo ?? homeOpening ?? fallback}
             brief=""
             format="4:5"
             sizes="(min-width: 1024px) 42vw, 80vw"

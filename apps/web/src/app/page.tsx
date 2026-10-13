@@ -3,6 +3,7 @@ import { getFeaturedMembers } from "@/data/members";
 import { getLatestActions } from "@/data/actions";
 import { getLatestNews } from "@/data/news";
 import { getCurrentRotaryYear } from "@/data/rotary-years";
+import { getSiteSettings } from "@/data/site-settings";
 import { About } from "./_sections/About";
 import { FocusAreas } from "./_sections/FocusAreas";
 import { JoinField } from "./_sections/JoinField";
@@ -19,23 +20,24 @@ export default async function HomePage() {
   // l'état vide.
   await connection();
 
-  const [actions, news, members, currentYear] = await Promise.all([
+  const [actions, news, members, currentYear, settings] = await Promise.all([
     getLatestActions(3),
     getLatestNews(3),
     getFeaturedMembers(4),
     getCurrentRotaryYear(),
+    getSiteSettings(),
   ]);
 
   return (
     <>
-      <Opening rotaryYear={currentYear} />
-      <About />
+      <Opening rotaryYear={currentYear} photo={settings.photos["accueil-ouverture"]} />
+      <About club={settings.club} photo={settings.photos["accueil-club"]} />
       <RotaryValues />
       <FocusAreas />
       <LatestActions actions={actions} />
       <LatestNews news={news} />
       <MembersPreview members={members} rotaryYear={currentYear} />
-      <JoinField />
+      <JoinField photo={settings.photos["accueil-rejoindre"]} />
     </>
   );
 }

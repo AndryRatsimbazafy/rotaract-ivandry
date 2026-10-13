@@ -4,16 +4,19 @@ import { routes } from "@/config/routes";
 import { site } from "@/config/site";
 import { rotaryYearLabel } from "@/content/common";
 import { opening } from "@/content/home";
+import type { Photo } from "@/types/media";
 import type { RotaryYear } from "@/types/rotary-year";
 import styles from "./Opening.module.css";
 
 interface OpeningProps {
   rotaryYear: RotaryYear;
+  /** Photographie saisie dans le Back Office ; à défaut, celle livrée avec le site. */
+  photo?: Photo;
 }
 
 const [nameLead, nameRest] = site.nameLines;
 
-export function Opening({ rotaryYear }: OpeningProps) {
+export function Opening({ rotaryYear, photo }: OpeningProps) {
   return (
     <section className={styles.opening} aria-labelledby="ouverture-titre">
       <div className={styles.stage}>
@@ -27,7 +30,7 @@ export function Opening({ rotaryYear }: OpeningProps) {
         </div>
         <div className={styles.media}>
           <PhotoFrame
-            photo={opening.photo}
+            photo={photo ?? opening.photo}
             brief={opening.photoBrief}
             format="16:9"
             sizes="(min-width: 1024px) 84vw, 100vw"

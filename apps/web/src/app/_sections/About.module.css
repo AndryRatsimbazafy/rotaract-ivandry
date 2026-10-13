@@ -66,6 +66,37 @@
   line-height: var(--text-small-leading);
 }
 
+/* La fiche du club : une ligne par information, intitulé en marge. */
+.facts {
+  margin-top: var(--space-8);
+  border-bottom: var(--rule-width) solid var(--rule-strong);
+  font-family: var(--font-structure);
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: minmax(0, 9rem) minmax(0, 1fr);
+  column-gap: var(--space-16);
+  align-items: baseline;
+  padding-block: var(--space-12);
+  border-top: var(--rule-width) solid var(--rule-strong);
+}
+
+.factLabel {
+  color: var(--text-secondary);
+}
+
+.factValue {
+  margin: 0;
+  font-size: var(--text-body-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--text-body-leading);
+}
+
+.numeric {
+  font-variant-numeric: tabular-nums;
+}
+
 /* La photographie déborde à droite et chevauche la section suivante. */
 .photo {
   width: 72%;

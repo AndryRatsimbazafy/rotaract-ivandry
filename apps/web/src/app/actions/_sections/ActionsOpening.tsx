@@ -1,6 +1,7 @@
 import { PhotoFrame } from "@/components/media/PhotoFrame";
 import { actionsOpening } from "@/content/actions";
 import { pendingLabel } from "@/content/common";
+import type { Photo } from "@/types/media";
 import type { RotaryYear } from "@/types/rotary-year";
 import styles from "./ActionsOpening.module.css";
 
@@ -8,9 +9,17 @@ interface ActionsOpeningProps {
   rotaryYear: RotaryYear;
   /** Nombre d'actions publiées. */
   count: number;
+  /** Photographies saisies dans le Back Office ; à défaut, les gabarits. */
+  mainPhoto?: Photo;
+  detailPhoto?: Photo;
 }
 
-export function ActionsOpening({ rotaryYear, count }: ActionsOpeningProps) {
+export function ActionsOpening({
+  rotaryYear,
+  count,
+  mainPhoto,
+  detailPhoto,
+}: ActionsOpeningProps) {
   const [lead, rest] = actionsOpening.titleLines;
 
   return (
@@ -40,6 +49,7 @@ export function ActionsOpening({ rotaryYear, count }: ActionsOpeningProps) {
         <div className={styles.photos}>
           <div className={styles.main}>
             <PhotoFrame
+              photo={mainPhoto}
               brief={actionsOpening.mainPhotoBrief}
               format="4:5"
               sizes="(min-width: 1024px) 42vw, 78vw"
@@ -50,6 +60,7 @@ export function ActionsOpening({ rotaryYear, count }: ActionsOpeningProps) {
           </div>
           <div className={styles.detail}>
             <PhotoFrame
+              photo={detailPhoto}
               brief={actionsOpening.detailPhotoBrief}
               format="3:2"
               sizes="(min-width: 1024px) 26vw, 50vw"
