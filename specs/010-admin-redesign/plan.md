@@ -67,7 +67,7 @@ L'API, le Front Office, les adresses, la session et les dates ne changent pas. A
 
 **Re-vérification après la phase 1** : inchangée. La conception (research, data-model, contracts) n'ajoute ni dépendance, ni opération d'API, ni donnée métier.
 
-**Remarque sur la constitution.** Sa section « Décisions ouvertes » cite encore « spécification visuelle du Back Office » et « fournisseur de stockage des images ». Son principe V dit qu'« aucun fournisseur concret n'est imposé ». Ces deux points ont été tranchés le 2026-10-13 dans `ARCHITECTURE.md`, section 14, qui porte les décisions. Ce n'est pas une contradiction de règle. Un amendement (`/speckit-constitution`, version CORRECTIF ou MINEUR) est recommandé avant la fonctionnalité 011.
+**Remarque sur la constitution.** Amendée en 1.1.0 le 2026-10-13, après ce plan : `apps/admin/DESIGN.md` est une source de vérité (principe I), Cloudinary est le fournisseur retenu (principe V), et les décisions ouvertes renvoient à `ARCHITECTURE.md`, section 14. Le contrôle ci-dessus reste conforme.
 
 ## A. Alignements de la documentation
 
