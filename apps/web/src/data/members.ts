@@ -1,13 +1,15 @@
 import { apiGet } from "@/lib/api";
 import type { Member, MemberRole } from "@/types/member";
 import type { RotaryYear } from "@/types/rotary-year";
+import { toPhoto, type ApiImage } from "./media";
 
-// Forme publique d'un membre dans l'API : ni email, ni téléphone, ni portrait.
+// Forme publique d'un membre dans l'API : ni email, ni téléphone.
 interface ApiMember {
   id: string;
   firstName: string;
   lastName: string;
   occupation?: string;
+  portrait?: ApiImage;
   rotaryYear: string;
   roles: MemberRole[];
   order: number;
@@ -19,6 +21,7 @@ function toMember(member: ApiMember): Member {
     firstName: member.firstName,
     lastName: member.lastName,
     occupation: member.occupation,
+    portrait: member.portrait ? toPhoto(member.portrait) : undefined,
     rotaryYear: member.rotaryYear as RotaryYear,
     roles: member.roles,
     order: member.order,

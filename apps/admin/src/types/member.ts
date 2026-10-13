@@ -1,3 +1,4 @@
+import type { AdminImage } from "./media";
 import type { YearRef } from "./rotary-year";
 
 export type MemberRole =
@@ -19,6 +20,7 @@ export type Member = {
   occupation: string | null;
   email: string | null;
   phone: string | null;
+  portrait: AdminImage | null;
   createdAt: string;
   updatedAt: string;
 };

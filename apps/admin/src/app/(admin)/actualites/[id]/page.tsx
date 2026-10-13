@@ -1,5 +1,6 @@
 import DeleteSection from "@/components/DeleteSection";
 import PageHeader from "@/components/PageHeader";
+import PhotosSection from "@/components/PhotosSection";
 import { PublishedMark } from "@/components/StatusMark";
 import { apiRead } from "@/lib/api";
 import {
@@ -13,6 +14,7 @@ import type { News } from "@/types/news";
 import type { RotaryYear } from "@/types/rotary-year";
 import { deleteNews, updateNews } from "../actions";
 import NewsForm from "../_components/NewsForm";
+import { addPhoto, removePhoto, reorderPhotos, updatePhoto } from "../images-actions";
 
 export default async function ActualitePage({
   params,
@@ -56,6 +58,13 @@ export default async function ActualitePage({
         }}
         years={yearsForMadagascarInput(years.data)}
         returnTo={returnTo}
+      />
+      <PhotosSection
+        photos={news.photos}
+        addAction={addPhoto.bind(null, news.id)}
+        updateAction={updatePhoto.bind(null, news.id)}
+        removeAction={removePhoto.bind(null, news.id)}
+        reorderAction={reorderPhotos.bind(null, news.id)}
       />
       <DeleteSection
         label="Supprimer cette actualité"

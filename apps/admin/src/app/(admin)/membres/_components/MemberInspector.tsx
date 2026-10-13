@@ -8,6 +8,7 @@ import {
   InspectorPanel,
   InspectorSection,
 } from "@/components/Inspector";
+import ImageThumb from "@/components/ImageThumb";
 import LinkButton from "@/components/LinkButton";
 import { readInspected } from "@/lib/inspector";
 import { MEMBER_ROLE_LABELS } from "@/lib/labels";
@@ -59,6 +60,17 @@ export default async function MemberInspector({
         </>
       }
     >
+      {member.portrait && (
+        <Box sx={{ mb: 2 }}>
+          <ImageThumb
+            url={member.portrait.url}
+            alt={member.portrait.alt}
+            focus={member.portrait.focus}
+            ratio="4 / 5"
+            sizes="360px"
+          />
+        </Box>
+      )}
       <FieldList
         labelWidth={110}
         fields={[

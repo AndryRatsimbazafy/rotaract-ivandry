@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter, SortOrder, Types } from 'mongoose';
 import { Paginated } from '../common/dto/pagination-query.dto';
@@ -6,7 +6,20 @@ import {
   parseRotaryYearLabel,
   rotaryYearLabel,
 } from '../common/utils/rotary-year';
+import {
+  ImageFieldsDto,
+  UpdateImageFieldsDto,
+} from '../common/dto/image-fields.dto';
 import { MemberRole } from '../common/enums/member-role.enum';
+import { AdminImage, toAdminImage } from '../common/schemas/media-ref.schema';
+import {
+  discardImage,
+  imageFieldsUpdate,
+  removeImageFile,
+  storeImage,
+} from '../media/content-images';
+import type { UploadedImage } from '../media/image-upload.interceptor';
+import { StorageService } from '../media/storage.service';
 import { RotaryYear } from '../rotary-years/schemas/rotary-year.schema';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { QueryMembersDto } from './dto/query-members.dto';
@@ -22,6 +35,7 @@ export type AdminMemberView = {
   occupation: string | null;
   email: string | null;
   phone: string | null;
+  portrait: AdminImage | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -56,6 +70,7 @@ function toAdminView(
     occupation: member.occupation ?? null,
     email: member.email ?? null,
     phone: member.phone ?? null,
+    portrait: member.portrait ? toAdminImage(member.portrait) : null,
     createdAt: member.createdAt,
     updatedAt: member.updatedAt,
   };
@@ -63,12 +78,15 @@ function toAdminView(
 
 @Injectable()
 export class MembersService {
+  private readonly logger = new Logger('Members');
+
   constructor(
     @InjectModel(Member.name) private readonly memberModel: Model<Member>,
     @InjectModel(MemberMandate.name)
     private readonly mandateModel: Model<MemberMandate>,
     @InjectModel(RotaryYear.name)
     private readonly rotaryYearModel: Model<RotaryYear>,
+    private readonly storage: StorageService,
   ) {}
 
   async findAll(query: QueryMembersDto): Promise<Paginated<AdminMemberView>> {
@@ -181,14 +199,93 @@ export class MembersService {
   }
 
   async remove(id: string): Promise<void> {
-    const member = await this.memberModel.exists({ _id: id }).exec();
+    const member = await this.memberModel
+      .findById(id)
+      .select('portrait')
+      .lean()
+      .exec();
     if (!member) {
       throw new NotFoundException();
+    }
+    // Le portrait d'abord : stockage indisponible, 503 et le membre reste.
+    if (member.portrait) {
+      await removeImageFile(
+        this.storage,
+        member.portrait.publicId,
+        this.logger,
+      );
     }
     // Les mandats d'abord : si l'opération s'arrête ici, il reste un membre
     // sans mandat, état valide, et la suppression peut être relancée.
     await this.mandateModel.deleteMany({ member: member._id }).exec();
     await this.memberModel.deleteOne({ _id: member._id }).exec();
+  }
+
+  // --- Portrait ---
+
+  // Ajoute ou remplace le portrait. L'ancien fichier est retiré une fois
+  // l'écriture faite ; un échec de ce retrait est journalisé.
+  async setPortrait(
+    id: string,
+    file: UploadedImage | undefined,
+    dto: ImageFieldsDto,
+  ): Promise<AdminMemberDetailView> {
+    if (!(await this.memberModel.exists({ _id: id }).exec())) {
+      throw new NotFoundException();
+    }
+    const image = await storeImage(this.storage, file, 'membres', dto);
+    let previous: Member | null;
+    try {
+      previous = await this.memberModel
+        .findByIdAndUpdate(id, { $set: { portrait: image } })
+        .lean()
+        .exec();
+    } catch (error) {
+      await discardImage(this.storage, image.publicId, this.logger);
+      throw error;
+    }
+    if (!previous) {
+      await discardImage(this.storage, image.publicId, this.logger);
+      throw new NotFoundException();
+    }
+    if (previous.portrait) {
+      await discardImage(this.storage, previous.portrait.publicId, this.logger);
+    }
+    return this.findOne(id);
+  }
+
+  async updatePortrait(
+    id: string,
+    dto: UpdateImageFieldsDto,
+  ): Promise<AdminMemberDetailView> {
+    const filter = { _id: id, portrait: { $ne: null } };
+    const update = imageFieldsUpdate('portrait', dto);
+    const found =
+      Object.keys(update).length > 0
+        ? (await this.memberModel.updateOne(filter, update).exec())
+            .matchedCount > 0
+        : (await this.memberModel.exists(filter).exec()) !== null;
+    if (!found) {
+      throw new NotFoundException();
+    }
+    return this.findOne(id);
+  }
+
+  // Le fichier d'abord : stockage indisponible, rien n'est modifié.
+  async removePortrait(id: string): Promise<AdminMemberDetailView> {
+    const member = await this.memberModel
+      .findById(id)
+      .select('portrait')
+      .lean()
+      .exec();
+    if (!member?.portrait) {
+      throw new NotFoundException();
+    }
+    await removeImageFile(this.storage, member.portrait.publicId, this.logger);
+    await this.memberModel
+      .updateOne({ _id: id }, { $set: { portrait: null } })
+      .exec();
+    return this.findOne(id);
   }
 
   // null quand le filtre ne peut désigner aucun membre (année inconnue).

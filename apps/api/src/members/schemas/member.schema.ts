@@ -1,4 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import {
+  MediaRef,
+  MediaRefSchema,
+} from '../../common/schemas/media-ref.schema';
 
 // Une personne membre du club. Ses fonctions ne sont pas ici : elles vivent
 // dans ses mandats (member-mandate.schema.ts).
@@ -20,6 +24,10 @@ export class Member {
   // Usage interne : jamais exposé sur la surface publique.
   @Prop({ type: String, trim: true })
   phone?: string;
+
+  // Portrait, public : il apparaît dans l'annuaire du site.
+  @Prop({ type: MediaRefSchema, default: null })
+  portrait: MediaRef | null;
 
   createdAt: Date;
   updatedAt: Date;

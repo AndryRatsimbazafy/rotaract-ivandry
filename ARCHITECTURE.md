@@ -1,7 +1,7 @@
 # ARCHITECTURE : Backend et Back Office
 
 > Référence technique avant implémentation de `apps/api` et `apps/admin`, et de la connexion de `apps/web` à l'API.
-> État au 2026-10-13. **Implémenté** : l'API (étapes 1 à 5 de la section 15), le Back Office (étapes 6 et 7), la connexion du Front Office à l'API (étape 8, fonctionnalité 009) et la refonte visuelle du Back Office (étape 9, fonctionnalité 010). **Reste à faire** : le stockage des images (fonctionnalité 011).
+> État au 2026-10-13. **Implémenté** : l'API (étapes 1 à 5 de la section 15), le Back Office (étapes 6 et 7), la connexion du Front Office à l'API (étape 8, fonctionnalité 009), la refonte visuelle du Back Office (étape 9, fonctionnalité 010) et le stockage des images (étape 10, fonctionnalité 011). **Reste à faire** : rien de planifié ; les décisions encore ouvertes sont en section 14.
 > Les décisions verrouillées et les décisions encore ouvertes sont listées en section 14 ; les points marqués **[ouvert]** y renvoient. Une décision qui change se corrige ici avant de se corriger dans le code.
 > La direction visuelle du Front Office reste dans `DESIGN.md` ; le contexte général dans `PROJECT_CONTEXT.md`.
 
@@ -58,7 +58,7 @@ Une personne membre du club. **La fonction n'est pas une propriété du membre**
 | `firstName` | string | oui | oui | |
 | `lastName` | string | oui | oui | |
 | `occupation` | string | non | oui | Profession ou études. |
-| `portrait` | MediaRef | non | oui | Voir 2. Non mis en œuvre avant le stockage de fichiers. |
+| `portrait` | MediaRef | non | oui | Voir 2. `null` sans portrait. Ajouté, remplacé ou retiré par `…/members/:id/portrait` (fonctionnalité 011). |
 | `email` | string | non | **non** | Usage interne au Back Office. |
 | `phone` | string | non | **non** | Usage interne au Back Office. |
 
@@ -109,7 +109,7 @@ Projet ou activité du club avec un objectif ou un impact concret.
 | `date` | Date | oui | Date de l'action (ou de son début). |
 | `rotaryYear` | ObjectId → RotaryYear | oui | **Référence explicite, choisie par l'administrateur** à la création et modifiable ensuite. Voir « Année Rotary d'un contenu » ci-dessous. |
 | `focusAreas` | FocusArea[] | oui | Zéro, un ou plusieurs domaines. Sans doublon. |
-| `photos` | MediaRef[] | oui | La première est la photographie principale. Peut être vide. Non mis en œuvre avant le stockage de fichiers. |
+| `photos` | MediaRef[] | oui | La première est la photographie principale. De 0 à 20. Gérées par `…/actions/:id/photos` (fonctionnalité 011). |
 | `impact` | ActionImpact | non | **Optionnel.** Seules les rubriques fournies sont enregistrées. Sans aucune rubrique, le champ est absent et rien ne s'affiche. |
 | `isPublished` | boolean | oui | `false` par défaut. |
 | `publishedAt` | Date | non | Posé à la première publication. Conservé à la dépublication et à la republication. Une action peut être créée directement publiée. |
@@ -147,7 +147,7 @@ Une actualité du club. **Entité distincte d'Action** : la date y domine, il n'
 | `location` | string | non | Déjà affiché par le Front Office. 1 à 120 caractères. |
 | `summary` | string | non | |
 | `content` | string | non | Texte brut, paragraphes séparés par une ligne vide. |
-| `photos` | MediaRef[] | oui | Peut être vide. Non mis en œuvre avant le stockage de fichiers. |
+| `photos` | MediaRef[] | oui | La première est la principale. De 0 à 20. Gérées par `…/news/:id/photos` (fonctionnalité 011). |
 | `isPublished` | boolean | oui | `false` par défaut. |
 | `publishedAt` | Date | non | Posé à la première publication. Conservé à la dépublication et à la republication. Une actualité peut être créée directement publiée. Jamais fourni en entrée. |
 
@@ -197,8 +197,9 @@ Le compte d'administration. Hors des entités métier, nécessaire à l'authenti
 
 | Champ | Type | Obligatoire | Notes |
 |---|---|---|---|
-| `url` | string | oui | Adresse servie au navigateur. |
-| `publicId` | string | non | Identifiant chez le fournisseur, pour supprimer ou transformer. |
+| `id` | ObjectId | oui | Identifiant du sous-document (fonctionnalité 011) : modifier, retirer, réordonner une photographie. Renvoyé seulement par les lectures d'administration. |
+| `url` | string | oui | Adresse publique servie au navigateur. |
+| `publicId` | string | oui | Identifiant chez le fournisseur (`site/<membres\|actions\|actualites>/<uuid>`), pour supprimer. **Jamais renvoyé par l'API.** |
 | `name` | string | non | Nom de fichier d'origine. |
 | `mimeType` | string | non | |
 | `size` | number | non | Octets. |
@@ -206,7 +207,9 @@ Le compte d'administration. Hors des entités métier, nécessaire à l'authenti
 | `alt` | string | oui | Texte alternatif, distinct de la légende. |
 | `caption` | string | non | Légende (quoi, où, quand). |
 | `credit` | string | non | |
-| `focus` | string | non | Point d'intérêt en syntaxe CSS (`"50% 30%"`). |
+| `focus` | string | oui | Point d'intérêt en syntaxe CSS (`"50% 30%"`), pourcentages entiers de 0 à 100 ; `"50% 50%"` par défaut. |
+
+Longueurs (fonctionnalité 011) : `alt` de 1 à 300 caractères, `caption` 300 au plus, `credit` 120 au plus. Lecture publique : `url`, `width`, `height`, `alt`, `caption`, `credit`, `focus` seulement. Lecture d'administration : en plus `id`, `name`, `mimeType`, `size`. Les images sont publiques chez le fournisseur ; l'orientation EXIF est appliquée à la réception.
 
 `FileRef` (document, pour le CV) : `publicId` (oui), `name` (oui), `mimeType` (oui), `size` (oui). Aucune `url` n'est enregistrée : le CV est déposé chez Cloudinary comme fichier brut (`raw`) en accès authentifié, sous un identifiant aléatoire, et n'a aucune adresse publique. `mimeType` est le type constaté par l'API sur le contenu. Le CV n'est jamais exposé par l'API publique ; ni son identifiant ni aucune adresse de stockage n'apparaît dans une réponse de l'API.
 
@@ -340,7 +343,7 @@ Un contenu non publié répond `404` sur la surface publique, comme s'il n'exist
 | Actions | `GET /admin/actions` (`year`, `focusArea`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` Création : `201`. Suppression : `204`. `409` pour un slug déjà pris. |
 | Actualités | `GET /admin/news` (`year`, `type`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` Création : `201`. Suppression : `204`. `409` pour un slug déjà pris. |
 | Candidatures | `GET /admin/applications` (`q`, `from`, `to`, `page`, `limit`, `sort`) · `GET /:id` · `GET /:id/cv` · `DELETE /:id`. Consultation et suppression seulement : ni création, ni modification, ni statut. `GET /:id/cv` : l'API renvoie le fichier lui-même, en pièce jointe et sans cache ; `404` si le fichier n'existe plus au stockage. Suppression : `204` ; elle retire le fichier puis la candidature ; un fichier déjà absent ne l'empêche pas (`204`) ; `503` si le stockage est indisponible, et la candidature est alors conservée. |
-| Médias | `POST /admin/media` (envoi d'une image → `MediaRef`) · `DELETE /admin/media` (par `publicId`). Forme définitive fixée par la fonctionnalité du stockage des images (Cloudinary, envoi par l'API). |
+| Images | Rattachées à leur contenu (fonctionnalité 011, `specs/011-image-storage/contracts/api-images.md`) : `PUT` · `PATCH` · `DELETE /admin/members/:id/portrait` ; `POST /admin/actions/:id/photos` · `PATCH` · `DELETE /admin/actions/:id/photos/:photoId` · `PUT /admin/actions/:id/photos/order`, et de même sous `/admin/news/:id/photos`. Envoi en `multipart/form-data` (champ `image`, plus `alt`, `caption`, `credit`, `focus`) ; `413`, `415`, `409` (20 photographies), `503`. Aucune route `/admin/media` générique : une image n'existe jamais sans son contenu. |
 
 La publication passe par `PATCH` (`isPublished`), sans endpoint dédié. Les corps de création et de modification d'une action ou d'une actualité portent `rotaryYear` (identifiant), obligatoire à la création.
 
@@ -531,7 +534,7 @@ Aucune valeur réelle ici ni dans le code. Chaque application aura un `.env.exam
 | `JWT_EXPIRES_IN` | non | Défaut `8h`. Durée strictement positive et de 8 heures au plus : une valeur nulle ou supérieure à 8 heures empêche le démarrage. |
 | `CORS_ORIGINS` | non | Vide par défaut : aucun navigateur n'appelle l'API. À renseigner seulement si l'envoi direct de fichiers est retenu. |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | script seulement | Lus par le script d'initialisation, jamais par l'API en fonctionnement. |
-| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | **oui** | Stockage des CV. Secrets. L'API refuse de démarrer si l'une manque. Les variables du stockage des images restent à définir, avec leur fournisseur. |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | **oui** | Stockage des CV et des images (même compte). Secrets. L'API refuse de démarrer si l'une manque. |
 
 ### `apps/web`
 

@@ -10,6 +10,17 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "6mb",
     },
   },
+  images: {
+    // Portraits et photographies, servis par le stockage : seules leurs
+    // adresses publiques sont autorisées.
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/*/image/upload/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

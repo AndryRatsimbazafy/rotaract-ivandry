@@ -1,3 +1,4 @@
+import type { AdminImage } from "./media";
 import type { YearRef } from "./rotary-year";
 
 export type FocusArea =
@@ -31,6 +32,7 @@ export type Action = {
   isPublished: boolean;
   publishedAt: string | null;
   order: number | null;
+  photos: AdminImage[];
   createdAt: string;
   updatedAt: string;
 };

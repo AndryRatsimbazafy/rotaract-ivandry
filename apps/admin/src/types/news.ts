@@ -1,3 +1,4 @@
+import type { AdminImage } from "./media";
 import type { YearRef } from "./rotary-year";
 
 export type NewsType =
@@ -19,6 +20,7 @@ export type News = {
   content: string | null;
   isPublished: boolean;
   publishedAt: string | null;
+  photos: AdminImage[];
   createdAt: string;
   updatedAt: string;
 };

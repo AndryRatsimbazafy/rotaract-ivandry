@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -15,6 +16,26 @@ import {
   rotaryYearLabel,
 } from '../common/utils/rotary-year';
 import { slugify, withSlugSuffix } from '../common/utils/slug';
+import {
+  ImageFieldsDto,
+  ReorderPhotosDto,
+  UpdateImageFieldsDto,
+} from '../common/dto/image-fields.dto';
+import {
+  AdminImage,
+  PublicImage,
+  toAdminImage,
+  toPublicImage,
+} from '../common/schemas/media-ref.schema';
+import {
+  addPhoto,
+  removeImageFiles,
+  removePhoto,
+  reorderPhotos,
+  updatePhoto,
+} from '../media/content-images';
+import type { UploadedImage } from '../media/image-upload.interceptor';
+import { StorageService } from '../media/storage.service';
 import { RotaryYear } from '../rotary-years/schemas/rotary-year.schema';
 import { CreateNewsDto } from './dto/create-news.dto';
 import { QueryAdminNewsDto } from './dto/query-admin-news.dto';
@@ -34,6 +55,7 @@ export type AdminNewsView = {
   content: string | null;
   isPublished: boolean;
   publishedAt: Date | null;
+  photos: AdminImage[];
   createdAt: Date;
   updatedAt: Date;
 };
@@ -49,6 +71,7 @@ export type PublicNewsView = {
   location?: string;
   summary?: string;
   content?: string;
+  photos: PublicImage[];
 };
 
 // Une année Rotary qui a des actualités publiées, avec leur nombre.
@@ -110,6 +133,7 @@ function toAdminView(news: NewsDocument, startYear: number): AdminNewsView {
     content: news.content ?? null,
     isPublished: news.isPublished,
     publishedAt: news.publishedAt ?? null,
+    photos: (news.photos ?? []).map(toAdminImage),
     createdAt: news.createdAt,
     updatedAt: news.updatedAt,
   };
@@ -126,6 +150,7 @@ function toPublicView(news: NewsDocument, startYear: number): PublicNewsView {
     ...(news.location ? { location: news.location } : {}),
     ...(news.summary ? { summary: news.summary } : {}),
     ...(news.content ? { content: news.content } : {}),
+    photos: (news.photos ?? []).map(toPublicImage),
   };
 }
 
@@ -135,10 +160,13 @@ function emptyPage<T>(page: number, limit: number): Paginated<T> {
 
 @Injectable()
 export class NewsService {
+  private readonly logger = new Logger('News');
+
   constructor(
     @InjectModel(News.name) private readonly newsModel: Model<News>,
     @InjectModel(RotaryYear.name)
     private readonly rotaryYearModel: Model<RotaryYear>,
+    private readonly storage: StorageService,
   ) {}
 
   // --- Administration ---
@@ -321,11 +349,59 @@ export class NewsService {
     return this.toAdminViewOf(updated);
   }
 
+  // Les fichiers d'abord : stockage indisponible, 503 et le contenu reste.
   async remove(id: string): Promise<void> {
-    const deleted = await this.newsModel.findByIdAndDelete(id).exec();
-    if (!deleted) {
+    const existing = await this.newsModel
+      .findById(id)
+      .select('photos')
+      .lean()
+      .exec();
+    if (!existing) {
       throw new NotFoundException();
     }
+    await removeImageFiles(this.storage, this.logger, existing.photos ?? []);
+    await this.newsModel.deleteOne({ _id: existing._id }).exec();
+  }
+
+  // --- Photographies ---
+
+  async addPhoto(
+    id: string,
+    file: UploadedImage | undefined,
+    dto: ImageFieldsDto,
+  ): Promise<AdminNewsView> {
+    await addPhoto(
+      this.newsModel,
+      this.storage,
+      this.logger,
+      id,
+      file,
+      dto,
+      'actualites',
+    );
+    return this.findOneForAdmin(id);
+  }
+
+  async updatePhoto(
+    id: string,
+    photoId: string,
+    dto: UpdateImageFieldsDto,
+  ): Promise<AdminNewsView> {
+    await updatePhoto(this.newsModel, id, photoId, dto);
+    return this.findOneForAdmin(id);
+  }
+
+  async removePhoto(id: string, photoId: string): Promise<AdminNewsView> {
+    await removePhoto(this.newsModel, this.storage, this.logger, id, photoId);
+    return this.findOneForAdmin(id);
+  }
+
+  async reorderPhotos(
+    id: string,
+    dto: ReorderPhotosDto,
+  ): Promise<AdminNewsView> {
+    await reorderPhotos(this.newsModel, id, dto.photoIds);
+    return this.findOneForAdmin(id);
   }
 
   // --- Lecture publique : actualités publiées seulement ---

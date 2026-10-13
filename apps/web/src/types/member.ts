@@ -21,7 +21,7 @@ export interface Member {
   lastName: string;
   /** Profession ou études. */
   occupation?: string;
-  /** Absent tant que l'API ne fournit pas de portrait. */
+  /** Absent quand le membre n'a pas de portrait. */
   portrait?: Photo;
   /** L'année Rotary de ce mandat. */
   rotaryYear: RotaryYear;

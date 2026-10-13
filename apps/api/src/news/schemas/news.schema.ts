@@ -1,4 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import {
+  MediaRef,
+  MediaRefSchema,
+} from '../../common/schemas/media-ref.schema';
 import { SchemaTypes, Types } from 'mongoose';
 import { NewsType } from '../../common/enums/news-type.enum';
 
@@ -39,6 +43,10 @@ export class News {
   // Posé à la première publication, jamais réécrit.
   @Prop({ type: Date })
   publishedAt?: Date;
+
+  // Photographies, dans l'ordre : la première est la principale. 20 au plus.
+  @Prop({ type: [MediaRefSchema], default: [] })
+  photos: MediaRef[];
 
   createdAt: Date;
   updatedAt: Date;

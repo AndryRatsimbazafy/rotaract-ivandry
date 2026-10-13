@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model, QueryFilter, Types } from 'mongoose';
+import { PublicImage, toPublicImage } from '../common/schemas/media-ref.schema';
 import { MemberRole } from '../common/enums/member-role.enum';
 import {
   isCurrentRotaryYear,
@@ -42,6 +43,7 @@ export type DirectoryEntryView = {
   firstName: string;
   lastName: string;
   occupation?: string;
+  portrait?: PublicImage;
   rotaryYear: string;
   roles: MemberRole[];
   order: number;
@@ -333,6 +335,9 @@ export class MandatesService {
           firstName: member.firstName,
           lastName: member.lastName,
           ...(member.occupation ? { occupation: member.occupation } : {}),
+          ...(member.portrait
+            ? { portrait: toPublicImage(member.portrait) }
+            : {}),
           rotaryYear: label,
           roles: mandate.roles,
           order: mandate.order,

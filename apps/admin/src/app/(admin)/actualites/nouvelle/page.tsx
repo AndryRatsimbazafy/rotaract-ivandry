@@ -1,3 +1,4 @@
+import Typography from "@mui/material/Typography";
 import PageHeader from "@/components/PageHeader";
 import { apiRead } from "@/lib/api";
 import { yearsForMadagascarInput } from "@/lib/dates";
@@ -23,6 +24,9 @@ export default async function NouvelleActualitePage({
         years={yearsForMadagascarInput(years.data)}
         returnTo={returnTo}
       />
+      <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+        Les photographies s&apos;ajoutent sur la fiche, après l&apos;enregistrement.
+      </Typography>
     </>
   );
 }

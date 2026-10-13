@@ -322,6 +322,15 @@ Ctrl+K ou ⌘K, même dans un champ. Dialogue à ombre de dialogue (plein écran
 ### Panneaux latéraux et dialogues
 `SideSheet` (480 px, plein écran sous `sm`) pour une saisie courte : nouvelle année, ajout d'un mandat, modification de ses fonctions. Tête sur chrome, titre, bouton Fermer. Les dialogues (confirmation de suppression, adresse publique d'un contenu) ont un titre à filet dessous et un pied sur chrome à filet dessus. `FieldList` : lignes libellé / valeur sur deux colonnes, « — » pour une valeur absente.
 
+### Images (portrait, photographies)
+- **Panneau image** (`ImageSheet`) : panneau latéral pour ajouter, remplacer ou modifier une image. L'image choisie est préparée dans le navigateur (réduite à 3000 px au plus sur le côté le plus long), avec « Préparation de l'image… » sur une barre fine. Champs : texte alternatif (obligatoire), légende, crédit. Les dimensions sont en chiffres tabulaires. Sous la largeur conseillée (1200 px pour un portrait, 1600 px pour une photographie), un avertissement s'affiche, sans bloquer.
+- **Point d'intérêt** (`FocusPicker`) : l'image entière, sans recadrage, avec un repère circulaire de 16 px (contour cranberry, liseré blanc pour rester visible sur toute image). Un clic place le repère ; au clavier, les flèches le déplacent par pas de 5 % ; « Recentrer » le remet à 50 %, 50 %.
+- **Portrait** (`PortraitSection`) : sur la fiche d'un membre, entre le formulaire et les mandats. Vignette 4:5 de 160 px recadrée selon le point d'intérêt ; sans portrait, un aplat d'outillage 4:5 et « Aucun portrait. ».
+- **Photographies d'un contenu** (`PhotosSection`) : sur la fiche d'une action ou d'une actualité. Titre « Photographies · N / 20 » ; une grille avec le rang (marque « Principale » en Azure au rang 1), une vignette 3:2 de 96 px, le texte alternatif, les dimensions, « Monter » et « Descendre », et un menu de ligne avec « Modifier » et « Retirer ». L'ordre s'enregistre à chaque déplacement.
+- **Vignettes** (`ImageThumb`) : cadre à filet sur fond d'outillage ; l'image est servie à la taille de la vignette.
+- **Aperçus** : l'image principale (portrait en 4:5, photographie en 3:2) en tête de l'aperçu, sur toute sa largeur.
+- Une image ne s'ajoute que sur la fiche d'un contenu enregistré ; les formulaires de création le disent en une ligne d'encre secondaire.
+
 ### Avis
 En bas, centrés, sur fond encre, au-dessus de la barre d'onglets sur téléphone. Textes de la liste fermée des avis du Back Office.
 

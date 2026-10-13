@@ -5,18 +5,24 @@ import { v2 as cloudinary } from 'cloudinary';
 import { getAppConfig } from '../config/app-config';
 import { EnvironmentVariables } from '../config/env.validation';
 import {
+  ImageFolder,
   StorageDeletion,
   StorageError,
   StorageService,
+  StoredImage,
 } from './storage.service';
 
 const FOLDER = 'candidatures/cv';
 // Fichier brut, conservé à l'identique, sans adresse publique.
 const RESOURCE = { resource_type: 'raw', type: 'authenticated' } as const;
+// Images du site : publiques, servies par leur adresse.
+const IMAGE_FOLDER = 'site';
+const IMAGE_RESOURCE = { resource_type: 'image', type: 'upload' } as const;
 const TIMEOUT_MS = 10_000;
 const SIGNED_URL_SECONDS = 60;
 
-type Operation = 'envoi' | 'lecture' | 'suppression';
+type Operation =
+  'envoi' | 'lecture' | 'suppression' | "envoi d'image" | "suppression d'image";
 
 // Seule partie du code qui connaît le fournisseur.
 @Injectable()
@@ -103,6 +109,66 @@ export class CloudinaryStorageService extends StorageService {
       return 'absent';
     }
     throw this.failure('suppression', new Error());
+  }
+
+  async uploadImage(
+    content: Buffer,
+    folder: ImageFolder,
+  ): Promise<StoredImage> {
+    try {
+      return await new Promise<StoredImage>((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            {
+              ...IMAGE_RESOURCE,
+              // Identifiant aléatoire : aucun nom de personne ni de contenu.
+              public_id: `${IMAGE_FOLDER}/${folder}/${randomUUID()}`,
+              overwrite: false,
+              timeout: TIMEOUT_MS,
+              // Orientation EXIF appliquée à la réception : le fichier stocké
+              // est droit, et ses dimensions sont celles de l'image affichée.
+              transformation: [{ angle: 'exif' }],
+            },
+            (error, result) => {
+              if (error || !result) {
+                reject(error ?? new Error());
+              } else {
+                resolve({
+                  id: result.public_id,
+                  url: result.secure_url,
+                  width: result.width,
+                  height: result.height,
+                  bytes: result.bytes,
+                  format: result.format,
+                });
+              }
+            },
+          )
+          .end(content);
+      });
+    } catch (error) {
+      throw this.failure("envoi d'image", error);
+    }
+  }
+
+  async deleteImage(id: string): Promise<StorageDeletion> {
+    let outcome: unknown;
+    try {
+      const result = (await cloudinary.uploader.destroy(id, {
+        ...IMAGE_RESOURCE,
+        invalidate: true,
+      })) as { result?: unknown };
+      outcome = result.result;
+    } catch (error) {
+      throw this.failure("suppression d'image", error);
+    }
+    if (outcome === 'ok') {
+      return 'deleted';
+    }
+    if (outcome === 'not found') {
+      return 'absent';
+    }
+    throw this.failure("suppression d'image", new Error());
   }
 
   // Le message d'une erreur du fournisseur peut contenir une adresse signée ou

@@ -8,6 +8,7 @@ import {
   InspectorPanel,
   InspectorSection,
 } from "@/components/Inspector";
+import ImageThumb from "@/components/ImageThumb";
 import LinkButton from "@/components/LinkButton";
 import RowAction from "@/components/RowAction";
 import { PublishedMark } from "@/components/StatusMark";
@@ -75,11 +76,27 @@ export default async function ActionInspector({
         </>
       }
     >
+      {action.photos[0] && (
+        <Box sx={{ mb: 2 }}>
+          <ImageThumb
+            url={action.photos[0].url}
+            alt={action.photos[0].alt}
+            focus={action.photos[0].focus}
+            ratio="3 / 2"
+            sizes="360px"
+          />
+        </Box>
+      )}
       <FieldList
         labelWidth={110}
         fields={[
           { label: "Date", value: formatUtcDate(action.date), numeric: true },
           { label: "Année", value: action.rotaryYear.label, numeric: true },
+          {
+            label: "Photographies",
+            value: action.photos.length > 0 ? String(action.photos.length) : null,
+            numeric: true,
+          },
           {
             label: "Ordre",
             value: action.order === null ? null : String(action.order),

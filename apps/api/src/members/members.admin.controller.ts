@@ -8,15 +8,24 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { ADMIN_ROLE } from '../auth/schemas/admin.schema';
 import type { Paginated } from '../common/dto/pagination-query.dto';
+import {
+  ImageFieldsDto,
+  UpdateImageFieldsDto,
+} from '../common/dto/image-fields.dto';
 import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
+import { ImageUploadInterceptor } from '../media/image-upload.interceptor';
+import type { UploadedImage } from '../media/image-upload.interceptor';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { QueryMembersDto } from './dto/query-members.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
@@ -61,5 +70,32 @@ export class MembersAdminController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseObjectIdPipe) id: string): Promise<void> {
     return this.membersService.remove(id);
+  }
+
+  // --- Portrait (contracts/api-images.md) ---
+
+  @Put(':id/portrait')
+  @UseInterceptors(ImageUploadInterceptor)
+  setPortrait(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @UploadedFile() file: UploadedImage | undefined,
+    @Body() dto: ImageFieldsDto,
+  ): Promise<AdminMemberDetailView> {
+    return this.membersService.setPortrait(id, file, dto);
+  }
+
+  @Patch(':id/portrait')
+  updatePortrait(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() dto: UpdateImageFieldsDto,
+  ): Promise<AdminMemberDetailView> {
+    return this.membersService.updatePortrait(id, dto);
+  }
+
+  @Delete(':id/portrait')
+  removePortrait(
+    @Param('id', ParseObjectIdPipe) id: string,
+  ): Promise<AdminMemberDetailView> {
+    return this.membersService.removePortrait(id);
   }
 }

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -15,6 +16,26 @@ import {
   rotaryYearLabel,
 } from '../common/utils/rotary-year';
 import { slugify, withSlugSuffix } from '../common/utils/slug';
+import {
+  ImageFieldsDto,
+  ReorderPhotosDto,
+  UpdateImageFieldsDto,
+} from '../common/dto/image-fields.dto';
+import {
+  AdminImage,
+  PublicImage,
+  toAdminImage,
+  toPublicImage,
+} from '../common/schemas/media-ref.schema';
+import {
+  addPhoto,
+  removeImageFiles,
+  removePhoto,
+  reorderPhotos,
+  updatePhoto,
+} from '../media/content-images';
+import type { UploadedImage } from '../media/image-upload.interceptor';
+import { StorageService } from '../media/storage.service';
 import { RotaryYear } from '../rotary-years/schemas/rotary-year.schema';
 import { ActionImpactDto, CreateActionDto } from './dto/create-action.dto';
 import { QueryAdminActionsDto } from './dto/query-admin-actions.dto';
@@ -44,6 +65,7 @@ export type AdminActionView = {
   isPublished: boolean;
   publishedAt: Date | null;
   order: number | null;
+  photos: AdminImage[];
   createdAt: Date;
   updatedAt: Date;
 };
@@ -59,6 +81,7 @@ export type PublicActionView = {
   rotaryYear: string;
   focusAreas: FocusArea[];
   impact?: ImpactView;
+  photos: PublicImage[];
 };
 
 export type ActionYearView = {
@@ -147,6 +170,7 @@ function toAdminView(
     isPublished: action.isPublished,
     publishedAt: action.publishedAt ?? null,
     order: action.order ?? null,
+    photos: (action.photos ?? []).map(toAdminImage),
     createdAt: action.createdAt,
     updatedAt: action.updatedAt,
   };
@@ -167,6 +191,7 @@ function toPublicView(
     rotaryYear: rotaryYearLabel(startYear),
     focusAreas: action.focusAreas,
     ...(impact ? { impact } : {}),
+    photos: (action.photos ?? []).map(toPublicImage),
   };
 }
 
@@ -176,10 +201,13 @@ function emptyPage<T>(page: number, limit: number): Paginated<T> {
 
 @Injectable()
 export class ActionsService {
+  private readonly logger = new Logger('Actions');
+
   constructor(
     @InjectModel(Action.name) private readonly actionModel: Model<Action>,
     @InjectModel(RotaryYear.name)
     private readonly rotaryYearModel: Model<RotaryYear>,
+    private readonly storage: StorageService,
   ) {}
 
   // --- Administration ---
@@ -374,11 +402,59 @@ export class ActionsService {
     return this.toAdminViewOf(updated);
   }
 
+  // Les fichiers d'abord : stockage indisponible, 503 et le contenu reste.
   async remove(id: string): Promise<void> {
-    const deleted = await this.actionModel.findByIdAndDelete(id).exec();
-    if (!deleted) {
+    const existing = await this.actionModel
+      .findById(id)
+      .select('photos')
+      .lean()
+      .exec();
+    if (!existing) {
       throw new NotFoundException();
     }
+    await removeImageFiles(this.storage, this.logger, existing.photos ?? []);
+    await this.actionModel.deleteOne({ _id: existing._id }).exec();
+  }
+
+  // --- Photographies ---
+
+  async addPhoto(
+    id: string,
+    file: UploadedImage | undefined,
+    dto: ImageFieldsDto,
+  ): Promise<AdminActionView> {
+    await addPhoto(
+      this.actionModel,
+      this.storage,
+      this.logger,
+      id,
+      file,
+      dto,
+      'actions',
+    );
+    return this.findOneForAdmin(id);
+  }
+
+  async updatePhoto(
+    id: string,
+    photoId: string,
+    dto: UpdateImageFieldsDto,
+  ): Promise<AdminActionView> {
+    await updatePhoto(this.actionModel, id, photoId, dto);
+    return this.findOneForAdmin(id);
+  }
+
+  async removePhoto(id: string, photoId: string): Promise<AdminActionView> {
+    await removePhoto(this.actionModel, this.storage, this.logger, id, photoId);
+    return this.findOneForAdmin(id);
+  }
+
+  async reorderPhotos(
+    id: string,
+    dto: ReorderPhotosDto,
+  ): Promise<AdminActionView> {
+    await reorderPhotos(this.actionModel, id, dto.photoIds);
+    return this.findOneForAdmin(id);
   }
 
   // --- Lecture publique : actions publiées seulement ---

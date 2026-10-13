@@ -1,5 +1,6 @@
 import { apiGet, apiGetAll } from "@/lib/api";
 import { toParagraphs } from "@/lib/paragraphs";
+import { toPhoto, type ApiImage } from "./media";
 import type { NewsItem, NewsType } from "@/types/news";
 import type { RotaryYear } from "@/types/rotary-year";
 
@@ -14,6 +15,7 @@ interface ApiNews {
   location?: string;
   summary?: string;
   content?: string;
+  photos: ApiImage[];
 }
 
 function toNewsItem(news: ApiNews): NewsItem {
@@ -29,8 +31,8 @@ function toNewsItem(news: ApiNews): NewsItem {
     location: news.location,
     summary: news.summary,
     body: body.length > 0 ? body : undefined,
-    // L'API ne fournit aucune photographie.
-    photos: [],
+    // La première est la principale.
+    photos: (news.photos ?? []).map(toPhoto),
   };
 }
 

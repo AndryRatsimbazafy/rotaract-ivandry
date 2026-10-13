@@ -146,6 +146,47 @@ export async function apiWrite<T>(
   }
 }
 
+// L'API dépose ensuite l'image au stockage : l'envoi peut être long.
+const UPLOAD_TIMEOUT_MS = 30_000;
+
+// Envoi d'une image, depuis une Server Action : corps multipart, frontière
+// posée par fetch. Même traitement de la session qu'apiWrite.
+export async function apiUpload<T>(
+  path: string,
+  method: "POST" | "PUT",
+  formData: FormData,
+): Promise<T> {
+  const token = await getSessionToken();
+  let response: Response;
+  try {
+    response = await fetch(`${baseUrl()}${path}`, {
+      method,
+      cache: "no-store",
+      signal: AbortSignal.timeout(UPLOAD_TIMEOUT_MS),
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    });
+  } catch {
+    throw new ApiError(0, GENERIC_ERROR);
+  }
+  if (response.ok) {
+    try {
+      return (await response.json()) as T;
+    } catch {
+      throw new ApiError(0, GENERIC_ERROR);
+    }
+  }
+  const error = await toApiError(response);
+  if (error.status === 401) {
+    await clearSession();
+    redirect(LOGIN_EXPIRED_PATH);
+  }
+  if (error.status === 403) {
+    redirect(FORBIDDEN_PATH);
+  }
+  throw error;
+}
+
 // Appel sans traitement de session : la connexion.
 export async function apiAnonymous<T>(
   path: string,

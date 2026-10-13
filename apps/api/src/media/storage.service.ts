@@ -7,6 +7,20 @@ export class StorageError extends Error {
 
 export type StorageDeletion = 'deleted' | 'absent';
 
+// Dossier d'une image au stockage, selon le contenu qui la porte.
+export type ImageFolder = 'membres' | 'actions' | 'actualites';
+
+// Image déposée : identifiant interne, adresse publique et ce que le stockage
+// a constaté (dimensions après orientation, poids, format).
+export type StoredImage = {
+  id: string;
+  url: string;
+  width: number;
+  height: number;
+  bytes: number;
+  format: string;
+};
+
 // Seule vue du stockage qu'ont les modules métier : aucun fournisseur n'y est
 // nommé.
 export abstract class StorageService {
@@ -18,4 +32,13 @@ export abstract class StorageService {
 
   // Un fichier déjà absent n'est pas une erreur.
   abstract delete(id: string): Promise<StorageDeletion>;
+
+  // Images : publiques, servies au navigateur par leur adresse.
+  abstract uploadImage(
+    content: Buffer,
+    folder: ImageFolder,
+  ): Promise<StoredImage>;
+
+  // Un fichier déjà absent n'est pas une erreur.
+  abstract deleteImage(id: string): Promise<StorageDeletion>;
 }

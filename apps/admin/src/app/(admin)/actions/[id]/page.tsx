@@ -1,5 +1,6 @@
 import DeleteSection from "@/components/DeleteSection";
 import PageHeader from "@/components/PageHeader";
+import PhotosSection from "@/components/PhotosSection";
 import { PublishedMark } from "@/components/StatusMark";
 import { apiRead } from "@/lib/api";
 import { formatDateTime, isoToDateInput, yearsForDateInput } from "@/lib/dates";
@@ -9,6 +10,7 @@ import type { Listed } from "@/types/api";
 import type { RotaryYear } from "@/types/rotary-year";
 import { deleteAction, updateAction } from "../actions";
 import ActionForm from "../_components/ActionForm";
+import { addPhoto, removePhoto, reorderPhotos, updatePhoto } from "../images-actions";
 
 export default async function ActionPage({
   params,
@@ -55,6 +57,13 @@ export default async function ActionPage({
         }}
         years={yearsForDateInput(years.data)}
         returnTo={returnTo}
+      />
+      <PhotosSection
+        photos={action.photos}
+        addAction={addPhoto.bind(null, action.id)}
+        updateAction={updatePhoto.bind(null, action.id)}
+        removeAction={removePhoto.bind(null, action.id)}
+        reorderAction={reorderPhotos.bind(null, action.id)}
       />
       <DeleteSection
         label="Supprimer cette action"

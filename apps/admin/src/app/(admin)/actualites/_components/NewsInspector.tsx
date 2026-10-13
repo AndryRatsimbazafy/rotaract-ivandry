@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import FieldList from "@/components/FieldList";
@@ -7,6 +8,7 @@ import {
   InspectorPanel,
   InspectorSection,
 } from "@/components/Inspector";
+import ImageThumb from "@/components/ImageThumb";
 import LinkButton from "@/components/LinkButton";
 import RowAction from "@/components/RowAction";
 import { PublishedMark } from "@/components/StatusMark";
@@ -63,6 +65,17 @@ export default async function NewsInspector({
         </>
       }
     >
+      {news.photos[0] && (
+        <Box sx={{ mb: 2 }}>
+          <ImageThumb
+            url={news.photos[0].url}
+            alt={news.photos[0].alt}
+            focus={news.photos[0].focus}
+            ratio="3 / 2"
+            sizes="360px"
+          />
+        </Box>
+      )}
       <FieldList
         labelWidth={110}
         fields={[
@@ -73,6 +86,11 @@ export default async function NewsInspector({
             numeric: true,
           },
           { label: "Année", value: news.rotaryYear.label, numeric: true },
+          {
+            label: "Photographies",
+            value: news.photos.length > 0 ? String(news.photos.length) : null,
+            numeric: true,
+          },
           { label: "Lieu", value: news.location },
           {
             label: "Première publication",

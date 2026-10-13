@@ -62,7 +62,12 @@ export function PhotoFrame({
 
   return (
     <figure className={styles.figure}>
-      <div className={veiled ? `${frameClass} ${styles.veiled}` : frameClass}>
+      {/* Jamais agrandie au-delà de sa taille d'origine (DESIGN.md, section 7) :
+          une image plus petite que son cadre s'affiche en plus petit. */}
+      <div
+        className={veiled ? `${frameClass} ${styles.veiled}` : frameClass}
+        style={{ maxWidth: photo.width }}
+      >
         <Image
           src={photo.src}
           alt={photo.alt}
@@ -73,10 +78,12 @@ export function PhotoFrame({
           style={photo.focus ? { objectPosition: photo.focus } : undefined}
         />
       </div>
-      {photo.caption ? (
+      {photo.caption || photo.credit ? (
         <figcaption className={styles.caption}>
           {photo.caption}
-          {photo.credit ? ` Photo : ${photo.credit}.` : null}
+          {photo.credit
+            ? `${photo.caption ? " " : ""}Photo : ${photo.credit}.`
+            : null}
         </figcaption>
       ) : null}
     </figure>

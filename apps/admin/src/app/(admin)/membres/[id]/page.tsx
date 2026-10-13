@@ -6,6 +6,8 @@ import type { MemberWithMandates } from "@/types/member";
 import type { RotaryYear } from "@/types/rotary-year";
 import { updateMember } from "../actions";
 import MandatesSection from "../_components/MandatesSection";
+import PortraitSection from "../_components/PortraitSection";
+import { removePortrait, setPortrait, updatePortrait } from "../images-actions";
 import MemberDelete from "../_components/MemberDelete";
 import MemberForm from "../_components/MemberForm";
 
@@ -34,6 +36,12 @@ export default async function MembrePage({
           phone: member.phone ?? "",
         }}
         returnTo={returnTo}
+      />
+      <PortraitSection
+        portrait={member.portrait}
+        setAction={setPortrait.bind(null, member.id)}
+        updateAction={updatePortrait.bind(null, member.id)}
+        removeAction={removePortrait.bind(null, member.id)}
       />
       <MandatesSection
         memberId={member.id}

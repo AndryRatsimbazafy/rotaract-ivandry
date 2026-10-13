@@ -15,6 +15,8 @@ type Props = {
   // Nom de l'élément, pour les noms accessibles.
   name: string;
   openHref?: string;
+  // Modification sur place (panneau latéral, par exemple).
+  edit?: { label: string; onClick: () => void };
   // Publication : l'action bascule l'état courant.
   publish?: { isPublished: boolean; action: () => Promise<ActionResult> };
   // Suppression : textes de confirmation existants.
@@ -24,7 +26,7 @@ type Props = {
 // Menu d'actions d'une ligne de grille : Ouvrir, Publier ou Dépublier,
 // Supprimer (avec la confirmation existante). Un clic ici ne choisit pas la
 // ligne.
-export default function RowMenu({ name, openHref, publish, remove }: Props) {
+export default function RowMenu({ name, openHref, edit, publish, remove }: Props) {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string>();
@@ -56,6 +58,16 @@ export default function RowMenu({ name, openHref, publish, remove }: Props) {
         {openHref && (
           <MenuItem component={Link} href={openHref} onClick={close}>
             Ouvrir
+          </MenuItem>
+        )}
+        {edit && (
+          <MenuItem
+            onClick={() => {
+              close();
+              edit.onClick();
+            }}
+          >
+            {edit.label}
           </MenuItem>
         )}
         {publish && (

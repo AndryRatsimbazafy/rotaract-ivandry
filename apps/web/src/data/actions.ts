@@ -1,5 +1,6 @@
 import { apiGet, apiGetAll } from "@/lib/api";
 import { toParagraphs } from "@/lib/paragraphs";
+import { toPhoto, type ApiImage } from "./media";
 import type { Action, ActionImpact } from "@/types/action";
 import type { RotaryYear } from "@/types/rotary-year";
 
@@ -14,6 +15,7 @@ interface ApiAction {
   rotaryYear: string;
   focusAreas: string[];
   impact?: ActionImpact;
+  photos: ApiImage[];
 }
 
 function toAction(action: ApiAction): Action {
@@ -29,8 +31,9 @@ function toAction(action: ApiAction): Action {
     rotaryYear: action.rotaryYear as RotaryYear,
     focusAreas: action.focusAreas,
     impact: action.impact,
-    // L'API ne fournit aucune photographie : les cadres restent des gabarits.
-    photos: [],
+    // La première est la principale ; sans photographie, les cadres restent
+    // des gabarits.
+    photos: (action.photos ?? []).map(toPhoto),
   };
 }
 
