@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "admin",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "export PATH=$HOME/.nvm/versions/node/v22.23.3/bin:$PATH && npm run dev:admin"],
+      "port": 3001
+    },
+    {
+      "name": "api",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "export PATH=$HOME/.nvm/versions/node/v22.23.3/bin:$PATH && npm run dev:api"],
+      "port": 4000
+    }
+  ]
+}
