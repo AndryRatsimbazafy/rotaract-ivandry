@@ -1,5 +1,6 @@
 import type { Lang } from "@/lib/locale";
 import * as frActions from "./fr/actions";
+import * as frClub from "./fr/club";
 import * as frCommon from "./fr/common";
 import * as frHome from "./fr/home";
 import * as frJoin from "./fr/join";
@@ -7,6 +8,7 @@ import * as frMembers from "./fr/members";
 import * as frNews from "./fr/news";
 import * as frPages from "./fr/pages";
 import * as enActions from "./en/actions";
+import * as enClub from "./en/club";
 import * as enCommon from "./en/common";
 import * as enHome from "./en/home";
 import * as enJoin from "./en/join";
@@ -21,6 +23,7 @@ import * as enPages from "./en/pages";
 
 const fr = {
   actions: frActions,
+  club: frClub,
   common: frCommon,
   home: frHome,
   join: frJoin,
@@ -34,6 +37,7 @@ export type Content = typeof fr;
 // Même forme que le français : un texte anglais manquant casse la compilation.
 const en = {
   actions: enActions,
+  club: enClub,
   common: enCommon,
   home: enHome,
   join: enJoin,

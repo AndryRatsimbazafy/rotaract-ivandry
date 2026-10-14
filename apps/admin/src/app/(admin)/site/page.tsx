@@ -6,9 +6,10 @@ import { apiRead } from "@/lib/api";
 import type { SiteSettings } from "@/types/site-settings";
 import ClubForm from "./_components/ClubForm";
 import FaqForm from "./_components/FaqForm";
+import HistoryForm from "./_components/HistoryForm";
 import SitePhotoCard from "./_components/SitePhotoCard";
 import SocialForm from "./_components/SocialForm";
-import { saveClub, saveFaq, saveSocial } from "./actions";
+import { saveClub, saveFaq, saveHistory, saveSocial } from "./actions";
 import { removeSitePhoto, setSitePhoto, updateSitePhoto } from "./photo-actions";
 
 // Réglages du site public (contracts/admin-screens.md) : photographies fixes,
@@ -76,6 +77,13 @@ export default async function SitePage() {
             "en.meetingPlace": clubEn.meetingPlace ?? "",
             "en.meetingRhythm": clubEn.meetingRhythm ?? "",
           }}
+        />
+        <Typography variant="h3" component="h3" sx={{ mt: 4, mb: 1.5 }}>
+          Histoire du club
+        </Typography>
+        <HistoryForm
+          action={saveHistory}
+          initial={{ history: settings.history ?? "", "en.history": settings.en?.history ?? "" }}
         />
         <Typography variant="h3" component="h3" sx={{ mt: 4, mb: 1.5 }}>
           Questions fréquentes

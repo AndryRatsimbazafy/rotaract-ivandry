@@ -5,6 +5,11 @@ export interface PageMeta {
   description: string;
 }
 
+export const clubPage: PageMeta = {
+  title: "The club",
+  description: "The story of the Rotaract Club Ivandry, its link with Rotary and its years.",
+};
+
 export const actionsPage: PageMeta = {
   title: "Actions",
   description: "The actions of the Rotaract Club Ivandry and their impact.",

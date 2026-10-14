@@ -7,7 +7,6 @@ import { newsItemPath, routes } from "@/config/routes";
 import { getNewsBySlug } from "@/data/news";
 import { languageAlternates } from "@/lib/page-metadata";
 import { toExcerpt } from "@/lib/paragraphs";
-import { shareImages } from "@/lib/share-image";
 import { NewsArticle } from "./_sections/NewsArticle";
 import styles from "./page.module.css";
 import { getContent } from "@/content";
@@ -28,7 +27,6 @@ export async function generateMetadata({
       type: "article",
       title: item.title,
       description,
-      images: await shareImages(item.photos[0]),
     },
   };
 }

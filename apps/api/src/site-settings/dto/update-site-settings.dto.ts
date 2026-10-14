@@ -34,6 +34,9 @@ export const MEETING_RHYTHM_MESSAGE =
   'Le rythme des réunions compte 160 caractères au plus.';
 export const FAQ_LENGTH_MESSAGE = 'La réponse compte 1000 caractères au plus.';
 export const FAQ_REQUIRED_MESSAGE = "Cette question a besoin d'une réponse.";
+export const HISTORY_MESSAGE =
+  "L'histoire du club compte 4000 caractères au plus.";
+const HISTORY_EN_MESSAGE = englishLengthMessage("L'histoire du club", 4000);
 
 // Création du premier club Rotaract.
 const FIRST_FOUNDED_YEAR = 1968;
@@ -263,6 +266,12 @@ export class SiteSettingsEnDto {
   @ValidateNested()
   @Type(() => FaqEnDto)
   faq?: FaqEnDto;
+
+  @ValidateIf(isSentAndNotNull)
+  @Transform(trimOrNull)
+  @IsString({ message: HISTORY_EN_MESSAGE })
+  @Length(1, 4000, { message: HISTORY_EN_MESSAGE })
+  history?: string | null;
 }
 
 // Corps de PATCH /admin/site-settings : partiel ; null vide un champ.
@@ -281,6 +290,13 @@ export class UpdateSiteSettingsDto {
   @ValidateNested()
   @Type(() => FaqDto)
   faq?: FaqDto;
+
+  // Histoire du club (fonctionnalité 015) ; null ou vide la retire.
+  @ValidateIf(isSentAndNotNull)
+  @Transform(trimOrNull)
+  @IsString({ message: HISTORY_MESSAGE })
+  @Length(1, 4000, { message: HISTORY_MESSAGE })
+  history?: string | null;
 
   @IsOptional()
   @ValidateNested()

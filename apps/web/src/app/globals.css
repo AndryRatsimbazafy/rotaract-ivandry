@@ -11,6 +11,9 @@
 
 html {
   color-scheme: light;
+  /* Téléphone : ni surbrillance au toucher, ni agrandissement du texte en paysage. */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
   /* Rien ne doit faire défiler la page à l'horizontale. */
   overflow-x: clip;
   /* L'en-tête fixe ne masque ni une ancre ni un élément focalisé. */
@@ -95,6 +98,20 @@ a {
   color: var(--link);
 }
 
+/* Le navigateur n'attend pas un double appui avant de suivre le lien. */
+a,
+button,
+summary,
+label {
+  touch-action: manipulation;
+}
+
+/* Un appui long sur un bouton ne sélectionne pas son libellé. */
+button {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 :focus-visible {
   outline: var(--focus-ring-width) solid var(--focus-ring);
   outline-offset: var(--focus-ring-offset);
@@ -102,7 +119,11 @@ a {
 
 /* Mise en page partagée par les sections (DESIGN.md, section 5). */
 .container {
-  width: min(100% - 2 * var(--page-margin), var(--container-page));
+  /* La marge s'élargit en paysage pour que le texte reste hors de l'encoche. */
+  width: min(
+    100% - 2 * max(var(--page-margin), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)),
+    var(--container-page)
+  );
   margin-inline: auto;
 }
 

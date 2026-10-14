@@ -59,6 +59,7 @@ export default async function ActionPage({
           },
           focusAreas: action.focusAreas,
           isPublished: action.isPublished,
+          highlighted: action.highlighted,
           publishedAt: action.publishedAt
             ? formatDateTime(action.publishedAt)
             : undefined,

@@ -73,7 +73,8 @@
 
 /* Au survol, l'année passe au bleu clair. L'année affichée est signalée par
    une mention écrite, pas par un soulignement. */
-.year:hover .yearName {
+.year:hover .yearName,
+.year:active .yearName {
   color: var(--on-field-text-secondary);
 }
 

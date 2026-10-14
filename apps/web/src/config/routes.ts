@@ -1,5 +1,6 @@
 export const routes = {
   home: "/",
+  club: "/club",
   actions: "/actions",
   news: "/actualites",
   members: "/membres",
@@ -18,7 +19,7 @@ export function newsItemPath(slug: string): string {
 
 export type RoutePath = (typeof routes)[keyof typeof routes];
 
-export type NavKey = "home" | "actions" | "news" | "members" | "join";
+export type NavKey = "home" | "club" | "actions" | "news" | "members" | "join";
 
 export interface NavItem {
   key: NavKey;
@@ -30,6 +31,7 @@ export interface NavItem {
 /** Libellés : chrome.navigation du dictionnaire de la langue. */
 export const mainNavigation: NavItem[] = [
   { key: "home", href: routes.home },
+  { key: "club", href: routes.club },
   { key: "actions", href: routes.actions },
   { key: "news", href: routes.news },
   { key: "members", href: routes.members },

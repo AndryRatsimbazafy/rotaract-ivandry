@@ -88,3 +88,18 @@ export async function saveFaq(_previous: FormState, formData: FormData): Promise
   }
   return save("faq", body, formData, en);
 }
+
+// Histoire du club et sa traduction (fonctionnalité 015) : deux champs, pas un
+// groupe. Les erreurs de l'API portent déjà le nom des champs du formulaire.
+export async function saveHistory(_previous: FormState, formData: FormData): Promise<FormState> {
+  try {
+    await apiWrite("/admin/site-settings", "PATCH", {
+      history: text(formData, "history") || null,
+      en: { history: text(formData, "en.history") || null },
+    });
+  } catch (error) {
+    return failure(error, formValues(formData));
+  }
+  revalidatePath(PAGE);
+  redirect(withNotice(PAGE, "modifie"));
+}

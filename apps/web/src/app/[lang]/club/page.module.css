@@ -1,0 +1,33 @@
+/*
+ * Feuille blanche de « Le club » : elle reçoit la photographie d'ouverture qui
+ * y descend, puis l'histoire, le Rotaract et les chiffres en marge.
+ */
+
+.sheet {
+  padding-block: calc(var(--rhythm-major) + var(--space-64)) var(--rhythm-major);
+  background: var(--bg-page);
+}
+
+.facts {
+  row-gap: var(--space-64);
+}
+
+.rotary,
+.figures {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 1024px) {
+  .sheet {
+    padding-top: calc(var(--rhythm-major) + var(--space-64));
+  }
+
+  .rotary {
+    grid-column: 1 / span 7;
+  }
+
+  /* Les chiffres dans la marge droite. */
+  .figures {
+    grid-column: 9 / -1;
+  }
+}

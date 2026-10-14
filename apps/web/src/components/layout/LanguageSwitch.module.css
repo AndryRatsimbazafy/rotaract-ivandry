@@ -2,8 +2,11 @@
 
 .list {
   display: flex;
+  flex: none;
   align-items: center;
   list-style: none;
+  /* Sur téléphone, la une est étroite : « FR · EN » ne se coupe jamais. */
+  white-space: nowrap;
 }
 
 .list li + li::before {
@@ -32,7 +35,8 @@
   text-decoration: none;
 }
 
-.link:hover {
+.link:hover,
+.link:active {
   color: var(--text-primary);
 }
 
@@ -44,7 +48,8 @@
 
 /* Sur le champ encre du sommaire du téléphone. */
 .onField .current,
-.onField .link:hover {
+.onField .link:hover,
+.onField .link:active {
   color: var(--on-field-text);
 }
 

@@ -1,4 +1,5 @@
-// Les sept emplacements photographiques fixes du site. Liste fermée, dans
+// Les huit emplacements photographiques fixes du site (le huitième,
+// club-ouverture, depuis la fonctionnalité 015). Liste fermée, dans
 // l'ordre des pages.
 export enum SitePhotoSlot {
   AccueilOuverture = 'accueil-ouverture',
@@ -8,4 +9,5 @@ export enum SitePhotoSlot {
   ActionsDetail = 'actions-detail',
   MembresOuverture = 'membres-ouverture',
   RejoindreOuverture = 'rejoindre-ouverture',
+  ClubOuverture = 'club-ouverture',
 }

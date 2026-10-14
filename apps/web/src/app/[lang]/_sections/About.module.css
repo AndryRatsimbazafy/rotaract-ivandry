@@ -57,6 +57,12 @@
 }
 
 /* Texte en attente : en retrait, sans peser sur la page. */
+.more {
+  margin-top: var(--space-8);
+  font-family: var(--font-structure);
+  font-size: var(--text-body-size);
+}
+
 .pending {
   padding-top: var(--space-16);
   border-top: var(--rule-width) solid var(--border-rule);

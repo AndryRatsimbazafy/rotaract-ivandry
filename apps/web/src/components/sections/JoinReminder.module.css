@@ -50,7 +50,8 @@
 }
 
 .action:hover,
-.action:focus-visible {
+.action:focus-visible,
+.action:active {
   color: var(--text-primary);
   background: var(--on-field-text);
 }

@@ -88,7 +88,8 @@
   inset: 0;
 }
 
-.entry:has(.link:hover) .name {
+.entry:has(.link:hover) .name,
+.entry:has(.link:active) .name {
   color: var(--link);
 }
 

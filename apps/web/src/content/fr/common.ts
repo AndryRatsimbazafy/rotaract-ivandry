@@ -39,6 +39,7 @@ export const chrome = {
   skipLink: "Aller au contenu",
   navigation: {
     home: "Accueil",
+    club: "Le club",
     actions: "Actions",
     news: "Actualités",
     members: "Membres",
@@ -69,4 +70,14 @@ export const chrome = {
   photoCredit: (credit: string) => `Photo : ${credit}.`,
   /** Repère d'un passage en français sur une page anglaise. */
   inFrench: "En français",
+  /** Galerie plein écran des pages de détail (fonctionnalité 015). */
+  gallery: {
+    open: (alt: string) => `Agrandir la photographie : ${alt}`,
+    dialog: (title: string) => `Photographies de ${title}`,
+    previous: "Photographie précédente",
+    next: "Photographie suivante",
+    close: "Fermer",
+    /** Gabarit lu par la galerie : {n} et {total} sont remplacés. */
+    announce: "Photographie {n} sur {total}",
+  },
 };

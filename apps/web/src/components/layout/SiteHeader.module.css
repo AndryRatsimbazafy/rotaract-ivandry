@@ -1,13 +1,15 @@
 /* L'en-tête occupe toute la largeur de l'écran, d'une marge à l'autre. */
 
 .dateline {
+  padding-top: env(safe-area-inset-top, 0px);
   color: var(--text-secondary);
   background: var(--bg-page);
 }
 
 .datelineInner,
 .inner {
-  margin-inline: var(--page-margin);
+  /* En paysage, la marge s'élargit pour que rien ne passe sous l'encoche. */
+  margin-inline: max(var(--page-margin), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
 }
 
 .datelineInner {
@@ -20,6 +22,7 @@
 
 .datelineTools {
   display: flex;
+  flex: none;
   align-items: center;
   column-gap: var(--space-16);
 }

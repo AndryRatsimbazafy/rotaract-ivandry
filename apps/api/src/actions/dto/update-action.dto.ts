@@ -22,6 +22,7 @@ import {
   ActionEnDto,
   ActionImpactDto,
   EN_MESSAGE,
+  HIGHLIGHTED_MESSAGE,
   DATE_MESSAGE,
   DESCRIPTION_MESSAGE,
   FOCUS_AREAS_MESSAGE,
@@ -97,6 +98,10 @@ export class UpdateActionDto {
   @ValidateIf(isSent)
   @IsBoolean({ message: PUBLISHED_MESSAGE })
   isPublished?: boolean;
+
+  @ValidateIf(isSent)
+  @IsBoolean({ message: HIGHLIGHTED_MESSAGE })
+  highlighted?: boolean;
 
   @ValidateIf(isSentAndNotNull)
   @IsInt({ message: ORDER_MESSAGE })

@@ -38,6 +38,7 @@ export type AdminSiteSettingsView = {
   social: SocialLinks;
   club: ClubFacts;
   faq: Faq;
+  history?: string;
   photos: Partial<Record<SitePhotoSlot, AdminImage>>;
   en?: SiteSettingsEn;
   updatedAt: string | null;
@@ -47,6 +48,7 @@ export type PublicSiteSettingsView = {
   social: SocialLinks;
   club: ClubFacts;
   faq: Faq;
+  history?: string;
   photos: Partial<Record<SitePhotoSlot, PublicImage>>;
   en?: SiteSettingsEn;
 };
@@ -101,6 +103,7 @@ export class SiteSettingsService {
       social: present(settings?.social),
       club: present(settings?.club),
       faq: present(settings?.faq),
+      ...(settings?.history ? { history: settings.history } : {}),
       ...enOf(settings?.en),
       photos: mapPhotos(settings?.photos, toAdminImage),
       updatedAt: settings?.updatedAt?.toISOString() ?? null,
@@ -113,6 +116,7 @@ export class SiteSettingsService {
       social: present(settings?.social),
       club: present(settings?.club),
       faq: present(settings?.faq),
+      ...(settings?.history ? { history: settings.history } : {}),
       ...enOf(settings?.en),
       photos: mapPhotos(settings?.photos, toPublicImage),
     };
@@ -137,6 +141,18 @@ export class SiteSettingsService {
         } else if (value !== undefined) {
           set[`${group}.${field}`] = value as string | number;
         }
+      }
+    }
+    // Histoire du club et sa traduction (fonctionnalité 015) : un seul champ.
+    const texts: [string, string | null | undefined][] = [
+      ['history', dto.history],
+      ['en.history', dto.en?.history],
+    ];
+    for (const [field, value] of texts) {
+      if (value === null) {
+        unset[field] = '';
+      } else if (value !== undefined) {
+        set[field] = value;
       }
     }
     if (Object.keys(set).length > 0 || Object.keys(unset).length > 0) {

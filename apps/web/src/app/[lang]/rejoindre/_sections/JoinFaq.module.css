@@ -75,7 +75,8 @@
   }
 }
 
-.question:hover .name {
+.question:hover .name,
+.question:active .name {
   color: var(--link);
 }
 

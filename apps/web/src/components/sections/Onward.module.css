@@ -36,7 +36,8 @@
 }
 
 .link:hover,
-.link:focus-visible {
+.link:focus-visible,
+.link:active {
   color: var(--link);
 }
 

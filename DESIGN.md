@@ -24,7 +24,7 @@ description: Direction artistique du Front Office du Rotaract Club Ivandry. Édi
 
 ## Portée : tout le Front Office
 
-Cette direction est la référence obligatoire de toutes les pages de `apps/web` : `/`, `/actions`, `/actualites`, `/membres`, `/rejoindre`, et celles qui suivront, en français comme en anglais (sous `/en`, fonctionnalité 014). Le site doit donner l'impression qu'une seule direction artistique l'a conçu en entier.
+Cette direction est la référence obligatoire de toutes les pages de `apps/web` : `/`, `/club`, `/actions`, `/actualites`, `/membres`, `/rejoindre`, et celles qui suivront, en français comme en anglais (sous `/en`, fonctionnalité 014). Le site doit donner l'impression qu'une seule direction artistique l'a conçu en entier.
 
 **Ce que chaque page doit être.** Éditoriale et premium, contemporaine, photographique, asymétrique mais maîtrisée, avec une typographie expressive, des blancs intentionnels, des détails éditoriaux, de la profondeur, des interactions discrètes, et une identité Rotaract Club Ivandry forte.
 
@@ -380,6 +380,7 @@ Une image peut être très grande, recadrée, débordante, verticale ou panorami
 - **Texte sur image.** Uniquement un texte de l'étage graphique (Signature, Très grand titre), en blanc, sur une image voilée. Jamais un paragraphe, une étiquette ou un bouton.
 - **Recadrage.** Chaque photographie peut déclarer un point d'intérêt, conservé quand le cadre change de format. Le sujet est hors de la zone couverte par un titre ou un aplat. On ne coupe ni les visages ni les mains. On ne déforme et on n'agrandit jamais une image au-delà de sa taille d'origine.
 - **Survol.** L'image d'un contenu cliquable grossit de 3 % en 480 ms à l'intérieur de son cadre.
+- **Image de partage** (fonctionnalité 015). L'aperçu d'une page partagée sur les réseaux est composé à partir d'une photographie réelle du club : la photographie en plein cadre, cadrée sur son point d'intérêt, le Voile, le logo du club sans texte en haut à gauche, le trait d'or puis le titre de la page en blanc, Open Sans condensée grasse, en bas à gauche. C'est l'application de la règle du texte sur image, pas une image générée : aucune illustration, aucun paragraphe, aucune étiquette, aucun bouton. Sans photographie, l'ouverture de la page, puis celle de l'accueil.
 
 ### Qualité et légendes
 
@@ -414,7 +415,7 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 |---|---|
 | **En-tête** | Il occupe toute la largeur de l'écran, d'une marge à l'autre, même quand le contenu est centré. La une sur une ligne fine : lieu et année Rotary à gauche, pictogrammes des réseaux sociaux à droite. Puis l'en-tête, fixe en haut de l'écran, fermé par un filet encre. Signature du club à gauche, haute de 44 px sur téléphone et de 56 px sur ordinateur. Hauteur de l'en-tête : 68 px et 88 px. |
 | **Réseaux sociaux** | Facebook et Instagram, en pictogrammes au trait de 1,5 px, 20 px dans une zone tactile de 44 px. Dans la une, dans le pied de page et au bas du sommaire du téléphone. Chacun a un nom lisible par les lecteurs d'écran. |
-| **Navigation** | À partir de 1024 px : liens en ligne, un filet bleu de 2 px sous la rubrique courante. « Nous rejoindre » dans un cadre fin de 1 px. |
+| **Navigation** | Six rubriques : Accueil, Le club, Actions, Actualités, Membres, Nous rejoindre. À partir de 1024 px : liens en ligne, un filet bleu de 2 px sous la rubrique courante. « Nous rejoindre » dans un cadre fin de 1 px. Les six tiennent sur une ligne dans les deux langues ; si la place manque, l'écart entre les liens se resserre, jamais le corps du texte. |
 | **Menu du téléphone** | Le mot « Menu » en étiquette et deux filets inégaux. Il ouvre le **sommaire** : plein écran sur encre, rubriques numérotées en très grand, lieu et année au bas, bouton « Fermer ». Fermeture par Échap, focus retenu dans le sommaire. |
 | **Lien fléché** | Libellé en graisse 600 et flèche. C'est la forme d'appel par défaut. |
 | **Liens dans un texte** | Bleu royal, soulignés. Sur champ fort : blancs, soulignés. |
@@ -425,6 +426,7 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 | **Formulaires** | Une colonne, libellé au-dessus, aide et erreur dessous, champs de 48 px, bordure Tin, texte de 16 px au moins. Une erreur s'écrit sous son champ, précédée du mot « Erreur », avec une bordure plus épaisse : jamais par la couleur seule. Le choix entre deux options se fait par boutons radio dans un groupe titré. Le dépôt de fichier est un champ natif dans une zone à bordure pointillée. Si tous les champs sont obligatoires, une phrase le dit en tête du formulaire, sans astérisque. Ce qui se passe après l'envoi est écrit avant le bouton. |
 | **Accordéon** | Lignes séparées par un filet encre, question en H4, signe plus ou moins à droite, toute la ligne cliquable. Élément natif, sans script. |
 | **Modale, tiroir** | Rayon 0, l'unique ombre du système. |
+| **Galerie plein écran** | Sur les pages de détail, chaque photographie s'agrandit. Plein écran sur encre, la photographie entière, jamais recadrée ni agrandie au-delà de sa taille d'origine. Sous elle, la légende en Georgia italique blanche et le crédit ; en haut, la position « 3 / 12 » en chiffres tabulaires et le bouton « Fermer » ; de part et d'autre, deux flèches au trait dans des zones de 44 px. On passe d'une photographie à l'autre par les flèches, le clavier ou le balayage ; Échap et le retour du navigateur ferment, et le focus revient sur la photographie d'origine. Une seule photographie : ni position ni flèches. Pas d'ombre : le champ encre suffit. |
 | **Notification** | Bandeau à fond teinté d'état avec bordure de 1 px, icône et texte. |
 | **Chargement** | Squelettes aux dimensions du contenu. |
 | **Erreur** | Une phrase calme, la cause et la correction. Une page qui ne peut pas se charger affiche la page d'erreur : même composition que la page introuvable, sans chiffre, avec un bouton « Réessayer ». |
@@ -507,6 +509,8 @@ Courbe unique, en décélération. Aucun rebond.
 | **Appel du champ cranberry** | La ligne s'inverse (fond blanc, texte encre), se resserre de 16 px, la flèche avance de 8 px. |
 | **Sommaire du téléphone** | Apparaît en fondu avec un déplacement de 8 px ; repart par le même chemin, plus vite (200 ms). |
 | **Dépliant** (FAQ, filtre des domaines) | Le contenu se déploie en hauteur et en fondu ; il se replie de même. Le signe plus perd son trait vertical en se résorbant. Sans prise en charge du navigateur, il s'ouvre d'un coup. |
+| **Galerie** | S'ouvre en fondu (320 ms), se ferme en fondu plus court (200 ms). Le passage d'une photographie à l'autre est le défilement natif, accroché à chaque photographie ; sans mouvement en mouvement réduit. |
+| **Appui tactile** | Sur un écran tactile, l'élément touché change de couleur dès l'appui (120 ms), comme au survol ; la surbrillance grise du navigateur est supprimée. |
 | **Candidature envoyée** | Le message de confirmation apparaît en fondu avec un déplacement de 8 px (320 ms). |
 | **Focus** | Contour de 2 px, décalé de 2 px : bleu royal sur fond clair, blanc sur champ fort. Toujours visible. |
 
@@ -548,9 +552,11 @@ Le téléphone est conçu, pas réduit.
 | **Actions** | Première image bord à bord, les autres en colonne | Deux images côte à côte, décalées | Bord perdu, aplat mordant, décalages |
 | **Registre** | Jour à gauche, titre et type à droite | Idem | Titre de section en marge, type en bout de ligne |
 | **Membres** | Noms, puis portraits sur leur bande | Idem | Noms sur sept colonnes, portraits à droite |
+| **Le club** | Ouverture bord à bord, puis histoire, chiffres et frise en une colonne ; années de la frise au-dessus de leur mandat | Idem, chiffres sur deux colonnes | Histoire sur la colonne de lecture, chiffres en marge ; frise : années en marge gauche, mandat à droite du filet |
 | **Champ cranberry** | Photographie qui dépasse en haut à droite, parcours sur deux colonnes | Parcours sur quatre colonnes | Question sur huit colonnes, photographie à bord perdu |
 
 - Aucun contenu coupé, aucun défilement horizontal.
+- **Encoche et barre d'accueil.** Le fond s'étend sous l'encoche et la barre d'accueil ; textes et commandes restent hors de ces zones (en-tête, sommaire, pied de page, galerie). La barre d'état du téléphone prend le blanc du fond de page.
 - Les superpositions restent sur téléphone quand elles tiennent : signature à cheval, photographies traversantes, chevauchement des portraits.
 - Les très grandes tailles suivent la largeur de l'écran.
 
@@ -616,7 +622,7 @@ Une valeur absente des tokens s'ajoute là avant d'être utilisée. Points de ru
 
 ## 17. Direction par page
 
-Les cinq pages et les deux pages de détail sont conçues. Ces lignes décrivent la composition retenue pour chacune ; elles fixent une intention, pas un périmètre fonctionnel.
+Les six pages et les deux pages de détail sont conçues. Ces lignes décrivent la composition retenue pour chacune ; elles fixent une intention, pas un périmètre fonctionnel.
 
 | Page | Intention |
 |---|---|
@@ -624,6 +630,7 @@ Les cinq pages et les deux pages de détail sont conçues. Ces lignes décrivent
 | **Actions** | Le reportage. Ouverture typographique sur le fond de page, avec une photographie verticale à bord perdu qui descend dans la section suivante et une seconde image qui la chevauche. Définition en entrée de dictionnaire sur feuille blanche. Index des filtres, puis les actions une à une, chacune dans l'une de trois compositions qui alternent : grand format avec titre au-dessus et métadonnées en marge, verticale à gauche avec fiche à droite, texte à gauche avec image décalée à droite. Rappel cranberry. |
 | **News** | Le journal. Ouverture purement typographique, en deux lignes décalées, comme une manchette. Une actualité à la une : le jour en chiffre monumental, une grande photographie à bord perdu, le titre sur un aplat blanc qui mord dessus. Sur feuille blanche, les rubriques en index puis le registre, groupé par mois : le mois reste en marge pendant que ses lignes défilent. Les archives par année Rotary sur champ encre, les années en très grand. Deux liens vers les actions et les membres, puis le rappel cranberry. |
 | **Join** | L'invitation. Ouverture sur champ cranberry partiel, photographie verticale qui le recouvre. « Un club, des actions, des liens » en trois lignes décalées sur feuille blanche. Les valeurs de part et d'autre d'un axe central : le nom à gauche de l'axe, la définition à droite. Les sept domaines sur champ encre, en lignes alternées gauche et droite. Le parcours en six étapes le long d'un filet vertical, chiffres au trait, le statut de sympathisant expliqué à son étape. Les quatre questions du Rotary en voix de récit, en grand, le titre au-dessus et les questions en retrait de deux colonnes. La candidature : colonne éditoriale et formulaire. Les questions fréquentes en accordéon. Liens de sortie. |
+| **Le club** | La chronique. Titre de page en signature, photographie d'ouverture verticale à bord perdu à droite (emplacement « Le club — ouverture »). Sur feuille blanche, l'histoire du club en voix de récit sur la colonne de lecture, la première phrase en chapeau. Le Rotaract et le Rotary en entrée de dictionnaire, avec le club parrain. Les chiffres clés en liste de définitions dans la marge, chiffres tabulaires en grand, sans compteur animé ; un chiffre absent n'a pas de ligne. Sur champ encre, la frise : un filet vertical, chaque année Rotary au trait en très grand en marge, le ou les présidents en titre, les actions marquantes en liens fléchés ; de la plus récente à la plus ancienne, sans carte ni vignette. Liens de sortie, rappel cranberry. |
 | **Members** | L'annuaire. Le titre sur une seule ligne, en signature. Une photographie de groupe panoramique à bord perdu à gauche, les années Rotary en regard à droite. Sur feuille blanche, l'année tracée au trait en très grand, puis trois niveaux de lecture : une personne en grand format, trois portraits de tailles et de hauteurs différentes, puis les autres en lignes. Sur champ encre, l'index des fonctions : qui tient quoi, sans hiérarchie entre les fonctions. Liens de sortie, rappel cranberry. L'ordre des personnes est celui que le club choisit, jamais un classement par fonction. |
 | **Action (détail)** | Le reportage (section 10). Métadonnées en marge, titre condensé qui mord la photographie principale à bord perdu, récit et fiche d'impact en marge, planche asymétrique des autres photographies, rappel cranberry. |
 | **Actualité (détail)** | L'article (section 10). Jour monumental en marge, titre et lieu, photographie 16:9 à bord perdu, chapeau, texte et photographies dans la marge droite. |

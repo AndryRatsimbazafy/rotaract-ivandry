@@ -97,6 +97,9 @@ export async function createAction(
   if (formData.get("isPublished") === "true") {
     body.isPublished = true;
   }
+  if (formData.get("highlighted") === "true") {
+    body.highlighted = true;
+  }
   const order = text(formData, "order");
   if (order) {
     body.order = orderOf(order);
@@ -130,6 +133,7 @@ export async function updateAction(
     impact: impactOf(formData),
     en: enOf(formData),
     isPublished: formData.get("isPublished") === "true",
+    highlighted: formData.get("highlighted") === "true",
     order: order ? orderOf(order) : null,
   };
   // Le slug n'est envoyé que s'il a changé.

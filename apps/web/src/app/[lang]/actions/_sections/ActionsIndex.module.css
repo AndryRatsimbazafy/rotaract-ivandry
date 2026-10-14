@@ -64,7 +64,8 @@
   text-underline-offset: 0.4em;
 }
 
-.option:hover {
+.option:hover,
+.option:active {
   color: var(--text-primary);
 }
 
@@ -224,7 +225,8 @@
   text-decoration: none;
 }
 
-.link:hover {
+.link:hover,
+.link:active {
   color: var(--link);
 }
 

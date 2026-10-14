@@ -19,6 +19,11 @@
   background-size: 100% var(--rule-width);
 }
 
+/* À l'appui, sur tous les écrans : la couleur change aussitôt (DESIGN.md, section 12). */
+.link:active {
+  color: var(--link);
+}
+
 /* Au survol, réservé aux pointeurs précis : sur un écran tactile, le filet et
  * la flèche resteraient figés après l'appui. */
 @media (hover: hover) and (pointer: fine) {

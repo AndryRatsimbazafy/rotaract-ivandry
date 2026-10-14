@@ -44,9 +44,13 @@ function toNewsItem(news: ApiNews, lang: Lang): NewsItem {
 }
 
 /** Une actualité publiée par son slug ; null si elle n'existe pas ou plus. */
-export async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
+/**
+ * lang : seulement hors d'une page (images de partage, fonctionnalité 015),
+ * où next/root-params n'est pas disponible.
+ */
+export async function getNewsBySlug(slug: string, forLang?: Lang): Promise<NewsItem | null> {
   const news = await apiGetOrNull<ApiNews>(`/news/${encodeURIComponent(slug)}`);
-  const lang = await currentLang();
+  const lang = forLang ?? (await currentLang());
   return news && toNewsItem(news, lang);
 }
 

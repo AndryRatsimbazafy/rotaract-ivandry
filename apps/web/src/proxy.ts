@@ -11,6 +11,12 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Images de partage (fonctionnalité 015) : Next.js publie leur adresse
+  // française sous /fr ; ce ne sont pas des pages, elles passent sans redirection.
+  if (pathname.startsWith("/fr/") && pathname.includes("/opengraph-image")) {
+    return NextResponse.next();
+  }
+
   if (pathname === "/fr" || pathname.startsWith("/fr/")) {
     const url = request.nextUrl.clone();
     url.pathname = pathname === "/fr" ? "/" : pathname.slice(3);

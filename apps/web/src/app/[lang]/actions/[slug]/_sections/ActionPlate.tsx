@@ -1,4 +1,5 @@
 import { PhotoFrame } from "@/components/media/PhotoFrame";
+import { GalleryTrigger } from "@/components/media/PhotoGallery";
 import type { Photo } from "@/types/media";
 import styles from "./ActionPlate.module.css";
 import { getContent } from "@/content";
@@ -36,7 +37,13 @@ export async function ActionPlate({ photos }: { photos: Photo[] }) {
                   format={slot.format}
                   sizes={slot.sizes}
                   className={styles[`frame${slot.format.replace(":", "x")}`]}
-                />
+                >
+                  {/* La planche suit la photographie principale : rang + 1 dans la galerie. */}
+                  <GalleryTrigger
+                    index={index + 1}
+                    label={content.common.chrome.gallery.open(photo.alt)}
+                  />
+                </PhotoFrame>
               </li>
             );
           })}

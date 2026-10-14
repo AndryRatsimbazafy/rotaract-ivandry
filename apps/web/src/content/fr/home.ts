@@ -41,6 +41,8 @@ export const about = {
     meetingRhythm: "Rythme",
   },
   photoBrief: "La vie du club : une réunion, un moment d'équipe.",
+  /** Lien vers la page « Le club » (fonctionnalité 015). */
+  more: "En savoir plus sur le club",
 };
 
 export interface RotaryValue {

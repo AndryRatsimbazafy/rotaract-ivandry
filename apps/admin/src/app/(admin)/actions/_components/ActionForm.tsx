@@ -34,6 +34,8 @@ export type ActionFormInitial = {
   values: Record<string, string>;
   focusAreas: string[];
   isPublished: boolean;
+  // Action marquante de la frise du club (fonctionnalité 015).
+  highlighted: boolean;
   // « Première publication le … », si elle a eu lieu.
   publishedAt?: string;
 };
@@ -70,6 +72,7 @@ const NO_INITIAL: ActionFormInitial = {
   values: {},
   focusAreas: [],
   isPublished: false,
+  highlighted: false,
 };
 
 export default function ActionForm({
@@ -94,6 +97,10 @@ export default function ActionForm({
     "title" in state.values
       ? state.values.isPublished === "true"
       : initial.isPublished;
+  const highlighted =
+    "title" in state.values
+      ? state.values.highlighted === "true"
+      : initial.highlighted;
   const noYear = years.length === 0;
 
   return (
@@ -159,6 +166,22 @@ export default function ActionForm({
             initialYearId={value("rotaryYear") || undefined}
             error={errors.rotaryYear}
           />
+          <FormControl error={Boolean(errors.highlighted)}>
+            <FormControlLabel
+              label="Action marquante (frise du club)"
+              control={
+                <Checkbox
+                  name="highlighted"
+                  value="true"
+                  defaultChecked={highlighted}
+                  size="small"
+                />
+              }
+            />
+            <FormHelperText>
+              {errors.highlighted ?? "Trois au plus par année Rotary."}
+            </FormHelperText>
+          </FormControl>
 
           <FormControl component="fieldset" error={Boolean(errors.focusAreas)}>
             <FormLabel component="legend">

@@ -20,7 +20,8 @@
   background: var(--action-bg);
 }
 
-.primary:hover {
+.primary:hover,
+.primary:active {
   background: var(--action-bg-hover);
 }
 
@@ -30,7 +31,8 @@
   background: transparent;
 }
 
-.secondary:hover {
+.secondary:hover,
+.secondary:active {
   color: var(--bg-page);
   background: var(--text-primary);
 }
@@ -41,7 +43,8 @@
   background: var(--on-field-text);
 }
 
-.onField:hover {
+.onField:hover,
+.onField:active {
   background: var(--bg-surface);
 }
 

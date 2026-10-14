@@ -8,11 +8,12 @@ import { actionPath, routes } from "@/config/routes";
 import { getActionBySlug } from "@/data/actions";
 import { languageAlternates } from "@/lib/page-metadata";
 import { toExcerpt } from "@/lib/paragraphs";
-import { shareImages } from "@/lib/share-image";
 import { ActionPlate } from "./_sections/ActionPlate";
 import { ActionStory } from "./_sections/ActionStory";
 import styles from "./page.module.css";
 import { getContent } from "@/content";
+import { PhotoGallery } from "@/components/media/PhotoGallery";
+import { galleryProps } from "@/lib/gallery";
 
 export async function generateMetadata({
   params,
@@ -30,7 +31,6 @@ export async function generateMetadata({
       type: "article",
       title: action.title,
       description,
-      images: await shareImages(action.photos[0]),
     },
   };
 }
@@ -45,11 +45,14 @@ export default async function ActionPage({ params }: PageProps<"/[lang]/actions/
   const { slug } = await params;
   const action = await getActionBySlug(slug);
   if (!action) notFound();
+  const gallery = await galleryProps(action.photos, action.title);
 
   return (
     <>
-      <ActionStory action={action} />
-      <ActionPlate photos={action.photos.slice(1)} />
+      <PhotoGallery photos={gallery.photos} labels={gallery.labels}>
+        <ActionStory action={action} />
+        <ActionPlate photos={action.photos.slice(1)} />
+      </PhotoGallery>
       <div className={`container ${styles.back}`}>
         <ArrowLink href={routes.actions}>{actionPage.backLabel}</ArrowLink>
       </div>

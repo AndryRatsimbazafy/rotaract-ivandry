@@ -1,0 +1,48 @@
+/* 03 : les chiffres clés dans la marge, en liste de définitions. */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-16);
+}
+
+.title {
+  font-size: var(--text-h3-size);
+  font-stretch: var(--font-width-normal);
+  line-height: var(--text-h3-leading);
+  letter-spacing: 0;
+}
+
+.list {
+  display: grid;
+  margin-top: var(--space-8);
+}
+
+.row {
+  display: flex;
+  flex-direction: column-reverse;
+  row-gap: var(--space-4);
+  padding-block: var(--space-16);
+  border-top: var(--rule-width) solid var(--rule-strong);
+}
+
+.name {
+  color: var(--text-secondary);
+}
+
+.value {
+  color: var(--link);
+  font-size: var(--text-display-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--text-display-leading);
+  letter-spacing: var(--text-display-tracking);
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
+  }
+}

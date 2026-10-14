@@ -38,6 +38,8 @@ export const IMPACT_TEXT_MESSAGE =
   'Cette rubrique compte 500 caractères au plus.';
 export const IMPACT_PARTNERS_MESSAGE =
   '20 partenaires au plus, 120 caractères chacun.';
+export const HIGHLIGHTED_MESSAGE =
+  "L'indication « marquante » est vraie ou fausse.";
 export const PUBLISHED_MESSAGE =
   "L'état de publication doit être vrai ou faux.";
 export const ORDER_MESSAGE =
@@ -195,6 +197,10 @@ export class CreateActionDto {
   @IsOptional()
   @IsBoolean({ message: PUBLISHED_MESSAGE })
   isPublished?: boolean;
+
+  @IsOptional()
+  @IsBoolean({ message: HIGHLIGHTED_MESSAGE })
+  highlighted?: boolean;
 
   @IsOptional()
   @IsInt({ message: ORDER_MESSAGE })

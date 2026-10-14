@@ -28,6 +28,10 @@
   background-size: 100% var(--border-width-strong);
 }
 
+.link:active {
+  color: var(--link);
+}
+
 /* Au survol, réservé aux pointeurs précis : sur un écran tactile, le filet
  * resterait tracé après l'appui. */
 @media (hover: hover) and (pointer: fine) {
@@ -49,7 +53,8 @@
 }
 
 .join:hover,
-.join[aria-current="page"] {
+.join[aria-current="page"],
+.join:active {
   color: var(--bg-page);
   border-color: var(--text-primary);
   background: var(--text-primary);

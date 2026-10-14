@@ -98,11 +98,13 @@
 }
 
 /* Au survol : la ligne devient blanche, le jour passe au bleu. */
-.row:has(.link:hover) {
+.row:has(.link:hover),
+.row:has(.link:active) {
   background: var(--bg-page);
 }
 
-.row:has(.link:hover) .day {
+.row:has(.link:hover) .day,
+.row:has(.link:active) .day {
   color: var(--link);
 }
 

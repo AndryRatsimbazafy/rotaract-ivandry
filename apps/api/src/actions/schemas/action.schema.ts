@@ -111,6 +111,11 @@ export class Action {
   @Prop({ type: Number })
   order?: number;
 
+  // Action marquante de la frise du club (fonctionnalité 015) : trois au plus
+  // par année Rotary, vérifié par le service.
+  @Prop({ type: Boolean, required: true, default: false })
+  highlighted: boolean;
+
   // Photographies, dans l'ordre : la première est la principale. 20 au plus.
   @Prop({ type: [MediaRefSchema], default: [] })
   photos: MediaRef[];
@@ -123,6 +128,7 @@ export const ActionSchema = SchemaFactory.createForClass(Action);
 
 ActionSchema.index({ isPublished: 1, date: -1 });
 ActionSchema.index({ rotaryYear: 1, isPublished: 1 });
+ActionSchema.index({ rotaryYear: 1, highlighted: 1 });
 ActionSchema.index({ focusAreas: 1 });
 // Recherche par mot entier, sans racinisation.
 ActionSchema.index(

@@ -29,6 +29,8 @@ export interface Action {
   /** Toujours vide tant que l'API ne fournit pas de photographie. */
   photos: Photo[];
   impact?: ActionImpact;
+  /** Action marquante de la frise du club (fonctionnalité 015). */
+  highlighted?: boolean;
   /** Champs affichés en français sur une page anglaise (fonctionnalité 014). */
   french?: FrenchFields<ActionTextField>;
 }

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
 import { getContent } from "@/content";
 import type { Photo } from "@/types/media";
 import styles from "./PhotoFrame.module.css";
@@ -20,6 +21,8 @@ interface PhotoFrameProps {
   veiled?: boolean;
   /** Fixe le ratio du cadre. */
   className?: string;
+  /** Posé sur la photographie, dans son cadre : le bouton de la galerie (015). */
+  children?: ReactNode;
 }
 
 /**
@@ -36,6 +39,7 @@ export async function PhotoFrame({
   compact,
   veiled,
   className,
+  children,
 }: PhotoFrameProps) {
   const { photoPendingLabel, chrome } = (await getContent()).common;
   const frameClass = className ? `${styles.frame} ${className}` : styles.frame;
@@ -79,6 +83,7 @@ export async function PhotoFrame({
           className={styles.image}
           style={photo.focus ? { objectPosition: photo.focus } : undefined}
         />
+        {children}
       </div>
       {photo.caption || photo.credit ? (
         <figcaption className={styles.caption}>

@@ -103,6 +103,10 @@ export default async function ActionInspector({
             numeric: true,
           },
           {
+            label: "Frise du club",
+            value: action.highlighted ? "Marquante" : null,
+          },
+          {
             label: "Première publication",
             value: action.publishedAt ? formatDateTime(action.publishedAt) : null,
             numeric: true,

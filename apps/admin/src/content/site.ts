@@ -91,6 +91,16 @@ export const SITE_PHOTO_SLOTS: SitePhotoSlotInfo[] = [
     brief: "Une image propre au recrutement.",
     emptyText: "Reprend l'ouverture de l'accueil.",
   },
+  {
+    slot: "club-ouverture",
+    page: "Le club",
+    label: "Ouverture",
+    ratio: "4 / 5",
+    format: "4:5",
+    recommendedWidth: PHOTO_MIN_WIDTH,
+    brief: "Ouverture de la page Le club : la vie du club, verticale, à bord perdu.",
+    emptyText: "Reprend la photographie « Accueil — Le club ».",
+  },
 ];
 
 // Questions fréquentes de « Nous rejoindre ». Copie des intitulés et des

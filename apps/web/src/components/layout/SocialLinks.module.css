@@ -19,7 +19,8 @@
   height: var(--icon-size);
 }
 
-a.link:hover {
+a.link:hover,
+a.link:active {
   color: var(--link);
 }
 

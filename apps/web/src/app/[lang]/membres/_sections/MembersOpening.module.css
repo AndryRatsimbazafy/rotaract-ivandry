@@ -98,7 +98,8 @@
   font-weight: var(--font-weight-extrabold);
 }
 
-.year:hover {
+.year:hover,
+.year:active {
   color: var(--link);
 }
 

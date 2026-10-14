@@ -41,6 +41,8 @@ export type Action = {
   isPublished: boolean;
   publishedAt: string | null;
   order: number | null;
+  // Action marquante de la frise du club (fonctionnalité 015).
+  highlighted: boolean;
   photos: AdminImage[];
   createdAt: string;
   updatedAt: string;

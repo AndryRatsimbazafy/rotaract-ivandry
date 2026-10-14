@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Open_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -19,6 +19,13 @@ const openSans = Open_Sans({
   variable: "--font-open-sans",
 });
 
+// Téléphone (fonctionnalité 015) : la barre d'état prend le blanc de l'en-tête,
+// et la page s'étend sous l'encoche ; le zoom manuel reste permis.
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
+  viewportFit: "cover",
+};
+
 const OPEN_GRAPH_LOCALES = { fr: "fr_FR", en: "en_GB" } as const;
 
 export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Promise<Metadata> {
@@ -35,6 +42,8 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
       locale: OPEN_GRAPH_LOCALES[lang],
       type: "website",
     },
+    // Grand aperçu : l'image de partage de chaque page (opengraph-image.tsx).
+    twitter: { card: "summary_large_image" },
   };
 }
 

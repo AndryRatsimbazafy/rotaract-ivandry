@@ -79,6 +79,10 @@ export class SiteSettingsEn {
 
   @Prop({ type: FaqAnswersSchema })
   faq?: FaqAnswers;
+
+  // Histoire du club en anglais (fonctionnalité 015).
+  @Prop({ type: String })
+  history?: string;
 }
 
 // Réglages du site public (ARCHITECTURE.md, section 1.8) : un seul document,
@@ -96,6 +100,10 @@ export class SiteSettings {
 
   @Prop({ type: FaqAnswersSchema })
   faq?: FaqAnswers;
+
+  // Histoire du club, paragraphes séparés par une ligne vide (fonctionnalité 015).
+  @Prop({ type: String })
+  history?: string;
 
   @Prop({ type: SitePhotosSchema })
   photos?: SitePhotos;

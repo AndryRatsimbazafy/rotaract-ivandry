@@ -1,0 +1,63 @@
+/* 02 : entrée de dictionnaire, comme la définition de la page Actions. */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-24);
+}
+
+.term {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--space-24);
+}
+
+.term dfn {
+  color: var(--link);
+  font-size: var(--text-xl-size);
+  font-style: normal;
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  line-height: 1;
+  letter-spacing: var(--text-xl-tracking);
+}
+
+.grammar {
+  color: var(--text-secondary);
+  font-family: var(--font-recit);
+  font-size: var(--text-lede-size);
+  font-style: italic;
+}
+
+.definition {
+  max-width: 34ch;
+  margin-top: var(--space-24);
+  font-family: var(--font-recit);
+  font-size: var(--text-statement-size);
+  line-height: var(--text-statement-leading);
+  text-wrap: pretty;
+}
+
+.sponsor {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-8);
+  padding-top: var(--space-16);
+  border-top: var(--rule-width) solid var(--rule-strong);
+}
+
+.sponsorName {
+  font-size: var(--text-h4-size);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--text-h4-leading);
+}
+
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

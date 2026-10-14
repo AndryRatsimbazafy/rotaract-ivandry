@@ -5,6 +5,11 @@ export interface PageMeta {
   description: string;
 }
 
+export const clubPage: PageMeta = {
+  title: "Le club",
+  description: "L'histoire du Rotaract Club Ivandry, son lien avec le Rotary et ses années.",
+};
+
 export const actionsPage: PageMeta = {
   title: "Actions",
   description: "Les actions du Rotaract Club Ivandry et leur impact.",

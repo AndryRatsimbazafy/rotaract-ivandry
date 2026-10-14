@@ -10,7 +10,7 @@
 ```
 Visiteur ──► apps/web (Next.js, 3000) ──┐
                                         ├─► apps/api (NestJS, 4000) ──► MongoDB Atlas
-Admin ─────► apps/admin (Next.js + MUI, 3001) ──┘                  └─► stockage de fichiers [ouvert]
+Admin ─────► apps/admin (Next.js + MUI, 3001) ──┘                  └─► Cloudinary (fichiers, décision 10)
 ```
 
 Principes :
@@ -114,6 +114,7 @@ Projet ou activité du club avec un objectif ou un impact concret.
 | `isPublished` | boolean | oui | `false` par défaut. |
 | `publishedAt` | Date | non | Posé à la première publication. Conservé à la dépublication et à la republication. Une action peut être créée directement publiée. |
 | `order` | number | non | Ordre manuel éventuel. Tri public : `order` croissant quand il existe, puis `date` décroissante. Entier supérieur ou égal à 1, global (non lié à l'année), doublons permis. Aucun réordonnancement. |
+| `highlighted` | boolean | oui | `false` par défaut. « Action marquante » de la frise de la page « Le club » (fonctionnalité 015). **Trois au plus par année Rotary**, actions publiées ou non : la création, le passage à `true` ou le changement d'année d'une action marquée qui ferait dépasser ce nombre est refusé (`400`, champ `highlighted`, message qui nomme l'année). La surface publique ne renvoie le champ que s'il vaut `true`. |
 
 `ActionImpact` (toutes les rubriques sont facultatives, aucune n'est jamais estimée) : `objective`, `beneficiaries`, `location`, `period`, `partners: string[]`, `results`. Rubriques de texte : 500 caractères au plus. Partenaires : 20 au plus, 120 caractères chacun. Une modification remplace l'objet entier.
 
@@ -197,7 +198,7 @@ Le français reste la référence ; chaque champ anglais est facultatif, avec le
 |---|---|
 | Action | `en.title` (≤ 120), `en.summary` (≤ 500), `en.description` (≤ 20 000), `en.impact.objective`, `beneficiaries`, `location`, `period`, `results` (≤ 500 chacun). Les partenaires ne se traduisent pas. |
 | News | `en.title` (≤ 120), `en.summary` (≤ 500), `en.content` (≤ 20 000), `en.location` (≤ 120) |
-| SiteSettings | `en.club.sponsorClub` (≤ 120), `en.club.meetingPlace`, `en.club.meetingRhythm` (≤ 160), `en.faq.<question>` (≤ 1000, aucune obligatoire) |
+| SiteSettings | `en.club.sponsorClub` (≤ 120), `en.club.meetingPlace`, `en.club.meetingRhythm` (≤ 160), `en.faq.<question>` (≤ 1000, aucune obligatoire), `en.history` (≤ 4000, fonctionnalité 015) |
 | MediaRef | `altEn` (1 à 300), `captionEn` (≤ 300) |
 
 Les lectures publiques et d'administration renvoient `en` (champs présents seulement) et, pour une image, `altEn` et `captionEn` : les deux langues voyagent dans la même réponse.
@@ -215,7 +216,8 @@ Les réglages du site public (fonctionnalité 012) : ce qui était écrit dans l
 | `club.memberCount` | number | non | Entier de 1 à 999, saisi à la main. |
 | `club.meetingPlace`, `club.meetingRhythm` | string | non | 160 caractères au plus. |
 | `faq.<question>` | string | non | Réponse, 1000 caractères au plus, paragraphes séparés par une ligne vide. `<question>` : `qui`, `rencontre`, `sympathisant`, `avant`, `membre`, `frequence` (liste fermée, identique aux `id` du Front Office). Les réponses de `rencontre`, `sympathisant`, `avant` et `membre` ne se vident pas. Les intitulés restent dans le code. |
-| `photos.<emplacement>` | MediaRef | non | Une image par emplacement : `accueil-ouverture`, `accueil-club`, `accueil-rejoindre`, `actions-ouverture`, `actions-detail`, `membres-ouverture`, `rejoindre-ouverture` (liste fermée). |
+| `history` | string | non | Histoire du club (fonctionnalité 015), 4000 caractères au plus, paragraphes séparés par une ligne vide. Page « Le club ». |
+| `photos.<emplacement>` | MediaRef | non | Une image par emplacement : `accueil-ouverture`, `accueil-club`, `accueil-rejoindre`, `actions-ouverture`, `actions-detail`, `membres-ouverture`, `rejoindre-ouverture`, `club-ouverture` (fonctionnalité 015) (liste fermée). |
 | `updatedAt` | Date | auto | |
 
 Sans réglage, le Front Office garde son état d'avant 012 : pictogrammes sans lien, mention « Présentation à compléter », réponses écrites dans le code, gabarits, photographie d'ouverture livrée avec le site.
@@ -360,7 +362,7 @@ Pas de déconnexion côté API (le jeton est sans état : le Back Office efface 
 | GET | `/news` | `year`, `type`, `q`, `page`, `limit` | Liste paginée, plus récente d'abord. Liste vide (`200`) si l'année n'existe pas |
 | GET | `/news/archives` | | Années qui ont des actualités publiées, avec leur nombre. Une entrée par année : `rotaryYear` dans la forme de `/rotary-years`, et `count`, le nombre d'actualités publiées |
 | GET | `/news/:slug` | | Détail ; page `/actualites/<slug>` du Front Office (fonctionnalité 013) |
-| GET | `/site-settings` | | Réglages du site (fonctionnalité 012) : `social`, `club`, `faq`, `photos`, toujours présents en objets, avec seulement les champs renseignés ; images en lecture publique |
+| GET | `/site-settings` | | Réglages du site (fonctionnalité 012) : `social`, `club`, `faq`, `photos`, toujours présents en objets, `history` s'il est saisi (fonctionnalité 015), avec seulement les champs renseignés ; images en lecture publique |
 | POST | `/applications` | `multipart/form-data` | Dépôt d'une candidature. Limité à 20 demandes par heure et par adresse IP. Ne renvoie rien de la candidature. `201` ; `400` (validation), `413` (CV trop lourd), `415` (type de fichier refusé), `429` (limite dépassée), `503` (stockage indisponible). |
 
 Un contenu non publié répond `404` sur la surface publique, comme s'il n'existait pas.
@@ -376,9 +378,11 @@ Un contenu non publié répond `404` sur la surface publique, comme s'il n'exist
 | Actualités | `GET /admin/news` (`year`, `type`, `published`, `q`, `page`, `limit`, `sort`) · `GET /:id` · `POST` · `PATCH /:id` · `DELETE /:id` Création : `201`. Suppression : `204`. `409` pour un slug déjà pris. |
 | Candidatures | `GET /admin/applications` (`q`, `from`, `to`, `page`, `limit`, `sort`) · `GET /:id` · `GET /:id/cv` · `DELETE /:id`. Consultation et suppression seulement : ni création, ni modification, ni statut. `GET /:id/cv` : l'API renvoie le fichier lui-même, en pièce jointe et sans cache ; `404` si le fichier n'existe plus au stockage. Suppression : `204` ; elle retire le fichier puis la candidature ; un fichier déjà absent ne l'empêche pas (`204`) ; `503` si le stockage est indisponible, et la candidature est alors conservée. |
 | Images | Rattachées à leur contenu (fonctionnalité 011, `specs/011-image-storage/contracts/api-images.md`) : `PUT` · `PATCH` · `DELETE /admin/members/:id/portrait` ; `POST /admin/actions/:id/photos` · `PATCH` · `DELETE /admin/actions/:id/photos/:photoId` · `PUT /admin/actions/:id/photos/order`, et de même sous `/admin/news/:id/photos`. Envoi en `multipart/form-data` (champ `image`, plus `alt`, `caption`, `credit`, `focus`) ; `413`, `415`, `409` (20 photographies), `503`. Aucune route `/admin/media` générique : une image n'existe jamais sans son contenu. |
-| Réglages du site | Fonctionnalité 012, `specs/012-site-settings/contracts/api-site-settings.md` : `GET /admin/site-settings` · `PATCH /admin/site-settings` (corps partiel `social`, `club`, `faq` ; `null` vide un champ ; `400` si une des quatre réponses obligatoires est vidée) · `PUT` · `PATCH` · `DELETE /admin/site-settings/photos/:slot` (comme le portrait d'un membre ; emplacement inconnu : `404`). Le document se crée au premier enregistrement. |
+| Réglages du site | Fonctionnalité 012, `specs/012-site-settings/contracts/api-site-settings.md` : `GET /admin/site-settings` · `PATCH /admin/site-settings` (corps partiel `social`, `club`, `faq`, `history` (fonctionnalité 015) ; `null` vide un champ ; `400` si une des quatre réponses obligatoires est vidée) · `PUT` · `PATCH` · `DELETE /admin/site-settings/photos/:slot` (comme le portrait d'un membre ; emplacement inconnu : `404`). Le document se crée au premier enregistrement. |
 
 Les corps de création et de modification des actions, des actualités, des réglages du site et des images acceptent les champs anglais de la section 1.7 bis (fonctionnalité 014). L'objet `en` d'une action ou d'une actualité est remplacé en entier, comme l'impact (`null` ou vide : plus de traduction) ; ceux des réglages du site et des images s'écrivent champ par champ (`null` retire un champ).
+
+Les corps de création et de modification d'une action acceptent `highlighted` (booléen, fonctionnalité 015 ; règle des trois par année, section 1.4).
 
 La publication passe par `PATCH` (`isPublished`), sans endpoint dédié. Les corps de création et de modification d'une action ou d'une actualité portent `rotaryYear` (identifiant), obligatoire à la création.
 
@@ -510,9 +514,15 @@ Format unique, pour les deux surfaces :
 
 Le site public existe en français à ses adresses et en anglais sous `/en` : l'adresse anglaise est l'adresse française précédée de `/en`, les mots des rubriques restant français. Toutes les routes vivent sous `app/[lang]/` (`lang` ∈ `fr`, `en`) ; `src/proxy.ts` réécrit une adresse sans préfixe vers `/fr`, redirige `/fr/…` (`308`) vers l'adresse sans préfixe et laisse passer `/en/…`. Les textes fixes vivent dans `src/content/fr` et `src/content/en`, de même forme, lus par `getContent()` (`next/root-params`) ; les liens passent par `localize()` (`src/lib/locale.ts`). `src/data/*` résout chaque champ traduisible selon la langue de la page : le texte anglais s'il existe, sinon le français, rendu avec `lang="fr"` et signalé « In French » (`DESIGN.md`, section 8). Métadonnées : `alternates.languages` et `openGraph.locale` par page.
 
+### Page « Le club », frise et images de partage (fonctionnalité 015)
+
+`/club` (`/en/club`), sixième entrée de navigation, rendue à la demande (décision 20) : histoire (`history`, `en.history`), lien Rotaract–Rotary et club parrain, chiffres clés tirés de données réelles (`club.foundedYear`, `club.memberCount`, nombre d'actions publiées, nombre d'années de la frise), ouverture sur `photos.club-ouverture` (à défaut `accueil-club`, puis le gabarit). La frise est lue par `src/data/timeline.ts` (`getClubTimeline`) sans route nouvelle : `GET /members/years`, puis `GET /members?year=` pour chaque année (membres dont `roles` contient `president`, dans l'ordre du club), et les actions publiées `highlighted` de la liste publique, groupées par année ; une année sans président ni action marquante n'apparaît pas.
+
+Chaque page déclare une image de partage composée par la convention de fichier `opengraph-image.tsx` (`next/og`, 1200 × 630) : photographie du contenu ou de l'ouverture de la page, Voile, logo, trait d'or, titre dans la langue de l'adresse (`DESIGN.md`, section 7). La police est un fichier `ttf` versionné (`src/assets/fonts/`), `ImageResponse` ne lisant pas le `woff2` de `next/font`. L'image d'un contenu non publié répond `404`. Next.js publie l'adresse des images françaises sous `/fr/…/opengraph-image…` : `src/proxy.ts` les laisse passer sans la redirection `308` des pages. Les images des pages fixes sont recomposées au plus toutes les 60 secondes ; celles d'une action ou d'une actualité, à chaque demande, pour qu'un `404` ne reste jamais en cache. `next/root-params` n'étant pas disponible dans ces routes, `getSiteSettings`, `getActionBySlug` et `getNewsBySlug` y reçoivent la langue en paramètre.
+
 ### Pages de détail (fonctionnalité 013)
 
-`data/actions.ts` (`getActionBySlug`) et `data/news.ts` (`getNewsBySlug`) lisent `GET /actions/:slug` et `GET /news/:slug` par `apiGetOrNull` (`lib/api.ts`) : un `404` de l'API devient `null`, et la page appelle `notFound()` (page introuvable, statut `404`) ; toute autre erreur remonte à la page d'erreur du site (`app/error.tsx`), une version déjà lue restant servie par le cache. Les pages sont rendues à la demande, comme l'accueil (décision 20). Les pages de liste vivent dans un groupe de routes `(liste)` : leur `loading.tsx` n'englobe pas les pages de détail, dont la réponse n'est pas envoyée en flux et peut donc porter le statut `404`. Métadonnées : titre, description tirée du résumé, image de partage (photographie principale, à défaut l'ouverture de l'accueil des réglages du site).
+`data/actions.ts` (`getActionBySlug`) et `data/news.ts` (`getNewsBySlug`) lisent `GET /actions/:slug` et `GET /news/:slug` par `apiGetOrNull` (`lib/api.ts`) : un `404` de l'API devient `null`, et la page appelle `notFound()` (page introuvable, statut `404`) ; toute autre erreur remonte à la page d'erreur du site (`app/error.tsx`), une version déjà lue restant servie par le cache. Les pages sont rendues à la demande, comme l'accueil (décision 20). Les pages de liste vivent dans un groupe de routes `(liste)` : leur `loading.tsx` n'englobe pas les pages de détail, dont la réponse n'est pas envoyée en flux et peut donc porter le statut `404`. Métadonnées : titre, description tirée du résumé ; l'image de partage est composée depuis la fonctionnalité 015 (voir ci-dessus).
 
 ### Écarts traités à la migration
 
@@ -551,6 +561,8 @@ apps/admin/src/
 │       ├── page.tsx        accueil du Back Office : barre de chiffres, accès aux domaines
 │       ├── annees/  membres/  actions/  actualites/  candidatures/   listes, aperçus (*Inspector), fiches
 │       ├── site/           réglages du site (fonctionnalité 012) : photographies fixes, réseaux sociaux, textes
+│       │                   (fonctionnalité 015 : carte « Histoire du club », emplacement « Le club — ouverture » ;
+│       │                   fiche d'action : case « Action marquante (frise du club) »)
 │       │                   (fonctionnalité 014 : chaque formulaire de contenu a sa section « English (facultatif) »)
 │       └── candidatures/[id]/cv/   relais du fichier renvoyé par l'API
 ├── components/ cadre (AppShell, CommandSearch, ColorModeButton, AccountMenu), en-tête de page, grilles
@@ -803,8 +815,9 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 | 18 | **Aspect du Back Office** | Distinct de `DESIGN.md`. Révisé le 2026-10-13 : direction « La grille » de l'application de trésorerie du club (`rotaract-app/rotaract-ivandry-runner`), complète (thèmes clair et sombre, Red Hat Mono, barre latérale et barre supérieure, barre d'onglets sur téléphone, aperçu à droite des tables, recherche Ctrl+K), adaptée par la fonctionnalité 010 et consignée dans `apps/admin/DESIGN.md`. Restent exigés : états d'attente, d'erreur et de liste vide, confirmation des suppressions, retour après chaque opération. |
 | 19 | **Dates du Back Office** | La date d'une actualité est saisie en date et heure, en heure de Madagascar, et convertie en temps universel avant l'enregistrement. Le Back Office affiche en heure de Madagascar la date des actualités et les dates de création, de première publication et de candidature, quel que soit le fuseau de l'ordinateur. L'API n'enregistre et ne renvoie que du temps universel. Le Front Office affiche le jour et le mois d'une actualité en heure de Madagascar, sans l'heure. |
 | 20 | **Cache du Front Office** | Revalidation par durée, configurée à environ 60 secondes, sans garantie à la seconde près. Une visite ne déclenche pas systématiquement une lecture de l'API. Une revalidation qui échoue ne remplace pas volontairement par un état vide un contenu déjà correctement mis en cache. Les listes d'actions et d'actualités sont lues en entier, par pages de 100 ; aucune pagination n'est visible. |
-| 21 | **Réglages du site** | Fonctionnalité 012 : un document unique (`site_settings`, `_id: "site"`) de champs nommés : réseaux sociaux, présentation du club en cinq champs, réponses des six questions de la FAQ, sept photographies fixes. Aucun éditeur générique des textes ; les intitulés de la FAQ et tous les autres textes restent dans le code. Les quatre réponses de FAQ déjà écrites dans le code sont recopiées dans le Back Office pour pré-remplir ses champs. |
+| 21 | **Réglages du site** | Fonctionnalité 012 : un document unique (`site_settings`, `_id: "site"`) de champs nommés : réseaux sociaux, présentation du club en cinq champs, réponses des six questions de la FAQ, sept photographies fixes. Étendue par la fonctionnalité 015 : l'histoire du club (un champ nommé, français et anglais) et un huitième emplacement, `club-ouverture`. Aucun éditeur générique des textes ; les intitulés de la FAQ et tous les autres textes restent dans le code. Les quatre réponses de FAQ déjà écrites dans le code sont recopiées dans le Back Office pour pré-remplir ses champs. |
 | 22 | **Deux langues** | Fonctionnalité 014 : le français est la référence, à ses adresses ; l'anglais vit sous `/en` (adresse française précédée de `/en`). Champs anglais facultatifs saisis dans le Back Office ; aucune traduction automatique ; repli visible sur le français. Le Back Office et les réponses de l'API restent en français. |
+| 23 | **Actions marquantes** | Fonctionnalité 015 : l'administrateur coche « marquante » dans la fiche d'une action ; trois au plus par année Rotary, publiées ou non. La frise de la page « Le club » montre, pour chaque année, ses présidents (tirés des mandats) et ses actions marquantes publiées. |
 
 ### Encore ouvertes
 
@@ -832,3 +845,4 @@ Chaque étape démarre sur demande explicite.
 11. Réglages du site : photographies fixes, réseaux sociaux, présentation du club et réponses de la FAQ, saisis dans l'écran « Site » du Back Office (fonctionnalité 012).
 12. Pages de détail des actions et des actualités, page introuvable et page d'erreur du Front Office (fonctionnalité 013).
 13. Version anglaise du site public et champs anglais des contenus (fonctionnalité 014).
+14. Évolutions design du site public : images de partage, galerie plein écran, page « Le club » et frise des années, finitions téléphone (fonctionnalité 015).

@@ -1,4 +1,5 @@
 import { PhotoFrame } from "@/components/media/PhotoFrame";
+import { GalleryTrigger } from "@/components/media/PhotoGallery";
 import { formatCalendarDate } from "@/lib/dates";
 import type { Action, ActionImpact } from "@/types/action";
 import styles from "./ActionStory.module.css";
@@ -57,7 +58,14 @@ export async function ActionStory({ action }: { action: Action }) {
               priority
               tone="paper"
               className={styles.frame}
-            />
+            >
+              {action.photos[0] ? (
+                <GalleryTrigger
+                  index={0}
+                  label={content.common.chrome.gallery.open(action.photos[0].alt)}
+                />
+              ) : null}
+            </PhotoFrame>
           </div>
           <h1 id="action-titre" className={styles.title} lang={frenchLang(action.french?.title)}>
             {action.title}

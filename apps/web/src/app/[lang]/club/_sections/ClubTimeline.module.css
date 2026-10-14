@@ -1,0 +1,176 @@
+/*
+ * 04 : le champ encre de la page. La frise : un filet vertical, chaque année
+ * Rotary au trait en très grand, la présidence et les actions marquantes.
+ */
+
+.field {
+  /* Sur champ fort, le contour de focus est blanc. */
+  --focus-ring: var(--on-field-focus-ring);
+  /* Le bleu royal ne se lit pas sur l'encre : survol en bleu clair. */
+  --link: var(--on-field-text-secondary);
+
+  padding-block: var(--rhythm-major);
+  color: var(--on-field-text);
+  background: var(--field-footer);
+}
+
+.layout {
+  row-gap: var(--space-48);
+}
+
+.head,
+.years {
+  grid-column: 1 / -1;
+}
+
+.head {
+  color: var(--on-field-text-secondary);
+}
+
+.title {
+  margin-top: var(--space-16);
+  color: var(--on-field-text);
+  font-size: var(--text-h1-size);
+}
+
+.intro {
+  max-width: 32ch;
+  margin-top: var(--space-16);
+  font-family: var(--font-recit);
+  font-style: italic;
+}
+
+/* Le filet vertical porte toute la frise. */
+.years {
+  border-left: var(--rule-width) solid var(--on-field-rule);
+  list-style: none;
+}
+
+.year {
+  display: grid;
+  row-gap: var(--space-16);
+  padding: var(--space-32) 0 var(--space-32) var(--space-24);
+}
+
+.year + .year {
+  border-top: var(--rule-width) solid var(--on-field-rule);
+}
+
+/* L'année tracée au trait, comme le nom du club au pied de page. */
+.yearName {
+  color: transparent;
+  font-size: var(--text-xl-size);
+  font-weight: var(--font-weight-extrabold);
+  font-stretch: var(--font-width-condensed);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: var(--text-xl-tracking);
+  white-space: nowrap;
+  -webkit-text-stroke: var(--rule-width) var(--on-field-text);
+}
+
+.mandate {
+  display: grid;
+  row-gap: var(--space-24);
+}
+
+.role {
+  color: var(--on-field-text-secondary);
+}
+
+.presidents {
+  margin-top: var(--space-8);
+  list-style: none;
+  font-size: var(--text-h3-size);
+  font-weight: var(--font-weight-bold);
+  font-stretch: var(--font-width-condensed);
+  line-height: var(--text-h3-leading);
+}
+
+.actions {
+  margin-top: var(--space-8);
+  list-style: none;
+}
+
+.action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-4) var(--space-16);
+  padding-block: var(--space-8);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  column-gap: var(--space-8);
+  min-height: var(--target-min);
+  color: var(--on-field-text);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: underline;
+  text-decoration-color: var(--on-field-rule);
+  text-decoration-thickness: var(--rule-width);
+  text-underline-offset: 0.3em;
+}
+
+.link:hover,
+.link:active {
+  color: var(--link);
+}
+
+.arrow {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+.areas {
+  color: var(--on-field-text-secondary);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .link {
+    transition: color var(--duration-instant) var(--ease-out);
+  }
+
+  .arrow {
+    transition: translate var(--duration-state) var(--ease-out);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .link:hover .arrow {
+    translate: var(--space-4) 0;
+  }
+}
+
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .head {
+    grid-column: 1 / span 4;
+  }
+
+  .years {
+    grid-column: 5 / -1;
+  }
+
+  /* L'année à gauche, le mandat à droite. */
+  .year {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    column-gap: var(--grid-gutter);
+    align-items: start;
+    padding-left: var(--space-32);
+  }
+
+  .yearName {
+    font-size: min(var(--text-xl-size), 5.5vw);
+  }
+}

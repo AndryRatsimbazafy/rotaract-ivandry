@@ -1,0 +1,56 @@
+/* 01 : sur la feuille blanche de la page. L'histoire sur la colonne de lecture. */
+
+.section {
+  padding-bottom: var(--rhythm-major);
+}
+
+.layout {
+  row-gap: var(--space-32);
+}
+
+.head,
+.text {
+  grid-column: 1 / -1;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: var(--space-16);
+}
+
+.title {
+  font-size: var(--text-h2-size);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1em;
+  max-width: var(--container-reading);
+  font-family: var(--font-recit);
+  font-size: var(--text-reading-size);
+  line-height: var(--text-reading-leading);
+}
+
+.lede {
+  font-size: var(--text-statement-size);
+  line-height: var(--text-statement-leading);
+  text-wrap: pretty;
+}
+
+.paragraph {
+  text-wrap: pretty;
+}
+
+@media (min-width: 1024px) {
+  /* La colonne de droite reste libre : la photographie d'ouverture y descend. */
+  .head {
+    grid-column: 1 / span 3;
+  }
+
+  .text {
+    grid-column: 4 / span 6;
+  }
+}

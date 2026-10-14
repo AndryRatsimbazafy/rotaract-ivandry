@@ -1,0 +1,224 @@
+/* Galerie plein écran (DESIGN.md, sections 9 et 12). */
+
+/* Bouton posé sur une photographie de la page : invisible, il garde l'image. */
+.trigger {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.trigger:focus-visible {
+  outline-offset: calc(-1 * var(--focus-ring-width) - var(--focus-ring-offset));
+}
+
+/* À l'appui, la photographie se voile un instant : changement de couleur seulement. */
+.trigger:active {
+  background: var(--photo-veil);
+}
+
+/* Le fond de la page ne défile pas sous la galerie. */
+:global(html:has(dialog[open])) {
+  overflow: hidden;
+}
+
+.dialog {
+  --focus-ring: var(--on-field-focus-ring);
+
+  width: 100dvw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--on-field-text);
+  background: var(--field-footer);
+}
+
+.dialog[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.dialog::backdrop {
+  background: var(--field-footer);
+}
+
+/* Position et « Fermer », hors de l'encoche. */
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: var(--space-16);
+  min-height: var(--header-height);
+  padding: env(safe-area-inset-top, 0px)
+    max(var(--page-margin), env(safe-area-inset-right, 0px)) 0
+    max(var(--page-margin), env(safe-area-inset-left, 0px));
+  border-bottom: var(--rule-width) solid var(--on-field-rule);
+}
+
+.position {
+  color: var(--on-field-text-secondary);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.close {
+  min-height: var(--target-min);
+  padding-inline: var(--space-8);
+  border: 0;
+  color: var(--on-field-text);
+  background: none;
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.close:hover,
+.close:active {
+  color: var(--on-field-text-secondary);
+}
+
+/* Piste accrochée : le balayage et sa physique sont ceux du système. */
+.track {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  list-style: none;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.slide {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  row-gap: var(--space-16);
+  flex: 0 0 100%;
+  min-width: 0;
+  padding: var(--space-24) max(var(--page-margin), env(safe-area-inset-right, 0px))
+    calc(var(--space-24) + env(safe-area-inset-bottom, 0px))
+    max(var(--page-margin), env(safe-area-inset-left, 0px));
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+.media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+/* Entière, jamais recadrée ni agrandie au-delà de sa taille d'origine. */
+.image {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.caption {
+  max-width: 42rem;
+  margin-inline: auto;
+  color: var(--on-field-text-secondary);
+  font-family: var(--font-recit);
+  font-size: var(--text-caption-size);
+  font-style: italic;
+  line-height: var(--text-caption-leading);
+  text-align: center;
+}
+
+/* Flèches au trait, de part et d'autre de la photographie. */
+.step {
+  position: fixed;
+  top: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--target-min);
+  height: var(--target-min);
+  border: 0;
+  color: var(--on-field-text);
+  background: none;
+  cursor: pointer;
+  translate: 0 -50%;
+}
+
+.step:disabled {
+  visibility: hidden;
+}
+
+.step:hover,
+.step:active {
+  color: var(--on-field-text-secondary);
+}
+
+.previous {
+  left: max(var(--space-8), env(safe-area-inset-left, 0px));
+}
+
+.next {
+  right: max(var(--space-8), env(safe-area-inset-right, 0px));
+}
+
+.arrow {
+  width: var(--space-24);
+  height: var(--space-24);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+/* Sur téléphone, le balayage suffit : les flèches ne couvrent pas l'image. */
+@media (pointer: coarse) and (max-width: 767px) {
+  .step {
+    display: none;
+  }
+}
+
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Ouverture en fondu (320 ms), fermeture plus courte (200 ms). */
+@media (prefers-reduced-motion: no-preference) {
+  .dialog,
+  .dialog::backdrop {
+    transition:
+      opacity var(--duration-state) var(--ease-out),
+      display var(--duration-state) allow-discrete,
+      overlay var(--duration-state) allow-discrete;
+  }
+
+  .dialog[open],
+  .dialog[open]::backdrop {
+    transition-duration: var(--duration-overlay);
+  }
+
+  .dialog:not([open]),
+  .dialog:not([open])::backdrop {
+    opacity: 0;
+  }
+
+  @starting-style {
+    .dialog[open],
+    .dialog[open]::backdrop {
+      opacity: 0;
+    }
+  }
+}

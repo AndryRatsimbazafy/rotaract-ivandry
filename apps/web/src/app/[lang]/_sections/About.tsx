@@ -1,5 +1,7 @@
 import { PhotoFrame } from "@/components/media/PhotoFrame";
+import { ArrowLink } from "@/components/ui/ArrowLink";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { routes } from "@/config/routes";
 import type { Photo } from "@/types/media";
 import type { ClubFacts } from "@/types/site-settings";
 import styles from "./About.module.css";
@@ -66,6 +68,9 @@ export async function About({ club, clubFrench, photo }: AboutProps) {
           ) : (
             <p className={styles.pending}>{about.pending}</p>
           )}
+          <div className={styles.more}>
+            <ArrowLink href={routes.club}>{about.more}</ArrowLink>
+          </div>
         </div>
         <div className={styles.photo}>
           <PhotoFrame

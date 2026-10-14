@@ -25,6 +25,8 @@ interface ApiAction {
     impact?: Omit<ActionImpact, "partners">;
   };
   photos: ApiImage[];
+  /** Présent seulement pour une action marquante (fonctionnalité 015). */
+  highlighted?: true;
 }
 
 const IMPACT_KEYS = ["objective", "beneficiaries", "location", "period", "results"] as const;
@@ -51,6 +53,7 @@ function toAction(action: ApiAction, lang: Lang): Action {
     rotaryYear: action.rotaryYear as RotaryYear,
     focusAreas: action.focusAreas,
     impact,
+    ...(action.highlighted ? { highlighted: true } : {}),
     // La première est la principale ; sans photographie, les cadres restent
     // des gabarits.
     photos: (action.photos ?? []).map((photo) => toPhoto(photo, lang)),
@@ -59,9 +62,10 @@ function toAction(action: ApiAction, lang: Lang): Action {
 }
 
 /** Une action publiée par son slug ; null si elle n'existe pas ou plus. */
-export async function getActionBySlug(slug: string): Promise<Action | null> {
+export async function getActionBySlug(slug: string, forLang?: Lang): Promise<Action | null> {
   const action = await apiGetOrNull<ApiAction>(`/actions/${encodeURIComponent(slug)}`);
-  const lang = await currentLang();
+  // forLang : hors d'une page (images de partage), next/root-params n'existe pas.
+  const lang = forLang ?? (await currentLang());
   return action && toAction(action, lang);
 }
 

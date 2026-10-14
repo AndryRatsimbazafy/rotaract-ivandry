@@ -67,6 +67,7 @@ export type AdminActionView = {
   isPublished: boolean;
   publishedAt: Date | null;
   order: number | null;
+  highlighted: boolean;
   photos: AdminImage[];
   createdAt: Date;
   updatedAt: Date;
@@ -84,6 +85,8 @@ export type PublicActionView = {
   focusAreas: FocusArea[];
   impact?: ImpactView;
   en?: ActionEn;
+  /** Présent seulement pour une action marquante (fonctionnalité 015). */
+  highlighted?: true;
   photos: PublicImage[];
 };
 
@@ -120,6 +123,9 @@ const ADMIN_SORTS: Record<
   createdAt: { createdAt: 1, _id: 1 },
   '-createdAt': { createdAt: -1, _id: 1 },
 };
+
+// Actions marquantes de la frise du club, par année Rotary (fonctionnalité 015).
+const HIGHLIGHTS_PER_YEAR = 3;
 
 function invalid(field: string, message: string): BadRequestException {
   return new BadRequestException({
@@ -180,6 +186,7 @@ function toAdminView(
     isPublished: action.isPublished,
     publishedAt: action.publishedAt ?? null,
     order: action.order ?? null,
+    highlighted: action.highlighted ?? false,
     photos: (action.photos ?? []).map(toAdminImage),
     createdAt: action.createdAt,
     updatedAt: action.updatedAt,
@@ -202,6 +209,7 @@ function toPublicView(
     focusAreas: action.focusAreas,
     ...(impact ? { impact } : {}),
     ...enOf(action.en),
+    ...(action.highlighted ? { highlighted: true as const } : {}),
     photos: (action.photos ?? []).map(toPublicImage),
   };
 }
@@ -268,6 +276,10 @@ export class ActionsService {
     const year = await this.existingYear(dto.rotaryYear);
     const impact = impactOf(dto.impact);
     const isPublished = dto.isPublished ?? false;
+    const highlighted = dto.highlighted ?? false;
+    if (highlighted) {
+      await this.assertHighlightRoom(year);
+    }
     const fields = {
       title: dto.title,
       summary: dto.summary,
@@ -279,6 +291,7 @@ export class ActionsService {
       ...(impact ? { impact } : {}),
       ...enOf(dto.en as ActionEn | undefined),
       isPublished,
+      highlighted,
       order: dto.order,
     };
     // Une action créée publiée prend sa date de création comme date de
@@ -355,8 +368,29 @@ export class ActionsService {
     if (dto.date !== undefined) {
       set.date = new Date(dto.date);
     }
+    let newYear: (RotaryYear & { _id: Types.ObjectId }) | undefined;
     if (dto.rotaryYear !== undefined) {
-      set.rotaryYear = (await this.existingYear(dto.rotaryYear))._id;
+      newYear = await this.existingYear(dto.rotaryYear);
+      set.rotaryYear = newYear._id;
+    }
+    if (dto.highlighted !== undefined) {
+      set.highlighted = dto.highlighted;
+    }
+    // Trois actions marquantes au plus par année : vérifié quand l'action
+    // devient marquante ou change d'année en restant marquante.
+    const willBeHighlighted = dto.highlighted ?? action.highlighted ?? false;
+    const yearChanges =
+      newYear !== undefined && !newYear._id.equals(action.rotaryYear);
+    if (
+      willBeHighlighted &&
+      ((dto.highlighted === true && !action.highlighted) || yearChanges)
+    ) {
+      const year =
+        newYear ??
+        (await this.rotaryYearModel.findById(action.rotaryYear).lean().exec());
+      if (year) {
+        await this.assertHighlightRoom(year, action._id);
+      }
     }
     if (dto.focusAreas !== undefined) {
       set.focusAreas = dto.focusAreas;
@@ -597,6 +631,28 @@ export class ActionsService {
       throw invalid('rotaryYear', "Cette année Rotary n'existe pas.");
     }
     return year;
+  }
+
+  // Refuse une quatrième action marquante dans l'année (fonctionnalité 015).
+  // Les actions non publiées comptent : leur publication ne doit pas faire
+  // dépasser la limite.
+  private async assertHighlightRoom(
+    year: RotaryYear & { _id: Types.ObjectId },
+    exceptId?: Types.ObjectId,
+  ): Promise<void> {
+    const count = await this.actionModel
+      .countDocuments({
+        rotaryYear: year._id,
+        highlighted: true,
+        ...(exceptId ? { _id: { $ne: exceptId } } : {}),
+      })
+      .exec();
+    if (count >= HIGHLIGHTS_PER_YEAR) {
+      throw invalid(
+        'highlighted',
+        `L'année ${rotaryYearLabel(year.startYear)} compte déjà trois actions marquantes.`,
+      );
+    }
   }
 
   private assertSlugNotReserved(slug: string): void {

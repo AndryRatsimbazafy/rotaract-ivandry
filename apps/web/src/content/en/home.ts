@@ -43,6 +43,8 @@ export const about = {
     meetingRhythm: "Rhythm",
   },
   photoBrief: "Club life: a meeting, a team moment.",
+  /** Link to "The club" page (feature 015). */
+  more: "More about the club",
 };
 
 export const rotaryValues: {

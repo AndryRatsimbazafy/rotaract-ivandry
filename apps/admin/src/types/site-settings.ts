@@ -9,7 +9,8 @@ export type SitePhotoSlot =
   | "actions-ouverture"
   | "actions-detail"
   | "membres-ouverture"
-  | "rejoindre-ouverture";
+  | "rejoindre-ouverture"
+  | "club-ouverture";
 
 export type FaqQuestionId =
   | "qui"
@@ -29,11 +30,14 @@ export type SiteSettings = {
     meetingRhythm?: string;
   };
   faq: Partial<Record<FaqQuestionId, string>>;
+  // Histoire du club (fonctionnalité 015).
+  history?: string;
   photos: Partial<Record<SitePhotoSlot, AdminImage>>;
   // Traductions anglaises (fonctionnalité 014).
   en?: {
     club?: { sponsorClub?: string; meetingPlace?: string; meetingRhythm?: string };
     faq?: Partial<Record<FaqQuestionId, string>>;
+    history?: string;
   };
   updatedAt: string | null;
 };

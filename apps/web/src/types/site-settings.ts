@@ -9,7 +9,7 @@ export type FaqQuestionId =
   | "membre"
   | "frequence";
 
-/** Les sept emplacements photographiques fixes du site. */
+/** Les huit emplacements photographiques fixes du site (club-ouverture : 015). */
 export type SitePhotoSlot =
   | "accueil-ouverture"
   | "accueil-club"
@@ -17,7 +17,8 @@ export type SitePhotoSlot =
   | "actions-ouverture"
   | "actions-detail"
   | "membres-ouverture"
-  | "rejoindre-ouverture";
+  | "rejoindre-ouverture"
+  | "club-ouverture";
 
 /** Informations du club saisies dans le Back Office ; chacune facultative. */
 export interface ClubFacts {
@@ -38,5 +39,9 @@ export interface SiteSettings {
   faq: Partial<Record<FaqQuestionId, string[]>>;
   /** Réponses enregistrées en anglais, en paragraphes (fonctionnalité 014). */
   faqEn: Partial<Record<FaqQuestionId, string[]>>;
+  /** Histoire du club, en paragraphes, dans la langue de la page (fonctionnalité 015). */
+  history?: string[];
+  /** Vrai quand une page anglaise affiche l'histoire en français. */
+  historyFrench?: true;
   photos: Partial<Record<SitePhotoSlot, Photo>>;
 }

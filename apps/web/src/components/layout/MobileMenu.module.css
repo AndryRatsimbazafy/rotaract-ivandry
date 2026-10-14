@@ -39,7 +39,12 @@
   height: 100dvh;
   max-height: none;
   margin: 0;
-  padding: 0 var(--page-margin) var(--space-32);
+  /* Textes et commandes hors de l'encoche et de la barre d'accueil. */
+  padding:
+    env(safe-area-inset-top, 0px)
+    max(var(--page-margin), env(safe-area-inset-right, 0px))
+    calc(var(--space-32) + env(safe-area-inset-bottom, 0px))
+    max(var(--page-margin), env(safe-area-inset-left, 0px));
   border: 0;
   color: var(--on-field-text);
   background: var(--field-footer);
@@ -93,7 +98,8 @@
   letter-spacing: 0;
 }
 
-/* La page affichée : en bleu clair, avec sa mention écrite. */
+/* La page affichée : en bleu clair, avec sa mention écrite. L'appui donne la même couleur. */
+.entry:active,
 .entry[aria-current="page"] {
   flex-wrap: wrap;
   color: var(--on-field-text-secondary);

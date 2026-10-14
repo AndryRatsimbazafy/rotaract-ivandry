@@ -56,7 +56,8 @@
   text-underline-offset: 0.4em;
 }
 
-.option:hover {
+.option:hover,
+.option:active {
   color: var(--text-primary);
 }
 
@@ -199,12 +200,15 @@
 }
 
 /* Au survol du lien d'une ligne : elle se teinte, le jour passe au bleu. */
-.row:has(a:hover) {
+.row:has(a:hover),
+.row:has(a:active) {
   background: var(--bg-surface);
 }
 
 .row:has(a:hover) .day,
-.row:has(a:hover) .link {
+.row:has(a:hover) .link,
+.row:has(a:active) .day,
+.row:has(a:active) .link {
   color: var(--link);
 }
 
