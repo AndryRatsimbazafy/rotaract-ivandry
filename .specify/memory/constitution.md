@@ -56,8 +56,8 @@ Le détail (collections, endpoints, contrats, variables d'environnement) est dan
 
 ### VII. Front Office
 
-- Le Front Office reste en français pour la V1.
-- L'architecture MUST permettre l'anglais plus tard, sans l'implémenter maintenant.
+- Le Front Office est bilingue depuis la fonctionnalité 014 : le français à ses adresses de référence, l'anglais sous `/en`. Les textes fixes vivent dans deux dictionnaires de même forme ; les contenus anglais sont facultatifs et saisis dans le Back Office ; une traduction absente affiche le français, déclaré et signalé. Aucune traduction automatique.
+- Le Back Office et les réponses de l'API restent en français.
 - Le Front Office MUST NOT devenir un gabarit générique.
 - Toute évolution visuelle MUST respecter `DESIGN.md`.
 - Un composant, une mise en page ou un motif qui contredit la direction éditoriale validée MUST NOT être réintroduit.
@@ -87,8 +87,8 @@ Le détail (collections, endpoints, contrats, variables d'environnement) est dan
 ### XI. Git et collaboration
 
 - Les commits suivent Conventional Commits.
-- Les branches de fonctionnalité suivent la convention existante du projet, notamment `feat/*`.
-- Spec Kit peut numéroter les spécifications (`001`, `002`, …) ; ces numéros ne remplacent pas la convention de branches Git.
+- Les branches de fonctionnalité suivent la convention choisie par le porteur du projet pour chaque fonctionnalité : `feat/*`, ou la branche numérotée créée par Spec Kit.
+- Spec Kit numérote les spécifications (`001`, `002`, …) ; le dossier d'une spécification et le nom de sa branche restent indépendants.
 - Un commit MUST NOT être créé sans demande explicite.
 - Un push vers un remote MUST NOT être fait sans demande explicite.
 
@@ -131,4 +131,4 @@ Règles associées :
 - Conformité : vérifiée à chaque plan et à chaque fin d'étape.
 - `CLAUDE.md` donne les consignes de travail quotidiennes et MUST rester cohérent avec cette constitution.
 
-**Version**: 1.1.0 | **Ratified**: 2026-10-01 | **Last Amended**: 2026-10-13
+**Version**: 2.0.0 | **Ratified**: 2026-10-01 | **Last Amended**: 2026-10-14
