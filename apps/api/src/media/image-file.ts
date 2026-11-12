@@ -1,5 +1,6 @@
-// 5 Mo.
-export const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+// 4 Mo : avec ses champs et l'habillage multipart, une image à la limite
+// passe sous les 4,5 Mo du corps d'une fonction Vercel (Back Office).
+export const IMAGE_MAX_BYTES = 4 * 1024 * 1024;
 
 export const IMAGE_TYPE_MESSAGE =
   "Format d'image non accepté : JPEG, PNG ou WebP.";

@@ -30,6 +30,8 @@ export class MediaRef {
   })
   mimeType: string;
 
+  // Les envois sont limités à 4 Mo (image-file.ts) ; le schéma garde 5 Mo pour
+  // les images déposées avant l'abaissement de la limite.
   @Prop({ type: Number, required: true, min: 1, max: 5 * 1024 * 1024 })
   size: number;
 

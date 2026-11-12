@@ -363,7 +363,7 @@ Pas de déconnexion côté API (le jeton est sans état : le Back Office efface 
 | GET | `/news/archives` | | Années qui ont des actualités publiées, avec leur nombre. Une entrée par année : `rotaryYear` dans la forme de `/rotary-years`, et `count`, le nombre d'actualités publiées |
 | GET | `/news/:slug` | | Détail ; page `/actualites/<slug>` du Front Office (fonctionnalité 013) |
 | GET | `/site-settings` | | Réglages du site (fonctionnalité 012) : `social`, `club`, `faq`, `photos`, toujours présents en objets, `history` s'il est saisi (fonctionnalité 015), avec seulement les champs renseignés ; images en lecture publique |
-| POST | `/applications` | `multipart/form-data` | Dépôt d'une candidature. Limité à 20 demandes par heure et par adresse IP. Ne renvoie rien de la candidature. `201` ; `400` (validation), `413` (CV trop lourd), `415` (type de fichier refusé), `429` (limite dépassée), `503` (stockage indisponible). |
+| POST | `/applications` | `multipart/form-data` | Dépôt d'une candidature. Limité à 20 demandes par heure et par adresse IP du visiteur (voir « Adresse du visiteur », section 7). Ne renvoie rien de la candidature. `201` ; `400` (validation), `413` (CV trop lourd), `415` (type de fichier refusé), `429` (limite dépassée), `503` (stockage indisponible). |
 
 Un contenu non publié répond `404` sur la surface publique, comme s'il n'existait pas.
 
@@ -394,7 +394,8 @@ La publication passe par `PATCH` (`isPublished`), sans endpoint dédié. Les cor
 |---|---|
 | **Compte** | **Un seul compte `ADMIN` en V1**, un document dans `admins`. Créé **uniquement** par un script lancé à la main (`npm run seed:admin --workspace=api`), qui lit `ADMIN_EMAIL` et `ADMIN_PASSWORD` dans l'environnement. Aucun endpoint de création, **aucun écran de gestion des comptes**. Relancé avec l'email du compte existant, le script remplace le mot de passe ; avec un autre email, il refuse et ne modifie rien. |
 | **Mot de passe** | Jamais stocké ni journalisé. Haché en **Argon2id** (paquet `argon2`). Longueur minimale : 12 caractères. |
-| **Login** | `POST /auth/login`. Réponse identique que l'email soit inconnu ou le mot de passe faux (`401`, même message). Limité à 5 tentatives par minute et par adresse IP. |
+| **Login** | `POST /auth/login`. Réponse identique que l'email soit inconnu ou le mot de passe faux (`401`, même message). Limité à 5 tentatives par minute et par adresse IP du visiteur. |
+| **Adresse du visiteur** | Ajouté le 2026-11-12. Le navigateur n'appelle jamais l'API : sans précaution, l'API ne verrait que l'adresse du serveur Next.js (Vercel), et tous les visiteurs partageraient la même limite. Les Server Actions du site (candidature) et du Back Office (connexion) lisent l'adresse du visiteur (`x-forwarded-for`, premier élément, sinon `x-real-ip`) et la transmettent dans l'en-tête `X-Client-Ip`, accompagnée du secret partagé `INTERNAL_API_SECRET` dans l'en-tête `X-Internal-Secret`. L'API ne retient `X-Client-Ip` que si le secret est configuré chez elle et concorde (comparaison à temps constant) et si la valeur est une adresse IP ; sinon elle compte l'adresse de la requête. Express fait confiance à un mandataire (`trust proxy` à 1, celui de Render) pour cette adresse. |
 | **Jeton** | JWT signé HS256 avec `JWT_SECRET`. Contenu : `sub` (id du compte), `role: "ADMIN"`, `iat`, `exp`. Expiration : **8 heures**. **Aucun jeton de rafraîchissement en V1** : à l'expiration, on se reconnecte. La durée vient de `JWT_EXPIRES_IN` : 8 heures par défaut, jamais plus. Un changement de mot de passe n'invalide pas les jetons déjà délivrés. |
 | **Transport** | En-tête `Authorization: Bearer <jeton>`, envoyé par le serveur du Back Office. |
 | **Garde** | `JwtAuthGuard` vérifie la signature et l'expiration, recharge le compte, l'attache à la requête. Mise en œuvre avec `@nestjs/jwt` et une garde écrite à la main, sans Passport (une seule stratégie, donc pas besoin de la couche). |
@@ -419,8 +420,8 @@ Changer le mot de passe en V1 : relancer le script d'initialisation. Pas de « m
 | **Enums** | `MemberRole`, `FocusArea`, `NewsType`, `ApplicantStatus` : valeurs de la section 1 uniquement. |
 | **Tableaux** | `roles`, `focusAreas` : valeurs d'enum, sans doublon. `photos` : 20 au plus. `partners` : 20 au plus. |
 | **Identifiants** | ObjectId valide, sinon `400` (et non `500`). |
-| **Images** | JPEG, PNG ou WebP ; 5 Mo au plus (5 242 880 octets). `alt`, `width`, `height` obligatoires. |
-| **CV** | PDF, DOC ou DOCX ; 5 Mo au plus (5 242 880 octets) ; un seul fichier, non vide. Le type est constaté par l'API sur le contenu, et l'extension doit concorder ; le type annoncé par le client n'est pas utilisé. |
+| **Images** | JPEG, PNG ou WebP ; 4 Mo au plus (4 194 304 octets). `alt`, `width`, `height` obligatoires. |
+| **CV** | PDF, DOC ou DOCX ; 4 Mo au plus (4 194 304 octets) ; un seul fichier, non vide. Le type est constaté par l'API sur le contenu, et l'extension doit concorder ; le type annoncé par le client n'est pas utilisé. |
 
 **Slug.** Généré automatiquement par le serveur à partir du titre quand il n'est pas fourni (sans accents, en minuscules, mots séparés par des tirets) ; en cas de collision, suffixe `-2`, `-3`. **Modifiable à la main par l'administrateur**, à la création comme ensuite ; un slug saisi déjà pris répond `409`. Modifier le titre ne régénère pas le slug. Changer le slug d'un contenu publié change son adresse publique : le Back Office le signale, sans l'empêcher. Un titre dont aucun slug ne peut être tiré est refusé (`400`) si aucun slug n'est fourni. `years` est réservé pour les actions : il désigne la route `/actions/years` ; la génération automatique passe à `years-2`, et fourni par l'administrateur il est refusé (`400`). `archives` est réservé pour les actualités : il désigne la route `/news/archives` ; la génération automatique passe à `archives-2`, et fourni par l'administrateur il est refusé (`400`).
 
@@ -545,7 +546,7 @@ Le Back Office est une application Next.js dont **le serveur fait l'intermédiai
 - **Erreurs.** `401` : cookie effacé, redirection vers `/connexion`. `403` : page d'accès refusé. `400` avec `details` : chaque message est rendu sous son champ. `409` : message en tête de formulaire. Erreur réseau ou `5xx` : message générique, la saisie est conservée.
 - **Déconnexion.** Une Server Action efface le cookie et redirige.
 - **Dates et fuseau.** La date d'une actualité se saisit en date et heure, **en heure de Madagascar** ; le Back Office la convertit en temps universel avant de l'envoyer à l'API, qui n'enregistre que du temps universel. Le Back Office l'affiche en heure de Madagascar, quel que soit le fuseau de l'ordinateur de l'administrateur ; il affiche de même les dates de création, de première publication et de candidature. La date d'une action est une date sans heure, affichée telle qu'elle est enregistrée. L'API et ses contrats ne changent pas.
-- **Envoi de fichiers.** Décidé le 2026-10-13 : une image passe du navigateur au serveur Next.js du Back Office, puis à l'API, qui la dépose chez Cloudinary ; le navigateur n'appelle toujours pas l'API et CORS reste fermé. Point d'attention pour la fonctionnalité du stockage des images : le corps d'une Server Action est limité par défaut (1 Mo, réglable) et un passage par Vercel l'est à environ 4,5 Mo, en dessous de la limite de 5 Mo par image ; le plan de cette fonctionnalité doit dire comment une image de 5 Mo passe (réglage du corps, réduction dans le navigateur avant l'envoi, ou autre).
+- **Envoi de fichiers.** Décidé le 2026-10-13 : une image passe du navigateur au serveur Next.js du Back Office, puis à l'API, qui la dépose chez Cloudinary ; le navigateur n'appelle toujours pas l'API et CORS reste fermé. Point d'attention pour la fonctionnalité du stockage des images : le corps d'une Server Action est limité par défaut (1 Mo, réglable) et un passage par Vercel l'est à environ 4,5 Mo, en dessous de l'ancienne limite de 5 Mo par image. Révisé le 2026-11-12 : la limite de l'API est abaissée à **4 Mo** (4 194 304 octets) pour les images comme pour le CV, afin qu'un fichier à la limite, avec ses champs et l'habillage multipart, passe sous les 4,5 Mo d'une fonction Vercel. Les Server Actions du site et du Back Office acceptent un corps de 4,5 Mo (`bodySizeLimit: "4.5mb"`) ; le Back Office réduit en plus les images dans le navigateur avant l'envoi.
 
 ### Structure
 
@@ -594,6 +595,7 @@ Aucune valeur réelle ici ni dans le code. Chaque application aura un `.env.exam
 | `JWT_SECRET` | **oui** | Secret. 32 caractères au moins, générés aléatoirement. Exigé dès le socle, utilisé à partir de l'authentification. L'API refuse de démarrer s'il manque. |
 | `JWT_EXPIRES_IN` | non | Défaut `8h`. Durée strictement positive et de 8 heures au plus : une valeur nulle ou supérieure à 8 heures empêche le démarrage. |
 | `CORS_ORIGINS` | non | Vide par défaut : aucun navigateur n'appelle l'API. À renseigner seulement si l'envoi direct de fichiers est retenu. |
+| `INTERNAL_API_SECRET` | non (recommandée en production) | Secret, 32 caractères au moins, le même que dans `web` et `admin`. Authentifie l'en-tête `X-Client-Ip` qui porte l'adresse du visiteur (section 7). Absente : l'en-tête est ignoré et la limite de fréquence compte l'adresse de la requête. |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | script seulement | Lus par le script d'initialisation, jamais par l'API en fonctionnement. |
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | **oui** | Stockage des CV et des images (même compte). Secrets. L'API refuse de démarrer si l'une manque. |
 
@@ -602,12 +604,14 @@ Aucune valeur réelle ici ni dans le code. Chaque application aura un `.env.exam
 | Variable | Obligatoire | Portée | Notes |
 |---|---|---|---|
 | `API_URL` | oui, à la connexion | **serveur seulement** | Par exemple `http://localhost:4000/api/v1` en local. Aucune variable `NEXT_PUBLIC_*` n'est nécessaire. |
+| `INTERNAL_API_SECRET` | non (recommandée en production) | **serveur seulement** | Même valeur que pour l'API. Absente : l'adresse du visiteur n'est pas transmise. |
 
 ### `apps/admin`
 
 | Variable | Obligatoire | Portée | Notes |
 |---|---|---|---|
 | `API_URL` | oui | **serveur seulement** | Même forme que pour `web`. |
+| `INTERNAL_API_SECRET` | non (recommandée en production) | **serveur seulement** | Même valeur que pour l'API ; transmise seulement à la connexion. |
 | `NEXT_PUBLIC_API_URL` | non | navigateur | Seulement si l'envoi direct de fichiers vers l'API est retenu. N'est pas un secret. |
 
 Tout est validé au démarrage de l'API (module `config`) : une variable obligatoire absente arrête le démarrage avec un message clair.
@@ -804,7 +808,7 @@ L'adresse du CV n'apparaît pas dans la liste : elle s'obtient par `GET /admin/a
 | 7 | **Applications** | Aucun workflow de statut. `applicantStatus` = Étudiant ou Professionnel. La candidature est enregistrée, puis consultable et supprimable par l'administrateur. |
 | 8 | **API** | Préfixe `/api/v1`. |
 | 9 | **Public / admin** | `/admin/*` protégé par JWT + `ADMIN`. Le Front Office n'a aucun accès aux endpoints d'administration. |
-| 10 | **Stockage** | Abstraction `StorageService` conservée. Cloudinary pour le CV des candidatures : fichier brut en accès authentifié, envoi côté serveur seulement, aucune référence de stockage dans les réponses de l'API. Une candidature et son CV sont conservés jusqu'à leur suppression par l'administrateur : aucune suppression automatique. Cloudinary aussi pour les images (2026-10-13), envoyées par le Back Office à l'API, jamais directement du navigateur vers le fournisseur ; 5 Mo au plus par image. |
+| 10 | **Stockage** | Abstraction `StorageService` conservée. Cloudinary pour le CV des candidatures : fichier brut en accès authentifié, envoi côté serveur seulement, aucune référence de stockage dans les réponses de l'API. Une candidature et son CV sont conservés jusqu'à leur suppression par l'administrateur : aucune suppression automatique. Cloudinary aussi pour les images (2026-10-13), envoyées par le Back Office à l'API, jamais directement du navigateur vers le fournisseur. 4 Mo au plus par image et par CV (révisé le 2026-11-12, limite du corps des fonctions Vercel). |
 | 11 | **News** | Les cinq types du Front Office V1 uniquement. |
 | 12 | **Impact** | Optionnel. Aucun faux contenu : sans donnée d'impact, la section n'est pas affichée. |
 | 13 | **Année Rotary d'un contenu** | Référence explicite vers RotaryYear sur Action et News, choisie par l'administrateur. Jamais déduite en silence de la date. |

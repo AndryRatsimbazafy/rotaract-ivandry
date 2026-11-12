@@ -12,7 +12,7 @@ type Errors = Partial<Record<ApplicationField, string>>;
 type Outcome = "idle" | "sending" | "sent" | "too-many" | "unavailable";
 
 /** Règles de l'API, reprises pour éviter un aller-retour ; elle reste l'autorité. */
-const CV_MAX_BYTES = 5 * 1024 * 1024;
+const CV_MAX_BYTES = 4 * 1024 * 1024;
 const PHONE_PATTERN = /^(?=(?:\D*\d){8})[\d\s+\-.()]+$/;
 
 type ApplicationText = Content["join"]["joinApplication"];
@@ -57,6 +57,9 @@ export function ApplicationForm({ text: joinApplication, lang }: ApplicationForm
   const statusValues = Object.keys(statuses) as ApplicantStatus[];
   const [errors, setErrors] = useState<Errors>({});
   const [outcome, setOutcome] = useState<Outcome>("idle");
+  // Nom du fichier choisi, affiché à la place du texte natif, tronqué sur
+  // téléphone.
+  const [cvName, setCvName] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -83,6 +86,7 @@ export function ApplicationForm({ text: joinApplication, lang }: ApplicationForm
 
     if (submission.ok) {
       form.reset();
+      setCvName(null);
       setOutcome("sent");
     } else if ("fieldErrors" in submission) {
       // Refus de l'API sur un champ : son message, sous le champ.
@@ -202,6 +206,8 @@ export function ApplicationForm({ text: joinApplication, lang }: ApplicationForm
 
       <div className={styles.field}>
         <label htmlFor="cv">{fields.cv}</label>
+        {/* Le champ natif reste le seul contrôle : transparent, il couvre la
+            zone ; le bouton et le nom du fichier n'en sont que l'habillage. */}
         <div className={styles.drop}>
           <input
             id="cv"
@@ -209,8 +215,16 @@ export function ApplicationForm({ text: joinApplication, lang }: ApplicationForm
             type="file"
             accept=".pdf,.doc,.docx"
             required
+            className={styles.fileInput}
+            onChange={(event) => setCvName(event.currentTarget.files?.[0]?.name ?? null)}
             {...describe("cv", "cv-aide")}
           />
+          <span className={styles.choose} aria-hidden="true">
+            {joinApplication.cvChoose}
+          </span>
+          <span className={cvName ? styles.fileName : `${styles.fileName} ${styles.noFile}`} aria-hidden="true">
+            {cvName ?? joinApplication.cvNone}
+          </span>
         </div>
         <p id="cv-aide" className={styles.hint}>
           {joinApplication.cvHint}

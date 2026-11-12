@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import type { ApiErrorBody, ApiErrorDetail } from "@/types/api";
+import { clientIpHeaders } from "./client-ip";
 import { clearSession, getSessionToken } from "./session";
 
 // Client de l'API, côté serveur uniquement : le navigateur ne connaît ni
@@ -39,6 +40,7 @@ export async function apiRaw(
   path: string,
   method: Method = "GET",
   body?: unknown,
+  extraHeaders: Record<string, string> = {},
 ): Promise<Response> {
   const token = await getSessionToken();
   const url = `${baseUrl()}${path}`;
@@ -50,6 +52,7 @@ export async function apiRaw(
       headers: {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+        ...extraHeaders,
       },
       body: body === undefined ? undefined : JSON.stringify(body),
     });
@@ -80,8 +83,9 @@ async function request<T>(
   path: string,
   method: Method,
   body?: unknown,
+  extraHeaders?: Record<string, string>,
 ): Promise<T> {
-  const response = await apiRaw(path, method, body);
+  const response = await apiRaw(path, method, body, extraHeaders);
   if (!response.ok) {
     throw await toApiError(response);
   }
@@ -187,13 +191,14 @@ export async function apiUpload<T>(
   throw error;
 }
 
-// Appel sans traitement de session : la connexion.
+// Appel sans traitement de session : la connexion. L'adresse du visiteur
+// accompagne l'appel, pour la limite de tentatives de l'API.
 export async function apiAnonymous<T>(
   path: string,
   method: Method,
   body?: unknown,
 ): Promise<T> {
-  return request<T>(path, method, body);
+  return request<T>(path, method, body, await clientIpHeaders());
 }
 
 export function queryString(

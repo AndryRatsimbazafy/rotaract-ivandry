@@ -7,7 +7,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ThrottlerGuard } from '@nestjs/throttler';
+import { ClientIpThrottlerGuard } from '../common/guards/client-ip-throttler.guard';
 import { AuthService } from './auth.service';
 import type { AuthenticatedAdmin, LoginResult } from './auth.service';
 import { CurrentAdmin } from './decorators/current-admin.decorator';
@@ -18,11 +18,11 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // Seule route limitée en fréquence : 5 demandes par minute et par adresse IP,
-  // réussies ou non (réglage dans app.module.ts).
+  // Limitée en fréquence : 5 demandes par minute et par adresse IP du
+  // visiteur, réussies ou non (réglage dans app.module.ts).
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(ThrottlerGuard)
+  @UseGuards(ClientIpThrottlerGuard)
   login(@Body() loginDto: LoginDto): Promise<LoginResult> {
     return this.authService.login(loginDto);
   }

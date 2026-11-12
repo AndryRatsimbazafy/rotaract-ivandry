@@ -13,6 +13,8 @@ export type AppConfig = {
   jwtExpiresIn: string;
   jwtExpiresInSeconds: number;
   corsOrigins: string[];
+  // null : l'en-tête X-Client-Ip n'est jamais cru.
+  internalApiSecret: string | null;
   cloudinary: { cloudName: string; apiKey: string; apiSecret: string };
 };
 
@@ -29,6 +31,8 @@ export function getAppConfig(
       config.get('JWT_EXPIRES_IN', { infer: true }),
     ),
     corsOrigins: parseOrigins(config.get('CORS_ORIGINS', { infer: true })),
+    internalApiSecret:
+      config.get('INTERNAL_API_SECRET', { infer: true }) ?? null,
     cloudinary: {
       cloudName: config.get('CLOUDINARY_CLOUD_NAME', { infer: true }),
       apiKey: config.get('CLOUDINARY_API_KEY', { infer: true }),

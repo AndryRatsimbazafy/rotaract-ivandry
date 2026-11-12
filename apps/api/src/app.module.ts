@@ -39,8 +39,8 @@ import { SiteSettingsModule } from './site-settings/site-settings.module';
         },
       }),
     }),
-    // Aucune garde de limitation globale : elle n'est posée que sur la
-    // connexion (auth.controller.ts). Compteur en mémoire.
+    // Aucune garde de limitation globale : ClientIpThrottlerGuard n'est posée
+    // que sur la connexion et le dépôt de candidature. Compteur en mémoire.
     ThrottlerModule.forRoot({
       throttlers: [{ limit: 5, ttl: 60_000 }],
       errorMessage: 'Trop de requêtes. Réessayez plus tard.',

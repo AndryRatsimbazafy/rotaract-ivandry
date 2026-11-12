@@ -1,10 +1,10 @@
 // Préparation d'une image dans le navigateur, avant l'envoi
 // (specs/011-image-storage, research R6) : contrôle du type et du poids, puis
 // réduction à 3000 px au plus sur le côté le plus long et réencodage. Une
-// image de 5 Mo passe ainsi sous les limites du serveur et de l'hébergement.
+// image de 4 Mo passe ainsi sous les limites du serveur et de l'hébergement.
 // L'API reste l'autorité : elle refait ses propres contrôles.
 
-const MAX_BYTES = 5 * 1024 * 1024;
+const MAX_BYTES = 4 * 1024 * 1024;
 const MAX_SIDE = 3000;
 const QUALITY = 0.85;
 const TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -12,7 +12,7 @@ const TYPES = ["image/jpeg", "image/png", "image/webp"];
 // Les mêmes textes que l'API.
 export const IMAGE_TYPE_MESSAGE =
   "Format d'image non accepté : JPEG, PNG ou WebP.";
-export const IMAGE_SIZE_MESSAGE = "L'image dépasse 5 Mo.";
+export const IMAGE_SIZE_MESSAGE = "L'image dépasse 4 Mo.";
 
 export type PreparedImage = {
   blob: Blob;

@@ -12,11 +12,12 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       // Une image est réduite dans le navigateur avant l'envoi ; quand ce
-      // n'est pas possible, l'original part tel quel, jusqu'à 5 242 880
+      // n'est pas possible, l'original part tel quel, jusqu'à 4 194 304
       // octets, avec ses champs et l'habillage multipart. Une Server Action
       // refuse par défaut un corps de plus de 1 Mo. L'API reste l'autorité
-      // sur la limite de 5 Mo.
-      bodySizeLimit: "6mb",
+      // sur la limite de 4 Mo ; la marge reste sous les 4,5 Mo du corps d'une
+      // fonction Vercel.
+      bodySizeLimit: "4.5mb",
     },
   },
   images: {

@@ -1,7 +1,8 @@
 import { basename, extname } from 'node:path';
 
-// 5 Mo.
-export const CV_MAX_BYTES = 5 * 1024 * 1024;
+// 4 Mo : avec ses champs et l'habillage multipart, un CV à la limite passe
+// sous les 4,5 Mo du corps d'une fonction Vercel (serveur du site).
+export const CV_MAX_BYTES = 4 * 1024 * 1024;
 const NAME_MAX_LENGTH = 255;
 
 const PDF_SIGNATURE = Buffer.from('%PDF-');

@@ -215,7 +215,7 @@ Le script racine `dev` repose sur le shell (`&` + `wait`) : il fonctionne sous L
 - Cibles d'hébergement : Vercel (fronts) et Render (API).
 - **Design du Front Office** : `DESIGN.md` en est la source de vérité (éditorial premium, concept « Le journal du club », palette Rotary hiérarchisée, Open Sans et Georgia, pas de mode sombre en V1, WCAG 2.2 AA). Il vaut pour toutes les pages.
 - **Modèle métier** : Action et Actualité sont deux entités distinctes ; la fonction d'un membre n'est pas une propriété du membre mais d'un mandat par année Rotary, qui peut porter plusieurs fonctions ; une candidature est simplement enregistrée, **sans workflow de statut**.
-- **Fichiers** : le CV des candidatures est conservé chez Cloudinary (fichier brut, accès authentifié, sans adresse publique), derrière l'abstraction `StorageService` ; les images (portraits, photographies) le seront aussi, envoyées par le Back Office à l'API, 5 Mo au plus. Une candidature et son CV restent jusqu'à leur suppression par l'administrateur : aucune suppression automatique. CV : PDF, DOC ou DOCX, 5 Mo au plus.
+- **Fichiers** : le CV des candidatures est conservé chez Cloudinary (fichier brut, accès authentifié, sans adresse publique), derrière l'abstraction `StorageService` ; les images (portraits, photographies) le seront aussi, envoyées par le Back Office à l'API, 4 Mo au plus. Une candidature et son CV restent jusqu'à leur suppression par l'administrateur : aucune suppression automatique. CV : PDF, DOC ou DOCX, 4 Mo au plus (limite abaissée de 5 à 4 Mo le 2026-11-12 pour passer sous les 4,5 Mo du corps d'une fonction Vercel).
 
 ## 9. Décisions encore ouvertes
 
@@ -283,5 +283,5 @@ Aucune étape n'est planifiée. Restent ouvertes les décisions de `ARCHITECTURE
 - **`@emotion/cache`** : sixième dépendance du Back Office, non prévue à l'origine. C'est une dépendance paire obligatoire de `@mui/material-nextjs` ; avec l'installation sans hoisting, elle n'est pas résolue si elle n'est pas déclarée.
 - **Journal de développement du Back Office** : `next dev` journalise par défaut les adresses appelées et les arguments des Server Actions, qui peuvent porter des données personnelles ; `apps/admin/next.config.ts` désactive ces deux journaux.
 - **Limite des connexions vue du Back Office** : c'est le serveur du Back Office qui appelle `POST /auth/login` ; l'API voit donc son adresse, et la limite de 5 par minute est partagée par tous ceux qui se connectent par lui.
-- **Lecture d'un CV volumineux** : le stockage borne chaque appel à 10 secondes ; sur une liaison lente, un CV de 5 Mo peut dépasser ce délai. Le Back Office affiche alors « Service indisponible. » et permet de réessayer.
+- **Lecture d'un CV volumineux** : le stockage borne chaque appel à 10 secondes ; sur une liaison lente, un CV de 4 Mo peut dépasser ce délai. Le Back Office affiche alors « Service indisponible. » et permet de réessayer.
 - Le Front Office affiche encore des contenus provisoires à remplacer avant mise en ligne (texte de présentation du club, photographies, adresses des réseaux sociaux).

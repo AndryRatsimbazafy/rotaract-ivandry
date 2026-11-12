@@ -1,6 +1,7 @@
 import { ConsoleLogger, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import type { Request, Response } from 'express';
 import helmet from 'helmet';
 import { Error as MongooseError } from 'mongoose';
@@ -47,12 +48,16 @@ function isDriverError(error: unknown): boolean {
 
 async function bootstrap() {
   try {
-    const app = await NestFactory.create(AppModule, {
+    const app = await NestFactory.create<NestExpressApplication>(AppModule, {
       abortOnError: false,
       logger: new StartupLogger(),
     });
     const config = getAppConfig(app.get(ConfigService));
 
+    // Un mandataire devant l'API (Render) : req.ip est l'adresse qu'il a
+    // reçue, pas la sienne. Une seule étape, pour qu'un client ne puisse pas
+    // choisir son adresse en ajoutant un X-Forwarded-For de son cru.
+    app.set('trust proxy', 1);
     app.setGlobalPrefix('api/v1');
     app.use(helmet());
     const exceptionFilter = new AllExceptionsFilter();

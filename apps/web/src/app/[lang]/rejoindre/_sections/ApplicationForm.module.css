@@ -71,28 +71,67 @@
 
 /* Le dépôt de fichier : le champ natif, dans une zone à bordure pointillée. */
 .drop {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-12) var(--space-16);
   padding: var(--space-16);
   border: var(--rule-width) dashed var(--border-control);
   background: var(--bg-surface);
 }
 
-.drop input {
+/* Le vrai champ, transparent, couvre toute la zone : un appui n'importe où
+ * ouvre le choix du fichier. */
+.fileInput {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  min-height: var(--target-min);
-  font: inherit;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 
-.drop input::file-selector-button {
+/* Habillage : bouton secondaire, puis le nom du fichier, qui passe à la
+ * ligne au lieu d'être tronqué. */
+.choose {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
   min-height: var(--target-min);
-  margin-right: var(--space-16);
   padding-inline: var(--space-16);
   border: var(--border-width-strong) solid var(--text-primary);
   border-radius: var(--radius-control);
   color: var(--text-primary);
   background: var(--bg-page);
-  font: inherit;
   font-weight: var(--font-weight-semibold);
-  cursor: pointer;
+}
+
+.fileName {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.noFile {
+  color: var(--text-secondary);
+}
+
+/* Le champ est invisible : son focus se dessine sur le bouton. */
+.drop:has(.fileInput:focus-visible) .choose {
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.drop:active .choose {
+  color: var(--link);
+  border-color: var(--link);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .drop:hover .choose {
+    color: var(--link);
+    border-color: var(--link);
+  }
 }
 
 .drop:has(input[aria-invalid="true"]) {

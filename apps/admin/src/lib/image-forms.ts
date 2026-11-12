@@ -1,6 +1,7 @@
 import { ApiError } from "./api";
 import { failure } from "./form-errors";
 import { text, type FormState, type FormValues } from "./form-state";
+import { IMAGE_SIZE_MESSAGE } from "./image-reduction";
 
 // Champs d'une image, partagés par les actions serveur des portraits et des
 // photographies (specs/011-image-storage, contracts/api-images.md).
@@ -45,7 +46,7 @@ export function imageFailure(error: unknown, values: FormValues): FormState {
       fieldErrors: {
         image:
           error.status === 413
-            ? "L'image dépasse 5 Mo."
+            ? IMAGE_SIZE_MESSAGE
             : error.message,
       },
       values,

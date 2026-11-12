@@ -3,6 +3,7 @@
 import { contentFor } from "@/content/dictionaries";
 import { isLang, type Lang } from "@/lib/locale";
 import { apiUrl } from "@/lib/api";
+import { clientIpHeaders } from "@/lib/client-ip";
 import type { ApplicationField } from "@/types/application";
 
 export type SubmissionResult =
@@ -54,6 +55,8 @@ export async function submitApplication(
   try {
     response = await fetch(apiUrl("/applications"), {
       method: "POST",
+      // Adresse du visiteur, pour la limite de 20 dépôts par heure.
+      headers: await clientIpHeaders(),
       body,
       cache: "no-store",
       signal: AbortSignal.timeout(TIMEOUT_MS),

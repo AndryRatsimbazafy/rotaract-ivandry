@@ -2,6 +2,7 @@ import { plainToInstance } from 'class-transformer';
 import {
   IsIn,
   IsInt,
+  IsOptional,
   IsString,
   Matches,
   Max,
@@ -89,6 +90,13 @@ export class EnvironmentVariables {
   @Validate(IsOriginList)
   CORS_ORIGINS: string = '';
 
+  // Secret partagé avec les serveurs Next.js : authentifie l'adresse du
+  // visiteur qu'ils transmettent (limitation de fréquence).
+  @IsOptional()
+  @IsString()
+  @MinLength(32)
+  INTERNAL_API_SECRET?: string;
+
   // Stockage des CV des candidatures.
   @IsString()
   CLOUDINARY_CLOUD_NAME: string;
@@ -109,6 +117,7 @@ const RULES: Record<keyof EnvironmentVariables, string> = {
     'nombre suivi de s, m, h ou d ; durée strictement positive et de 8 heures au plus',
   CORS_ORIGINS:
     'origines séparées par des virgules ; chacune avec schéma et hôte, sans chemin',
+  INTERNAL_API_SECRET: 'facultative ; 32 caractères au moins',
   CLOUDINARY_CLOUD_NAME: 'obligatoire ; nom du compte Cloudinary',
   CLOUDINARY_API_KEY: "obligatoire ; clé d'API Cloudinary",
   CLOUDINARY_API_SECRET: 'obligatoire ; secret Cloudinary',

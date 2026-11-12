@@ -6,7 +6,8 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { Throttle } from '@nestjs/throttler';
+import { ClientIpThrottlerGuard } from '../common/guards/client-ip-throttler.guard';
 import { ApplicationsService } from './applications.service';
 import { CvUploadInterceptor } from './cv-upload.interceptor';
 import type { UploadedCv } from './cv-upload.interceptor';
@@ -17,11 +18,11 @@ import { CreateApplicationDto } from './dto/create-application.dto';
 export class ApplicationsPublicController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
-  // 20 demandes par heure et par adresse IP, réussies ou non. La garde passe
+  // 20 demandes par heure et par adresse IP du visiteur, réussies ou non. La garde passe
   // avant la lecture du fichier : une demande refusée n'est pas lue.
   @Post()
   @Throttle({ default: { limit: 20, ttl: 3_600_000 } })
-  @UseGuards(ThrottlerGuard)
+  @UseGuards(ClientIpThrottlerGuard)
   @UseInterceptors(CvUploadInterceptor)
   create(
     @Body() createApplicationDto: CreateApplicationDto,

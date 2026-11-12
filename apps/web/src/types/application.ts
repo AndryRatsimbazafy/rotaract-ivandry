@@ -8,7 +8,7 @@ export interface MembershipApplication {
   email: string;
   phone: string;
   applicantStatus: ApplicantStatus;
-  /** Le CV, en fichier : PDF ou Word, 5 Mo au plus. */
+  /** Le CV, en fichier : PDF ou Word, 4 Mo au plus. */
   cv: File;
 }
 

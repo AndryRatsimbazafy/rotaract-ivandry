@@ -91,6 +91,9 @@ export const joinApplication: {
   fields: Record<ApplicationField, string>;
   statuses: Record<ApplicantStatus, string>;
   cvHint: string;
+  /** Habillage du champ de fichier : bouton et nom du fichier choisi. */
+  cvChoose: string;
+  cvNone: string;
   required: string;
   submit: string;
   errorPrefix: string;
@@ -117,7 +120,9 @@ export const joinApplication: {
     cv: "CV",
   },
   statuses: { etudiant: "Étudiant", professionnel: "Professionnel" },
-  cvHint: "Un fichier PDF ou Word, de 5 Mo au plus.",
+  cvHint: "Un fichier PDF ou Word, de 4 Mo au plus.",
+  cvChoose: "Choisir un fichier",
+  cvNone: "Aucun fichier choisi",
   required: "Tous les champs sont obligatoires.",
   submit: "Envoyer ma candidature",
   errorPrefix: "Erreur :",
@@ -131,7 +136,7 @@ export const joinApplication: {
     applicantStatus: "Choisissez votre statut.",
     cv: "Joignez votre CV.",
   },
-  cvTooLarge: "Le fichier est trop volumineux.",
+  cvTooLarge: "Le fichier dépasse 4 Mo : choisissez un fichier plus léger.",
   cvFormat: "Le format du CV n’est pas accepté.",
   sending: "Envoi en cours…",
   tooMany: "Trop de demandes. Veuillez réessayer plus tard.",
