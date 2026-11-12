@@ -7,7 +7,7 @@ export async function JoinValues() {
   const { rotaryValues } = content.home;
   const { joinValues } = content.join;
   return (
-    <section className={styles.section} aria-labelledby="valeurs-titre">
+    <section id="valeurs" className={styles.section} aria-labelledby="valeurs-titre">
       <div className="container">
         <SectionLabel number={joinValues.number}>{joinValues.label}</SectionLabel>
         <h2 id="valeurs-titre" className={styles.title}>

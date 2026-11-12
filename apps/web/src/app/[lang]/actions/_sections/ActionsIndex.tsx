@@ -2,6 +2,7 @@ import Link from "@/components/ui/LocalLink";
 import { Suspense } from "react";
 import { PhotoFrame } from "@/components/media/PhotoFrame";
 import { ArrowLink } from "@/components/ui/ArrowLink";
+import { EmptyNote } from "@/components/ui/EmptyNote";
 import { ListSkeleton } from "@/components/ui/PageSkeleton";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { actionPath, routes } from "@/config/routes";
@@ -59,18 +60,6 @@ function toEntry(action: Action, content: Content): Entry {
       impact: action.impact?.results ? action.french?.results : action.french?.beneficiaries,
     },
   };
-}
-
-function placeholderEntries({ actionsIndex }: Content["actions"]): Entry[] {
-  const { meta, title, summary, impact } = actionsIndex.placeholder;
-
-  return VARIANTS.map((_, index) => ({
-    key: `emplacement-${index}`,
-    meta: [meta],
-    title,
-    summary,
-    impact,
-  }));
 }
 
 function filterHref(filters: ActionFilters) {
@@ -231,9 +220,11 @@ async function ActionsEntries({
   const content = await getContent();
   const { actionsIndex } = content.actions;
   const { actions } = await list;
-  const entries = isPending
-    ? placeholderEntries(content.actions)
-    : actions.map((action) => toEntry(action, content));
+  // Aucune action publiée : une phrase entre deux filets, pas d'entrée fantôme.
+  if (isPending) {
+    return <EmptyNote className={styles.none}>{actionsIndex.none}</EmptyNote>;
+  }
+  const entries = actions.map((action) => toEntry(action, content));
 
   return (
     <>
@@ -243,7 +234,7 @@ async function ActionsEntries({
           <ArrowLink href={filterHref({})}>{actionsIndex.reset}</ArrowLink>
         </div>
       ) : (
-        <div className={isPending ? styles.pending : undefined}>
+        <div>
           {entries.map((entry, index) => {
             const variant = VARIANTS[index % VARIANTS.length];
 

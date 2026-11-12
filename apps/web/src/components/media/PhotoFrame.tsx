@@ -80,6 +80,8 @@ export async function PhotoFrame({
           fill
           sizes={sizes}
           priority={priority}
+          placeholder={photo.blurDataURL ? "blur" : "empty"}
+          blurDataURL={photo.blurDataURL}
           className={styles.image}
           style={photo.focus ? { objectPosition: photo.focus } : undefined}
         />

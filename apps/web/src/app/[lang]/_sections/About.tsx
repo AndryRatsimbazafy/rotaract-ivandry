@@ -63,11 +63,8 @@ export async function About({ club, clubFrench, photo }: AboutProps) {
               ))}
             </dl>
           ) : null}
-          {facts.length > 0 ? (
-            <LangMark show={hasFrench(clubFrench)} />
-          ) : (
-            <p className={styles.pending}>{about.pending}</p>
-          )}
+          {/* Sans information, pas de fiche ni de mention (DESIGN.md, section 6). */}
+          {facts.length > 0 ? <LangMark show={hasFrench(clubFrench)} /> : null}
           <div className={styles.more}>
             <ArrowLink href={routes.club}>{about.more}</ArrowLink>
           </div>

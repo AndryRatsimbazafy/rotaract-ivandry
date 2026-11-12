@@ -1,0 +1,15 @@
+/* La même phrase que le registre vide des actualités, entre ses filets. */
+
+.note {
+  border-block: var(--rule-width) solid var(--border-rule);
+}
+
+.text {
+  max-width: 24ch;
+  padding-block: var(--space-48) var(--space-64);
+  font-family: var(--font-recit);
+  font-size: var(--text-statement-size);
+  font-style: italic;
+  line-height: var(--text-statement-leading);
+  text-wrap: pretty;
+}

@@ -15,6 +15,7 @@
 
 .head,
 .members,
+.empty,
 .all,
 .portraits {
   grid-column: 1 / -1;
@@ -74,14 +75,6 @@
   list-style: none;
 }
 
-.pending .name {
-  color: var(--text-placeholder);
-}
-
-.pending.members,
-.pending .member {
-  border-color: var(--border-rule);
-}
 
 .portraits {
   position: relative;
@@ -129,7 +122,8 @@
     grid-column: 1 / span 7;
   }
 
-  .members {
+  .members,
+  .empty {
     grid-column: 1 / span 7;
     align-self: start;
   }

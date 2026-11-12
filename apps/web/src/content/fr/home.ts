@@ -1,8 +1,10 @@
 // Textes de la page d'accueil.
-// Aucune donnée n'est inventée : quand une information manque, la page affiche
-// un emplacement discret (voir les libellés « placeholder »).
+// Aucune donnée n'est inventée : quand une information manque, la section le
+// dit en une phrase (DESIGN.md, section 8, « Collection vide »).
 
 import type { Photo } from "@/types/media";
+// Import statique : seul son aperçu flou sert, le fichier reste servi depuis public/.
+import openingImage from "../../../public/images/Image-16-9.jpeg";
 import { rotaryYearLabel } from "./common";
 
 export const opening = {
@@ -13,6 +15,7 @@ export const opening = {
   photoBrief: "Une action du club, sur le terrain.",
   photo: {
     src: "/images/Image-16-9.jpeg",
+    blurDataURL: openingImage.blurDataURL,
     width: 6043,
     height: 3399,
     alt: "Deux jeunes hommes en t-shirt blanc versent l'eau d'un jerrican jaune, entourés d'habitants.",
@@ -29,9 +32,6 @@ export const about = {
   paragraphs: [
     "Le Rotaract fait partie de la famille du Rotary, un réseau mondial de clubs de service.",
   ],
-  // Affichée tant qu'aucune information du club n'est saisie dans le Back Office.
-  pending:
-    "Présentation à compléter : année de création, club parrain, nombre de membres, lieu et rythme des réunions.",
   /** Intitulés de la fiche du club, dans l'ordre d'affichage (DESIGN.md, section 6). */
   facts: {
     foundedYear: "Création",
@@ -54,11 +54,14 @@ export const rotaryValues: {
   number: string;
   label: string;
   title: string;
+  /** Lien vers la forme développée, sur la page Nous rejoindre. */
+  more: string;
   values: RotaryValue[];
 } = {
   number: "02",
   label: "Nos valeurs",
   title: "Les valeurs du Rotary",
+  more: "Les valeurs, en détail",
   values: [
     {
       name: "Service",
@@ -127,12 +130,7 @@ export const latestActions = {
   impactLabel: "Impact",
   photoBrief: "Une action du club.",
   // Affiché tant qu'aucune action n'est publiée.
-  placeholder: {
-    meta: rotaryYearLabel,
-    title: "Titre de l'action",
-    summary: "Courte description de l'action.",
-    impact: "Ce que l'action a changé, et pour qui.",
-  },
+  empty: "Aucune action n'est encore publiée.",
 };
 
 export const latestNews = {
@@ -149,11 +147,8 @@ export const membersPreview = {
   yearLabel: rotaryYearLabel,
   allLink: "Tous les membres",
   portraitBrief: "Portrait d'un membre.",
-  // Affiché tant qu'aucun membre n'est publié.
-  placeholder: {
-    name: "Prénom Nom",
-    roles: "Fonction",
-  },
+  // Affiché tant qu'aucun membre de l'année n'est publié.
+  empty: "Les membres de cette année ne sont pas encore publiés.",
 };
 
 export const joinField = {

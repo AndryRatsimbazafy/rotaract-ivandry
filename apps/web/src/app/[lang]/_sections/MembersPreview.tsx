@@ -1,27 +1,18 @@
 import { PhotoFrame } from "@/components/media/PhotoFrame";
 import { ArrowLink } from "@/components/ui/ArrowLink";
+import { EmptyNote } from "@/components/ui/EmptyNote";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { routes } from "@/config/routes";
 import type { Member } from "@/types/member";
 import type { RotaryYear } from "@/types/rotary-year";
 import styles from "./MembersPreview.module.css";
-import { getContent, type Content } from "@/content";
-
-const SLOTS = 4;
+import { getContent } from "@/content";
 
 interface MemberLine {
   key: string;
   name: string;
   /** Un membre peut avoir plusieurs fonctions la même année, ou aucune. */
   roles: string[];
-}
-
-function placeholderLines({ membersPreview }: Content["home"]): MemberLine[] {
-  return Array.from({ length: SLOTS }, (_, index) => ({
-    key: `emplacement-${index}`,
-    name: membersPreview.placeholder.name,
-    roles: [membersPreview.placeholder.roles],
-  }));
 }
 
 interface MembersPreviewProps {
@@ -35,9 +26,7 @@ export async function MembersPreview({ members, rotaryYear }: MembersPreviewProp
   const { membersPreview } = content.home;
   const { memberRoleLabels } = content.members;
   const isPending = members.length === 0;
-  const lines: MemberLine[] = isPending
-    ? placeholderLines(content.home)
-    : members.map((member) => ({
+  const lines: MemberLine[] = members.map((member) => ({
         key: member.id,
         name: `${member.firstName} ${member.lastName}`,
         roles: member.roles.map((role) => memberRoleLabels[role]),
@@ -68,11 +57,11 @@ export async function MembersPreview({ members, rotaryYear }: MembersPreviewProp
           ) : null}
         </div>
 
-        <ul
-          className={
-            isPending ? `${styles.members} ${styles.pending}` : styles.members
-          }
-        >
+        {isPending ? (
+          // Collection vide : une phrase, ni nom inventé ni portrait gabarit.
+          <EmptyNote className={styles.empty}>{membersPreview.empty}</EmptyNote>
+        ) : (
+        <ul className={styles.members}>
           {lines.map((line) => (
             <li key={line.key} className={styles.member}>
               <p className={styles.name}>{line.name}</p>
@@ -86,12 +75,14 @@ export async function MembersPreview({ members, rotaryYear }: MembersPreviewProp
             </li>
           ))}
         </ul>
+        )}
 
         <p className={styles.all}>
           <ArrowLink href={routes.members}>{membersPreview.allLink}</ArrowLink>
         </p>
 
         {/* Deux portraits verticaux qui se chevauchent, sur une bande bleue. */}
+        {isPending ? null : (
         <div className={styles.portraits}>
           <div className={styles.portraitMain}>
             <PhotoFrame
@@ -113,6 +104,7 @@ export async function MembersPreview({ members, rotaryYear }: MembersPreviewProp
             />
           </div>
         </div>
+        )}
       </div>
     </section>
   );

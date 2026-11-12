@@ -42,8 +42,9 @@ export default async function ClubPage() {
     yearCount: timeline.length,
   };
   // Les sections absentes ne laissent pas de trou dans la numérotation.
+  // L'histoire est toujours là : vide, elle le dit (DESIGN.md, section 8).
   const present = [
-    history.length > 0 && "history",
+    "history",
     "rotary",
     hasFigures(figures) && "figures",
     timeline.length > 0 && "timeline",

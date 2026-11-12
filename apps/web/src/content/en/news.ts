@@ -28,13 +28,7 @@ export const newsFeature = {
   locationLabel: "Location",
   photoBrief: "The highlight of this news item.",
   // Shown as long as no news is published.
-  placeholder: {
-    day: "00",
-    month: "Month, year",
-    type: "Category",
-    title: "Title of the featured news",
-    summary: "Short summary of the news.",
-  },
+  empty: "No news has been published yet.",
 };
 
 export const newsRegister = {

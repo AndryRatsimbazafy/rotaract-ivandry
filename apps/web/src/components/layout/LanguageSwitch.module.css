@@ -9,16 +9,24 @@
   white-space: nowrap;
 }
 
+.list li {
+  display: flex;
+  align-items: center;
+}
+
+/* Les zones de 44 px laissent déjà de l'air : le point se resserre. */
 .list li + li::before {
-  content: "·";
-  padding-inline: var(--space-8);
+  content: "·" / "";
   color: var(--text-secondary);
 }
 
+/* Zone tactile de 44 × 44 px (DESIGN.md, section 13), étiquette centrée. */
 .current,
 .link {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: var(--target-min);
   min-height: var(--target-min);
 }
 

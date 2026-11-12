@@ -12,6 +12,8 @@ export const opening = {
 export const history = {
   label: "Histoire",
   title: "Notre histoire",
+  // Tant que l'histoire n'est pas saisie dans le Back Office.
+  empty: "L'histoire du club sera bientôt racontée ici.",
 };
 
 export const rotary = {

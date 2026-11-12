@@ -56,7 +56,6 @@ export const chrome = {
     listLabel: "The club on social media",
     /** “The club on Facebook” */
     linkLabel: (network: string) => `The club on ${network}`,
-    pending: (network: string) => `${network}: link to come`,
   },
   languages: {
     label: "Language",

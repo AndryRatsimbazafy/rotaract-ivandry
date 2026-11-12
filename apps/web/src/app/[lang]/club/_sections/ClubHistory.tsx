@@ -1,3 +1,4 @@
+import { EmptyNote } from "@/components/ui/EmptyNote";
 import { LangMark } from "@/components/ui/LangMark";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { getContent } from "@/content";
@@ -14,11 +15,11 @@ interface ClubHistoryProps {
 
 /**
  * L'histoire du club, en voix de récit : la première phrase en chapeau.
- * Sans histoire saisie, la section n'existe pas (rien d'inventé).
+ * Sans histoire saisie, la section garde son titre et le dit en une phrase
+ * entre deux filets (DESIGN.md, section 8) : rien d'inventé.
  */
 export async function ClubHistory({ paragraphs, french, number }: ClubHistoryProps) {
   const { history } = (await getContent()).club;
-  if (paragraphs.length === 0) return null;
   const [first, ...rest] = paragraphs;
   const lang = french ? "fr" : undefined;
 
@@ -32,16 +33,20 @@ export async function ClubHistory({ paragraphs, french, number }: ClubHistoryPro
           </h2>
           {french ? <LangMark show /> : null}
         </div>
-        <div className={styles.text}>
-          <p className={styles.lede} lang={lang}>
-            {first}
-          </p>
-          {rest.map((paragraph, index) => (
-            <p key={index} className={styles.paragraph} lang={lang}>
-              {paragraph}
+        {first === undefined ? (
+          <EmptyNote className={styles.text}>{history.empty}</EmptyNote>
+        ) : (
+          <div className={styles.text}>
+            <p className={styles.lede} lang={lang}>
+              {first}
             </p>
-          ))}
-        </div>
+            {rest.map((paragraph, index) => (
+              <p key={index} className={styles.paragraph} lang={lang}>
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

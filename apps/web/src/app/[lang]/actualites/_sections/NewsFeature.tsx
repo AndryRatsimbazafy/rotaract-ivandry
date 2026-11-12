@@ -19,7 +19,6 @@ export async function NewsFeature({ item }: NewsFeatureProps) {
   const content = await getContent();
   const lang = await currentLang();
   const { newsFeature, newsTypeLabels } = content.news;
-  const placeholder = newsFeature.placeholder;
   const href = item ? newsItemPath(item.slug) : undefined;
 
   return (
@@ -33,6 +32,7 @@ export async function NewsFeature({ item }: NewsFeatureProps) {
           <SectionLabel number={newsFeature.number}>
             {newsFeature.label}
           </SectionLabel>
+          {/* Sans actualité, ni jour ni mois inventés. */}
           {item ? (
             <time dateTime={item.date} className={styles.stack}>
               <span className={styles.day}>{formatDay(item.date, lang)}</span>
@@ -40,14 +40,7 @@ export async function NewsFeature({ item }: NewsFeatureProps) {
                 {formatMonthYear(item.date, lang)}
               </span>
             </time>
-          ) : (
-            <p className={styles.stack}>
-              <span className={styles.day} aria-hidden="true">
-                {placeholder.day}
-              </span>
-              <span className={`label ${styles.month}`}>{placeholder.month}</span>
-            </p>
-          )}
+          ) : null}
         </div>
 
         <div className={styles.media}>
@@ -78,9 +71,9 @@ export async function NewsFeature({ item }: NewsFeatureProps) {
 
         {/* Le texte, sur un aplat blanc qui mord sur la photographie. */}
         <div className={styles.text}>
-          <p className={`label ${styles.type}`}>
-            {item ? newsTypeLabels[item.type] : placeholder.type}
-          </p>
+          {item ? (
+            <p className={`label ${styles.type}`}>{newsTypeLabels[item.type]}</p>
+          ) : null}
           <LangMark show={hasFrench(item?.french)} />
           <h2 id="une-titre" className={styles.title} lang={frenchLang(item?.french?.title)}>
             {item && href ? (
@@ -88,13 +81,14 @@ export async function NewsFeature({ item }: NewsFeatureProps) {
                 {item.title}
               </Link>
             ) : (
-              placeholder.title
+              // Collection vide : une phrase calme, pas de titre inventé.
+              newsFeature.empty
             )}
           </h2>
           {/* Une actualité sans résumé n'a pas de ligne de résumé. */}
-          {!item || item.summary ? (
-            <p className={styles.summary} lang={frenchLang(item?.french?.summary)}>
-              {item ? item.summary : placeholder.summary}
+          {item?.summary ? (
+            <p className={styles.summary} lang={frenchLang(item.french?.summary)}>
+              {item.summary}
             </p>
           ) : null}
           {item?.location ? (

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "@/components/ui/LocalLink";
+import { KeepYear } from "@/components/ui/KeepYear";
 import { routes } from "@/config/routes";
 import { site } from "@/config/site";
 import { getCurrentRotaryYear } from "@/data/rotary-years";
@@ -27,7 +28,9 @@ export async function SiteHeader() {
         <div className={styles.datelineInner}>
           <p className={`label ${styles.datelineText}`}>
             {dateline.map((item) => (
-              <span key={item}>{item}</span>
+              <span key={item}>
+                <KeepYear>{item}</KeepYear>
+              </span>
             ))}
           </p>
           <div className={styles.datelineTools}>

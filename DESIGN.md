@@ -331,14 +331,14 @@ Une section utilise un procédé, deux au plus. Jamais d'ombre, de flou ni de tr
 |---|---|---|
 | **Ouverture** | Marge de deux colonnes (étiquette, année), photographie panoramique à bord perdu à droite, signature à cheval, accroche et liens sous la signature | Fond de page |
 | **01 Le club** | Chiffre au trait sur trois colonnes, question en très grand, accroche, texte, photographie verticale à bord perdu qui descend dans la section suivante | Blanc |
-| **02 Nos valeurs** | Cinq lignes en escalier, chacune décalée d'une colonne, la définition en regard à droite | Encre |
+| **02 Nos valeurs** | Forme courte (révisée le 2026-11-12) : les cinq noms en titres moyens sur une seule ligne qui passe à la ligne, séparés par des points médians, puis un lien fléché « Les valeurs, en détail » vers la section des valeurs de Join, qui garde la forme développée (nom et définition). Pas de définition sur la Home : les valeurs n'y sont plus répétées en très grand | Encre |
 | **03 Nos causes** | « 7 » monumental, « axes stratégiques » posé contre lui, sept entrées numérotées sur deux colonnes décalées | Fond de page |
 | **04 Sur le terrain** | Une action sur huit colonnes à bord perdu à gauche avec aplat mordant, puis une verticale et une horizontale à des hauteurs différentes | Blanc |
 | **05 Vie du club** | Titre en marge sur trois colonnes, registre sur huit : jour en très grand, titre, type | Fond de page |
 | **06 Le collectif** | Noms en très grand, une ligne par personne, une sur deux en retrait ; deux portraits qui se chevauchent sur une bande bleue | Blanc |
 | **07 Nous rejoindre** | Champ cranberry, question en signature, photographie qui dépasse par le haut, appel sur une ligne entière, parcours d'adhésion en quatre étapes au bas | Cranberry |
 
-**La fiche du club.** Dans la section 01, sous le texte, les informations du club fournies dans le Back Office se lisent comme une fiche : une ligne par information, séparées par des filets encre de 1 px ; l'intitulé en étiquette Charcoal en marge gauche, la valeur en Open Sans 600 à droite, en chiffres tabulaires pour l'année et le nombre. Intitulés, dans cet ordre : Création, Club parrain, Membres, Réunions, Rythme. Une information absente n'a pas de ligne. Sans aucune information, la mention « Présentation à compléter » reste à sa place. Aucun chiffre monumental ni animé : le « 01 » au trait reste le seul grand chiffre de la section.
+**La fiche du club.** Dans la section 01, sous le texte, les informations du club fournies dans le Back Office se lisent comme une fiche : une ligne par information, séparées par des filets encre de 1 px ; l'intitulé en étiquette Charcoal en marge gauche, la valeur en Open Sans 600 à droite, en chiffres tabulaires pour l'année et le nombre. Intitulés, dans cet ordre : Création, Club parrain, Membres, Réunions, Rythme. Une information absente n'a pas de ligne. Sans aucune information, la fiche n'existe pas : aucune mention publique du type « Présentation à compléter » (révisé le 2026-11-12). Aucun chiffre monumental ni animé : le « 01 » au trait reste le seul grand chiffre de la section.
 
 ### Règles
 
@@ -396,9 +396,12 @@ Une image peut être très grande, recadrée, débordante, verticale ou panorami
 Tant que le club n'a pas fourni un contenu, la page garde sa composition et le signale avec retenue. Elle ne doit jamais ressembler à une maquette inachevée.
 
 - **Photographie absente : le gabarit.** Un aplat brume ou encre, deux repères de cadrage dans les angles, l'étiquette « Photographie à venir » suivie d'une description de l'image attendue, et le format en très grand, ton sur ton. C'est un objet d'édition, pas une fausse image.
-- **Texte absent.** Le libellé décrit l'emplacement (« Titre de l'action », « Prénom Nom »), sans crochets. En grand, il est en Tin. En petit, il est en Charcoal. Les filets passent en Silver.
+- **Texte absent.** Révisé le 2026-11-12 : aucun faux contenu textuel public. Pas de libellé qui mime un contenu (« Titre de l'action », « Prénom Nom — Fonction », « 00 », « Mois, année ») : une section sans contenu suit la règle « Registre vide » ci-dessous. Seul le gabarit photographique reste un emplacement visible.
 - **Une mention par section.** « Contenu à venir », une seule fois, près du titre de la section.
 - **Registre vide.** Un registre sans aucune ligne ne répète pas trois lignes fantômes : il montre ses en-têtes de colonnes, une phrase qui dit qu'il n'y a encore rien, et ses filets. La règle vaut sur la Home comme sur la page News.
+- **Collection vide** (ajouté le 2026-11-12). La même règle vaut pour les actions et les membres, sur la Home comme sur leurs pages, et pour l'actualité à la une : la section garde son étiquette, son titre et la mention « Contenu à venir », puis une seule phrase calme entre deux filets qui dit que rien n'est encore publié. Aucune entrée fantôme, aucun nom inventé, aucun portrait gabarit pour une personne qui n'existe pas. L'actualité à la une garde son gabarit photographique et remplace le jour monumental et le titre par cette phrase.
+- **Histoire du club absente** (ajouté le 2026-11-12). La page « Le club » garde sa section « Notre histoire » : étiquette, titre, puis, sur la colonne de lecture, une phrase en Georgia entre deux filets qui dit que l'histoire du club sera bientôt racontée. L'entrée de navigation reste.
+- **Réseau social sans adresse** (ajouté le 2026-11-12). Un pictogramme n'apparaît que si son adresse est renseignée, dans la une, le pied de page et le sommaire du téléphone. Sans aucune adresse, la liste n'existe pas. Jamais de pictogramme inerte ni de mention « lien à venir ».
 - **Gabarits qui se touchent.** Deux gabarits qui se chevauchent ne se recouvrent pas leur texte ; dans un cadre de moins de 240 px, le format en très grand se retire.
 - **Un emplacement n'est jamais cliquable.**
 - **Rien n'est inventé.** Ni action, ni date, ni membre, ni chiffre, ni citation.
@@ -414,23 +417,23 @@ Tant que le club n'a pas fourni un contenu, la page garde sa composition et le s
 | Élément | Langage |
 |---|---|
 | **En-tête** | Il occupe toute la largeur de l'écran, d'une marge à l'autre, même quand le contenu est centré. La une sur une ligne fine : lieu et année Rotary à gauche, pictogrammes des réseaux sociaux à droite. Puis l'en-tête, fixe en haut de l'écran, fermé par un filet encre. Signature du club à gauche, haute de 44 px sur téléphone et de 56 px sur ordinateur. Hauteur de l'en-tête : 68 px et 88 px. |
-| **Réseaux sociaux** | Facebook et Instagram, en pictogrammes au trait de 1,5 px, 20 px dans une zone tactile de 44 px. Dans la une, dans le pied de page et au bas du sommaire du téléphone. Chacun a un nom lisible par les lecteurs d'écran. |
+| **Réseaux sociaux** | Facebook et Instagram, en pictogrammes au trait de 1,5 px, 20 px dans une zone tactile de 44 px. Dans la une, dans le pied de page et au bas du sommaire du téléphone. Chacun a un nom lisible par les lecteurs d'écran. Un réseau sans adresse n'est pas affiché (section 8). |
 | **Navigation** | Six rubriques : Accueil, Le club, Actions, Actualités, Membres, Nous rejoindre. À partir de 1024 px : liens en ligne, un filet bleu de 2 px sous la rubrique courante. « Nous rejoindre » dans un cadre fin de 1 px. Les six tiennent sur une ligne dans les deux langues ; si la place manque, l'écart entre les liens se resserre, jamais le corps du texte. |
-| **Menu du téléphone** | Le mot « Menu » en étiquette et deux filets inégaux. Il ouvre le **sommaire** : plein écran sur encre, rubriques numérotées en très grand, lieu et année au bas, bouton « Fermer ». Fermeture par Échap, focus retenu dans le sommaire. |
+| **Menu du téléphone** | Le mot « Menu » en étiquette et deux filets inégaux. Il ouvre le **sommaire** : plein écran sur encre, rubriques numérotées en très grand, lieu et année au bas, bouton « Fermer ». Fermeture par Échap, focus retenu dans le sommaire. Le premier appui ouvre le sommaire même avant le chargement des scripts (commande HTML native, script en repli). |
 | **Lien fléché** | Libellé en graisse 600 et flèche. C'est la forme d'appel par défaut. |
 | **Liens dans un texte** | Bleu royal, soulignés. Sur champ fort : blancs, soulignés. |
 | **Boutons** | Réservés aux formulaires et à l'accès à un formulaire (« Candidater »). Rectangle, rayon 2 px. Principal : fond bleu royal, texte blanc. Secondaire : contour encre. Sur champ fort : fond blanc, texte encre. |
 | **Appel du champ cranberry** | Une ligne de texte en H1 sur toute la largeur, entre deux filets blancs, flèche à droite. |
 | **Étiquettes et badges** | Texte seul, sans fond ni contour. |
 | **Filtres** | Un index, pas une barre d'outils : une étiquette, puis les choix en texte sur une ligne. Le choix courant est en encre, souligné d'un filet bleu de 2 px ; les autres sont en Charcoal. Une liste longue se replie derrière son choix courant et se déplie sur place. Ni pilule, ni menu déroulant habillé, ni bouton. Un filtre est un lien : il change l'adresse de la page. |
-| **Formulaires** | Une colonne, libellé au-dessus, aide et erreur dessous, champs de 48 px, bordure Tin, texte de 16 px au moins. Une erreur s'écrit sous son champ, précédée du mot « Erreur », avec une bordure plus épaisse : jamais par la couleur seule. Le choix entre deux options se fait par boutons radio dans un groupe titré. Le dépôt de fichier est un champ natif dans une zone à bordure pointillée. Si tous les champs sont obligatoires, une phrase le dit en tête du formulaire, sans astérisque. Ce qui se passe après l'envoi est écrit avant le bouton. |
+| **Formulaires** | Une colonne, libellé au-dessus, aide et erreur dessous, champs de 48 px, bordure Tin, texte de 16 px au moins. Une erreur s'écrit sous son champ, précédée du mot « Erreur », avec une bordure plus épaisse : jamais par la couleur seule. Le choix entre deux options se fait par boutons radio dans un groupe titré. Le dépôt de fichier est un champ natif dans une zone à bordure pointillée ; son habillage natif est remplacé par un bouton secondaire « Choisir un fichier » et le nom du fichier choisi (ou « Aucun fichier choisi »), qui passe à la ligne au lieu d'être tronqué ; le champ natif reste le seul contrôle, relié à son libellé, avec un focus visible. Si tous les champs sont obligatoires, une phrase le dit en tête du formulaire, sans astérisque. Ce qui se passe après l'envoi est écrit avant le bouton. |
 | **Accordéon** | Lignes séparées par un filet encre, question en H4, signe plus ou moins à droite, toute la ligne cliquable. Élément natif, sans script. |
 | **Modale, tiroir** | Rayon 0, l'unique ombre du système. |
 | **Galerie plein écran** | Sur les pages de détail, chaque photographie s'agrandit. Plein écran sur encre, la photographie entière, jamais recadrée ni agrandie au-delà de sa taille d'origine. Sous elle, la légende en Georgia italique blanche et le crédit ; en haut, la position « 3 / 12 » en chiffres tabulaires et le bouton « Fermer » ; de part et d'autre, deux flèches au trait dans des zones de 44 px. On passe d'une photographie à l'autre par les flèches, le clavier ou le balayage ; Échap et le retour du navigateur ferment, et le focus revient sur la photographie d'origine. Une seule photographie : ni position ni flèches. Pas d'ombre : le champ encre suffit. |
 | **Notification** | Bandeau à fond teinté d'état avec bordure de 1 px, icône et texte. |
 | **Chargement** | Squelettes aux dimensions du contenu. |
 | **Erreur** | Une phrase calme, la cause et la correction. Une page qui ne peut pas se charger affiche la page d'erreur : même composition que la page introuvable, sans chiffre, avec un bouton « Réessayer ». |
-| **Sélecteur de langue** | Dans la une, à droite, avant les réseaux sociaux, et au bas du sommaire du téléphone : « FR · EN » en étiquettes. La langue courante est en encre, soulignée d'un filet bleu de 2 px ; l'autre est un lien en Charcoal. Il mène à la même page dans l'autre langue. |
+| **Sélecteur de langue** | Dans la une, à droite, avant les réseaux sociaux, et au bas du sommaire du téléphone : « FR · EN » en étiquettes. La langue courante est en encre, soulignée d'un filet bleu de 2 px ; l'autre est un lien en Charcoal. Il mène à la même page dans l'autre langue. Chaque étiquette occupe une zone de 44 × 44 px. |
 | **Page introuvable** | Sur le fond de page, « 404 » en chiffre monumental au trait dans la marge, le titre « Cette page n'existe pas, ou plus. », une phrase calme, trois liens fléchés (Accueil, Actions, Actualités). |
 | **Pied de page** | Sur encre : signature du club, navigation en colonne, lieu, année et réseaux sociaux, puis le nom du club en très grand, tracé au trait et coupé par le bas. |
 
@@ -544,10 +547,10 @@ Le téléphone est conçu, pas réduit.
 
 | Élément | Téléphone | Tablette | Ordinateur |
 |---|---|---|---|
-| **En-tête** | Année seule dans la une, nom du club, « Menu » | Une complète, « Menu » | Une complète, navigation en ligne |
+| **En-tête** | Année seule dans la une (l'année « 2026-2027 » ne se coupe jamais), nom du club, « Menu » | Une complète, « Menu » | Une complète, navigation en ligne |
 | **Ouverture** | Photographie bord à bord, signature à cheval sur son bord inférieur | Idem, photographie moins haute | Marge de deux colonnes, photographie à bord perdu à droite. La photographie et la signature tiennent dans le premier écran ; sur un écran bas, l'accroche passe dessous pour que les visages restent visibles |
 | **Signature** | 16,5 % de la largeur de l'écran | Idem | Plafonnée à 13,5 rem |
-| **Escalier des valeurs** | Pas de 12 px, définition sous le nom | Idem | Pas d'une colonne, définition à droite |
+| **Valeurs (Home)** | Noms sur plusieurs lignes, lien dessous | Idem | Noms sur une ou deux lignes, lien dessous |
 | **Axes** | Une colonne | Deux colonnes décalées | Deux colonnes décalées, en regard du « 7 » |
 | **Actions** | Première image bord à bord, les autres en colonne | Deux images côte à côte, décalées | Bord perdu, aplat mordant, décalages |
 | **Registre** | Jour à gauche, titre et type à droite | Idem | Titre de section en marge, type en bout de ligne |

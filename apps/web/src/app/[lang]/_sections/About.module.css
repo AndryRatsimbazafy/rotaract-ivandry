@@ -63,15 +63,6 @@
   font-size: var(--text-body-size);
 }
 
-.pending {
-  padding-top: var(--space-16);
-  border-top: var(--rule-width) solid var(--border-rule);
-  color: var(--text-secondary);
-  font-family: var(--font-structure);
-  font-size: var(--text-small-size);
-  line-height: var(--text-small-leading);
-}
-
 /* La fiche du club : une ligne par information, intitulé en marge. */
 .facts {
   margin-top: var(--space-8);

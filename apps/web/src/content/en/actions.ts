@@ -53,8 +53,8 @@ export const actionsIndex = {
   },
   empty: "No action matches these filters.",
   reset: "See all actions",
-  // Shown as long as no action is published: the same placeholder as on the home page.
-  placeholder: latestActions.placeholder,
+  // Shown as long as no action is published: the same sentence as on the home page.
+  none: latestActions.empty,
 };
 
 // Action page (DESIGN.md, section 10, “the report”).

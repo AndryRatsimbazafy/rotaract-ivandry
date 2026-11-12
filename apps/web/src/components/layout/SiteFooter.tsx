@@ -2,6 +2,7 @@ import Image from "next/image";
 import { site } from "@/config/site";
 import { getCurrentRotaryYear } from "@/data/rotary-years";
 import { SiteNav } from "./SiteNav";
+import { KeepYear } from "@/components/ui/KeepYear";
 import { SocialLinks } from "./SocialLinks";
 import styles from "./SiteFooter.module.css";
 import { getContent } from "@/content";
@@ -30,7 +31,7 @@ export async function SiteFooter() {
           <p className={`label ${styles.dateline}`}>
             <span>{site.location}</span>
             <span>
-              {rotaryYearLabel} {currentYear}
+              <KeepYear>{`${rotaryYearLabel} ${currentYear}`}</KeepYear>
             </span>
           </p>
           <div className={styles.social}>

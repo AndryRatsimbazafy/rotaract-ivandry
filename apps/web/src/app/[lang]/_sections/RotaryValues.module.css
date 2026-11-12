@@ -1,6 +1,7 @@
 /*
- * 02 : le champ encre. Les cinq valeurs descendent en escalier, chacune
- * décalée d'une colonne, sa définition en regard.
+ * 02 : le champ encre, en forme courte. Les cinq noms se suivent sur une ligne
+ * qui passe à la ligne, séparés par des points médians ; un lien mène aux
+ * définitions, sur la page Nous rejoindre.
  */
 
 .field {
@@ -27,43 +28,35 @@
 }
 
 .values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) 0;
   margin-top: var(--rhythm-heading);
+  padding-block: var(--space-24);
+  border-block: var(--rule-width) solid var(--on-field-rule);
   list-style: none;
 }
 
 .value {
-  display: grid;
-  grid-template-columns: var(--space-32) 1fr;
-  column-gap: var(--space-8);
-  align-items: baseline;
-  padding-block: var(--space-16);
-  /* L'escalier : sur téléphone, un pas court. */
-  padding-left: calc(var(--step) * var(--space-12));
-  border-top: var(--rule-width) solid var(--on-field-rule);
-}
-
-.index {
-  color: var(--on-field-text-secondary);
-  font-variant-numeric: tabular-nums;
-}
-
-.name {
-  font-size: var(--text-xl-size);
+  font-size: var(--text-h1-size);
   font-weight: var(--font-weight-extrabold);
   font-stretch: var(--font-width-condensed);
-  line-height: var(--text-xl-leading);
-  letter-spacing: var(--text-xl-tracking);
+  line-height: var(--text-h1-leading);
+  letter-spacing: var(--text-h1-tracking);
 }
 
-.description {
-  grid-column: 2;
-  max-width: 30ch;
-  margin-top: var(--space-8);
+/* Le point médian sépare sans se retrouver seul en début de ligne. */
+.value:not(:last-child)::after {
+  /* Texte de remplacement vide : le point n'est pas lu. */
+  content: "·" / "";
+  padding-inline: 0.3em;
   color: var(--on-field-text-secondary);
-  font-family: var(--font-recit);
+  font-weight: var(--font-weight-regular);
+}
+
+.more {
+  margin-top: var(--space-24);
   font-size: var(--text-body-size);
-  font-style: italic;
-  line-height: var(--text-body-leading);
 }
 
 @media (min-width: 1024px) {
@@ -71,16 +64,7 @@
     padding-top: calc(var(--rhythm-major) + var(--space-64));
   }
 
-  .value {
-    grid-template-columns: var(--col) 1fr calc(3 * var(--col-step) - var(--grid-gutter));
-    column-gap: var(--grid-gutter);
-    padding-block: var(--space-24);
-    padding-left: calc(var(--step) * var(--col-step));
-  }
-
-  .description {
-    grid-column: 3;
-    margin-top: 0;
-    font-size: var(--text-h4-size);
+  .values {
+    padding-block: var(--space-32);
   }
 }

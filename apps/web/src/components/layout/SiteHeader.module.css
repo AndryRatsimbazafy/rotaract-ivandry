@@ -35,7 +35,7 @@
 }
 
 /* Sur téléphone, seule l'année reste dans la une. */
-.datelineText span:first-child {
+.datelineText > span:first-child {
   display: none;
 }
 
@@ -72,7 +72,7 @@
 }
 
 @media (min-width: 768px) {
-  .datelineText span:first-child {
+  .datelineText > span:first-child {
     display: inline;
   }
 }

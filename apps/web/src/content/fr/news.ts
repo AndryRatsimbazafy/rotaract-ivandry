@@ -29,13 +29,7 @@ export const newsFeature = {
   locationLabel: "Lieu",
   photoBrief: "Le moment fort de cette actualité.",
   // Affiché tant qu'aucune actualité n'est publiée.
-  placeholder: {
-    day: "00",
-    month: "Mois, année",
-    type: "Rubrique",
-    title: "Titre de l'actualité à la une",
-    summary: "Court résumé de l'actualité.",
-  },
+  empty: "Aucune actualité n'est encore publiée.",
 };
 
 export const newsRegister = {

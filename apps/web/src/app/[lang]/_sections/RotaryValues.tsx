@@ -1,8 +1,13 @@
-import type { CSSProperties } from "react";
+import { ArrowLink } from "@/components/ui/ArrowLink";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { routes } from "@/config/routes";
 import styles from "./RotaryValues.module.css";
 import { getContent } from "@/content";
 
+/**
+ * 02 : forme courte (DESIGN.md, section 6). Les cinq noms sur une ligne qui
+ * passe à la ligne ; les définitions vivent sur la page Nous rejoindre.
+ */
 export async function RotaryValues() {
   const content = await getContent();
   const { rotaryValues } = content.home;
@@ -17,21 +22,16 @@ export async function RotaryValues() {
             {rotaryValues.title}
           </h2>
         </div>
-        <ol className={styles.values}>
-          {rotaryValues.values.map((value, index) => (
-            <li
-              key={value.name}
-              className={styles.value}
-              style={{ "--step": index } as CSSProperties}
-            >
-              <span className={`meta ${styles.index}`} aria-hidden="true">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <h3 className={styles.name}>{value.name}</h3>
-              <p className={styles.description}>{value.description}</p>
+        <ul className={styles.values}>
+          {rotaryValues.values.map((value) => (
+            <li key={value.name} className={styles.value}>
+              {value.name}
             </li>
           ))}
-        </ol>
+        </ul>
+        <p className={styles.more}>
+          <ArrowLink href={`${routes.join}#valeurs`}>{rotaryValues.more}</ArrowLink>
+        </p>
       </div>
     </section>
   );

@@ -108,14 +108,15 @@
   overflow: hidden;
 }
 
-/* Emplacement sans contenu. */
-.pending .day,
+/* Aucune actualité publiée : la phrase remplace le titre, en voix de récit. */
 .pending .title {
-  color: var(--text-placeholder);
-}
-
-.pending .summary {
-  color: var(--text-secondary);
+  font-family: var(--font-recit);
+  font-size: var(--text-statement-size);
+  font-weight: var(--font-weight-regular);
+  font-style: italic;
+  font-stretch: var(--font-width-normal);
+  line-height: var(--text-statement-leading);
+  letter-spacing: 0;
 }
 
 @media (min-width: 1024px) {

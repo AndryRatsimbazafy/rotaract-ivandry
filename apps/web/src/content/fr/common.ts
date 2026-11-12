@@ -58,7 +58,6 @@ export const chrome = {
     listLabel: "Réseaux sociaux du club",
     /** « Facebook du club » */
     linkLabel: (network: string) => `${network} du club`,
-    pending: (network: string) => `${network} : lien à venir`,
   },
   languages: {
     label: "Langue",

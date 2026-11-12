@@ -235,18 +235,10 @@
   overflow: hidden;
 }
 
-/* Emplacements sans contenu : la structure reste, le texte se retire. */
-.pending .name {
-  color: var(--text-placeholder);
-}
-
-.pending .body {
-  color: var(--text-secondary);
-}
-
-.pending .meta,
-.pending .impact {
-  border-top-color: var(--border-rule);
+/* Aucune action publiée : la phrase sur la colonne de lecture. */
+.none {
+  max-width: var(--container-reading);
+  margin-top: var(--space-32);
 }
 
 @media (min-width: 768px) {

@@ -112,18 +112,15 @@
   margin-top: var(--space-4);
 }
 
-/* Emplacements sans contenu : la structure reste, le texte se retire. */
-.pending .name {
-  color: var(--text-placeholder);
+/* Aucune action publiée : la phrase prend la largeur de la grande action. */
+.empty {
+  margin-top: var(--rhythm-heading);
 }
 
-.pending .summary,
-.pending .impact dd {
-  color: var(--text-secondary);
-}
-
-.pending .impact {
-  border-top-color: var(--border-rule);
+@media (min-width: 1024px) {
+  .empty {
+    max-width: calc(8 * var(--col-step) - var(--grid-gutter));
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {

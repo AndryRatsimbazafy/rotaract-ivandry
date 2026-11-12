@@ -55,7 +55,7 @@ export const actionsIndex = {
   empty: "Aucune action ne correspond à ces filtres.",
   reset: "Voir toutes les actions",
   // Affiché tant qu'aucune action n'est publiée : le même emplacement que sur l'accueil.
-  placeholder: latestActions.placeholder,
+  none: latestActions.empty,
 };
 
 // Page d'une action (DESIGN.md, section 10, « le reportage »).

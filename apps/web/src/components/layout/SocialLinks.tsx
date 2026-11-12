@@ -18,16 +18,19 @@ const icons: Record<SocialLink["id"], React.ReactNode> = {
 };
 
 /**
- * Liens vers les réseaux sociaux du club. Tant qu'une adresse n'est pas
- * renseignée dans le Back Office, le pictogramme s'affiche sans lien.
+ * Liens vers les réseaux sociaux du club. Un réseau dont l'adresse n'est pas
+ * renseignée dans le Back Office n'est pas affiché ; sans aucune adresse, la
+ * liste n'existe pas (DESIGN.md, section 8).
  */
 export async function SocialLinks() {
   const { social } = await getSiteSettings();
   const labels = (await getContent()).common.chrome.social;
+  const networks = site.social.filter((network) => social[network.id]);
+  if (networks.length === 0) return null;
 
   return (
     <ul className={styles.list} aria-label={labels.listLabel}>
-      {site.social.map((network) => {
+      {networks.map((network) => {
         const icon = (
           <svg
             className={styles.icon}
@@ -42,28 +45,17 @@ export async function SocialLinks() {
           </svg>
         );
 
-        const href = social[network.id];
-
         return (
           <li key={network.id}>
-            {href ? (
-              <a
-                href={href}
-                className={styles.link}
-                aria-label={labels.linkLabel(network.label)}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                {icon}
-              </a>
-            ) : (
-              <span className={styles.link} title={labels.pending(network.label)}>
-                {icon}
-                <span className={styles.hidden}>
-                  {labels.pending(network.label)}
-                </span>
-              </span>
-            )}
+            <a
+              href={social[network.id]}
+              className={styles.link}
+              aria-label={labels.linkLabel(network.label)}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {icon}
+            </a>
           </li>
         );
       })}

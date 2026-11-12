@@ -1,6 +1,7 @@
 import Link from "@/components/ui/LocalLink";
 import { PhotoFrame } from "@/components/media/PhotoFrame";
 import { ArrowLink } from "@/components/ui/ArrowLink";
+import { EmptyNote } from "@/components/ui/EmptyNote";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { actionPath, routes } from "@/config/routes";
 import type { Action } from "@/types/action";
@@ -51,13 +52,6 @@ function toEntry(action: Action, { latestActions }: Content["home"]): ActionEntr
   };
 }
 
-function placeholderEntries({ latestActions }: Content["home"]): ActionEntry[] {
-  return SLOTS.map((_, index) => ({
-    key: `emplacement-${index}`,
-    ...latestActions.placeholder,
-  }));
-}
-
 interface LatestActionsProps {
   actions: Action[];
 }
@@ -67,9 +61,7 @@ export async function LatestActions({ actions }: LatestActionsProps) {
   const { pendingLabel } = content.common;
   const { latestActions } = content.home;
   const isPending = actions.length === 0;
-  const entries = isPending
-    ? placeholderEntries(content.home)
-    : actions.map((action) => toEntry(action, content.home));
+  const entries = actions.map((action) => toEntry(action, content.home));
 
   return (
     <section
@@ -95,11 +87,11 @@ export async function LatestActions({ actions }: LatestActionsProps) {
           </p>
         </div>
 
-        <div
-          className={
-            isPending ? `grid ${styles.entries} ${styles.pending}` : `grid ${styles.entries}`
-          }
-        >
+        {isPending ? (
+          // Collection vide : une phrase entre deux filets, pas d'entrée fantôme.
+          <EmptyNote className={styles.empty}>{latestActions.empty}</EmptyNote>
+        ) : (
+        <div className={`grid ${styles.entries}`}>
           {entries.slice(0, SLOTS.length).map((entry, index) => (
             <article key={entry.key} className={styles.entry}>
               <div className={styles.media}>
@@ -140,6 +132,7 @@ export async function LatestActions({ actions }: LatestActionsProps) {
             </article>
           ))}
         </div>
+        )}
       </div>
     </section>
   );
